@@ -8,67 +8,74 @@
 
 - The VRPTW (Vehicle Routing Problem with Time Windows) module will be launched soon. Stay tuned!
 
-- This library is intended *for academic use only*.
+- This executable (compiled using Linux) is intended *for academic use only*.
 
 ## Requirements
 
 ---
 
 - [CMake](https://cmake.org/download/) version 3.16 or higher.
-- [GUROBI](https://www.gurobi.com/downloads/gurobi-software/) - please follow the link to install GUROBI.
+- [GUROBI](https://www.gurobi.com/downloads/gurobi-software/) version 10.0
+- [CVRPSEP](https://econ.au.dk/research/researcher-websites/jens-lysgaard/cvrpsep/)
+- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) version 3.4.0
 
-Please ensure these requirements are met before proceeding with the usage of the RouteOpt library.
+Please ensure these requirements are met before proceeding with the usage of the RouteOpt.
 
-## Link RouteOpt Library
-
----
-
-### 1. Linking the Library in Your Project
-
-### Using CMake
-
-If you're using CMake for your project, you can easily link to the RouteOpt library. First, in your CMakeLists.txt, add the following line:
-
-```cmake
-find_library(ROUTEOPT_LIBRARY RouteOpt PATHS /path/to/your/library)
-```
-
-Replace "/path/to/your/library" with the actual path where your built RouteOpt library is located.
-
-Then, when defining your executable or another library that depends on RouteOpt, you need to link to it:
-
-```cmake
-add_executable(your_executable ${YOUR_SOURCES})
-target_link_libraries(your_executable ${ROUTEOPT_LIBRARY})
-```
-
-Replace "your_executable" with the name of your executable and "${YOUR_SOURCES}" with the variable that contains your source files.
-
-### Without CMake
-
-If you're not using CMake, you would typically pass the path to the library directly to the compiler/linker.
-
-For example, if you're using the g++ compiler, you can do something like this:
-
-```bash
-g++ your_source_files.cpp -L/path/to/your/library -lRouteOpt -o your_executable
-```
-
-Again, replace "/path/to/your/library" with the actual path where your built RouteOpt library is located, "your_source_files.cpp" with your source files, and "your_executable" with the desired name of your executable.
-
-### 2. Including Headers
-
-In your source files, you need to include the headers of the RouteOpt library. You can do this with the following line:
-
-```cpp
-#include <RouteOpt/YourHeader.h>
-```
-
-Replace "YourHeader.h" with the actual name of the header you need.
+## Link Depencices
 
 ---
 
-Please refer to the specific documentation and examples of the RouteOpt library for more details on how to use its functions and classes in your code. If you encounter any problems or need further assistance, please submit an issue in the RouteOpt repository.
+**Step 1:** Clone the RouteOpt repository:
+
+```
+https://github.com/Zhengzhong-You/RouteOpt-CVRP.git
+```
+
+**Step 2:** Construct the project directory tree:
+
+```
+cd RouteOpt-CVRP && mkdir Zips Dependency && cd Dependency
+```
+
+**Step 3:** Build the cvrpsep library:
+
+```
+(obtain the code) && cd cvrpsep
+make
+```
+
+**Step 4:** Download Eigen:
+
+```
+cd ../
+wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip
+unzip eigen-3.4.0.zip && mv eigen-3.4.0.zip ../Zips
+```
+
+**Step 5:** Set the `GUROBI_HOME` environment variable:
+
+In Linux, `vim ~/.bashrc`. In MacOS, `vim ~/.bash_profile`. After adding the following command line, `source ~/.bashrc` or `source ~/.bash_profile`
+
+```
+export GUROBI_HOME=<gurobi_root>/<gurobi_version>/<OS>
+```
+
+Example: `export GUROBI_HOME=${HOME}/gurobi1000/linux64`
+
+**Step 6:** Revise `FindGUROBI.cmake`:
+
+It's in `<path to solver>/RouteOpt/Application/CVRP/CVRP7/package`
+
+```
+find_library(<package>_LIBRARY
+        NAMES <lib>
+        PATHS "$ENV{<package>_HOME}/lib"
+        )
+```
+
+Replace the `<lib>` with the right `lib`.
+
+For example, if we use `gurobi1000`, the lib will be `libgurobi100.so` in Linux and `libgurobi100.dylib` in MacOS.
 
 ## Useage
 
@@ -79,7 +86,7 @@ The library accepts two kinds of parameters:
 1. Utilize the `idx/<ins_file.ins>` (Recommended)
    
    ```
-   ./your_executable -d idx/<ins_file.ins> -n -u
+   ./RouteOpt_CVRP-d idx/<ins_file.ins> -n -u
    ```
    
    In this command, `-d` denotes the `.ins` file and `-n` stands for the instance corresponding to the `n`-th line of the file. Note that `-u` is an optional parameter indicating the initial upper bound, and it should be written without a space following `-u`.
@@ -87,7 +94,7 @@ The library accepts two kinds of parameters:
    For instance, you can enter:
    
    ```
-   ./your_executable -d idx/OldIns.ins -n 33 -u27592
+   ./RouteOpt_CVRP -d idx/OldIns.ins -n 33 -u27592
    ```
    
    This command will read the instance from the `33`-rd line of the `OldIns.ins` file.
@@ -95,7 +102,7 @@ The library accepts two kinds of parameters:
    Alternatively, you can just enter:
    
    ```
-   ./your_executable -d idx/OldIns.ins -n 33 
+   ./RouteOpt_CVRP -d idx/OldIns.ins -n 33 
    ```
    
    In this case, if the `.ins` file contains an Upper Bound (UB), it will be automatically read from the file. If no UB is provided, it will be initialized as 1e9.
@@ -103,7 +110,7 @@ The library accepts two kinds of parameters:
 2. Specify the complete path
    
    ```
-   ./your_executable ./../../../DataForCVRP/OldIns/X-n101-k25.vrp -u27592
+   ./RouteOpt_CVRP ./../../../DataForCVRP/OldIns/X-n101-k25.vrp -u27592
    ```
 
 ## Output:
