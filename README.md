@@ -4,9 +4,7 @@
 
 ## Note:
 
-- This is a demo of the CVRP (Capacitated Vehicle Routing Problem) module. The machine learning module is not yet enabled.
-
-- The VRPTW (Vehicle Routing Problem with Time Windows) module will be launched soon. Stay tuned!
+- This is a demo of the CVRP (Capacitated Vehicle Routing Problem) module and the VRPTW (Vehicle Routing Problem with Time Windows )
 
 - This executable (compiled using Linux) is intended *for academic use only*.
 
@@ -28,13 +26,13 @@ Please ensure these requirements are met before proceeding with the usage of the
 **Step 1:** Clone the RouteOpt repository:
 
 ```
-https://github.com/Zhengzhong-You/RouteOpt-CVRP.git
+https://github.com/Zhengzhong-You/open-RouteOpt.git
 ```
 
 **Step 2:** Construct the project directory tree:
 
 ```
-cd RouteOpt-CVRP && mkdir Zips Dependency && cd Dependency
+cd open-RouteOpt-CVRP && mkdir Zips Dependency && cd Dependency
 ```
 
 **Step 3:** Build the cvrpsep library:
@@ -64,7 +62,7 @@ Example: `export GUROBI_HOME=${HOME}/gurobi1000/linux64`
 
 **Step 6:** Revise `FindGUROBI.cmake`:
 
-It's in `<path to solver>/RouteOpt/Application/CVRP/CVRP7/package`
+It's in `<path to solver>/open-RouteOpt/Application/CVRP/CVRP7/package`
 
 ```
 find_library(<package>_LIBRARY
@@ -81,7 +79,7 @@ For example, if we use `gurobi1000`, the lib will be `libgurobi100.so` in Linux 
 
 ---
 
-The library accepts two kinds of parameters:
+The library accepts two kinds of parameters: (RouteOpt_VRPTW for VRPTW)
 
 1. Utilize the `idx/<ins_file.ins>` (Recommended)
    
