@@ -10,9 +10,9 @@ def generateIdxIns(path):
     for file in files:
         if file.endswith(".vrp"):
             idxIns.append("./../../../" + path + file)
-    with open("OldIns.ins", 'w') as f:
+    with open("tmp.ins", 'w') as f:
         for file in idxIns:
             f.write(file + "\n")
 
 
-generateIdxIns("DataForCVRP/OldIns/")
+generateIdxIns("DataForCVRP/<>/<>/")

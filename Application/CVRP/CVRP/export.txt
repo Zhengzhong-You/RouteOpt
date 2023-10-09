@@ -1,1 +1,0 @@
-export GUROBI_HOME=<gurobi_root>/gurobi952/linux64
