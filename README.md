@@ -2,47 +2,47 @@
 
 ---
 
-## Note:
+Note:
 
-- This is a demo of the CVRP (Capacitated Vehicle Routing Problem) module and the VRPTW (Vehicle Routing Problem with Time Windows )
+- This package is *still under development*.
+- This package is *only for academic use*.
 
-- This executable (compiled using Linux) is intended *for academic use only*.
 
 ## Requirements
 
 ---
 
-- [CMake](https://cmake.org/download/) version 3.16 or higher.
-- [GUROBI](https://www.gurobi.com/downloads/gurobi-software/) version 10.0
-- [CVRPSEP](https://econ.au.dk/research/researcher-websites/jens-lysgaard/cvrpsep/)
-- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) version 3.4.0
 
-Please ensure these requirements are met before proceeding with the usage of the RouteOpt.
+- [GUROBI](https://www.gurobi.com/downloads/gurobi-software/) 
+- [XGBoost](https://xgboost.readthedocs.io/en/stable/build.html)
+- [CMake](https://cmake.org/download/) versions 3.16 and higher
+- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) versions 3.4.0 and higher
 
-## Link Depencices
+
+## Installation:
 
 ---
 
-**Step 1:** Clone the RouteOpt repository:
+ Obtain RouteOpt by typing:
 
 ```
-https://github.com/Zhengzhong-You/open-RouteOpt.git
+git clone https://github.com/Zhengzhong-You/RouteOpt.git
 ```
 
-**Step 2:** Construct the project directory tree:
+Construct project tree:
 
 ```
-cd open-RouteOpt-CVRP && mkdir Zips Dependency && cd Dependency
+cd RouteOpt && mkdir Zips Dependency && cd Dependency
 ```
 
-**Step 3:** Build the cvrpsep library:
+Build cvrpsep library:
 
 ```
-(obtain the code) && cd cvrpsep
+git clone https://github.com/Zhengzhong-You/cvrpsep.git && cd cvrpsep
 make
 ```
 
-**Step 4:** Download Eigen:
+Download eigen:
 
 ```
 cd ../
@@ -50,7 +50,26 @@ wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip
 unzip eigen-3.4.0.zip && mv eigen-3.4.0.zip ../Zips
 ```
 
-**Step 5:** Set the `GUROBI_HOME` environment variable:
+Download xgboost (for ML purpose):
+
+If building on MacOS:
+
+Obtain `libomp` from [Homebrew](https://brew.sh/) first.
+
+```
+brew install libomp
+```
+
+Rest is the same as building on Linux.
+
+```
+git clone --recursive https://github.com/dmlc/xgboost
+cd xgboost && mkdir build && cd build
+cmake ..
+make -j$(nproc)
+```
+
+Set `GUROBI_HOME` :
 
 In Linux, `vim ~/.bashrc`. In MacOS, `vim ~/.bash_profile`. After adding the following command line, `source ~/.bashrc` or `source ~/.bash_profile`
 
@@ -58,11 +77,11 @@ In Linux, `vim ~/.bashrc`. In MacOS, `vim ~/.bash_profile`. After adding the fol
 export GUROBI_HOME=<gurobi_root>/<gurobi_version>/<OS>
 ```
 
-Example: `export GUROBI_HOME=${HOME}/gurobi1000/linux64`
+example: `export GUROBI_HOME=${HOME}/gurobi952/linux64`
 
-**Step 6:** Revise `FindGUROBI.cmake`:
+Revise `FindGUROBI.cmake` and `FindXGB.cmake`:
 
-It's in `<path to solver>/open-RouteOpt/Application/CVRP/CVRP7/package`
+They are in `<path to solver>/RouteOpt/Application/CVRP/CVRP7/package`
 
 ```
 find_library(<package>_LIBRARY
@@ -73,43 +92,50 @@ find_library(<package>_LIBRARY
 
 Replace the `<lib>` with the right `lib`.
 
-For example, if we use `gurobi1000`, the lib will be `libgurobi100.so` in Linux and `libgurobi100.dylib` in MacOS.
+For example, for `FindGUROBI.cmake` and we use `gurobi952`, the lib will be `libgurobi95.so` in Linux and `libgurobi95.dylib` in MacOS; for `FindXGB.cmake` , the lib will be `libxgboost.so` in Linux and `libxgboost.dylib` in MacOS.
 
-## Useage
+Build:
+
+```
+cd ../../../Application/CVRP/CVRP7/ && cmake .
+make -j$(nproc)
+```
+
+## Usage:
 
 ---
 
-The library accepts two kinds of parameters: (RouteOpt_VRPTW for VRPTW)
+Two ways of running CVRP Application:
 
-1. Utilize the `idx/<ins_file.ins>` (Recommended)
-   
-   ```
-   ./RouteOpt_CVRP-d idx/<ins_file.ins> -n -u
-   ```
-   
-   In this command, `-d` denotes the `.ins` file and `-n` stands for the instance corresponding to the `n`-th line of the file. Note that `-u` is an optional parameter indicating the initial upper bound, and it should be written without a space following `-u`.
-   
-   For instance, you can enter:
-   
-   ```
-   ./RouteOpt_CVRP -d idx/OldIns.ins -n 33 -u27592
-   ```
-   
-   This command will read the instance from the `33`-rd line of the `OldIns.ins` file.
-   
-   Alternatively, you can just enter:
-   
-   ```
-   ./RouteOpt_CVRP -d idx/OldIns.ins -n 33 
-   ```
-   
-   In this case, if the `.ins` file contains an Upper Bound (UB), it will be automatically read from the file. If no UB is provided, it will be initialized as 1e9.
+- Take the advantage of `idx/<ins_file.ins>` (Recommend)
+  
+  ```
+  ./CVRP -d idx/<ins_file.ins> -n -u
+  ```
+  
+  where `-d` specifies the `.ins` file and `-n` specifies the instance corresponding to the `n`-th line of the file. Note that `-u` is an optinal parameter indicating the initial upper bound and there is no space after `-u`.
+  
+  For example, you can type
+  
+  ```
+  ./CVRP -d idx/OldIns.ins -n 33 -u27592
+  ```
+  
+  , which means we read instance from `33`-rd line of `OldIns.ins` file.
+  
+  Or just type
+  
+  ```
+  ./CVRP -d idx/OldIns.ins -n 33 
+  ```
+  
+  , if the .ins file contains UB, it will read the UB automatically, otherwise, the UB will be initialized as 1e9.
 
-2. Specify the complete path
-   
-   ```
-   ./RouteOpt_CVRP ./../../../DataForCVRP/OldIns/X-n101-k25.vrp -u27592
-   ```
+- Specify the full path
+  
+  ```
+  ./CVRP ./../../../DataForCVRP/OldIns/X-n101-k25.vrp -u27592
+  ```
 
 ## Output:
 
@@ -117,74 +143,74 @@ The library accepts two kinds of parameters: (RouteOpt_VRPTW for VRPTW)
 
 - **Branching**:
   
-  - *nd_ind*: Node index
+  - *nd_ind*: index of node
   
-  - *nd_col*: Number of columns in the node's Linear Programming (LP)
+  - *nd_col*: # of columns in node's LP
   
-  - *nd_val*: The value assigned to the node (used by the **priority queue** during branching)
+  - *nd_val*: the assigned value of node (used by **priority queue** when branching)
   
-  - *nd_dep*: The depth of the node in the branch-and-bound tree (BBT) (tree level)
+  - *nd_dep*: the depth of the node in the branch-and-bound tree (BBT) (tree level)
   
-  - *nd_rmn*: The remaining nodes in the BBT
+  - *nd_rmn*: the remaining nodes of the BBT
   
-  - *et/s*: Elapsed time up until the current point
+  - *et/s*: elapsed time so far
   
-  - *lb*: Global lower bound
+  - *lb*: global lower bound
   
-  - *ub*: Global upper bound
+  - *ub*: global upper bound
 
 - **Cutting**:
   
-  - *rcc*: Number of rounded capacity cuts generated
+  - *rcc*: # of rounded capacity cuts gnerated
   
-  - *r3*: Number of rank1-3 cuts
+  - *r3*: # of rank1-3 cuts
   
-  - *r1*: Number of rank1-1 cuts
+  - *r1*: # of rank1-1 cuts
 
 - **Pricing**:
   
-  - *it*: Number of iterations
+  - *it*: # of iterations
   
-  - *chgcol*: Number of columns generated in Column Generation (CG)
+  - *chgcol*: # of columns generated in column generation (CG)
   
-  - *ncol*: Number of columns in LP
+  - *ncol*: # of columns in LP
   
-  - *ncstr*: Number of rows in LP
+  - *ncstr*: # of rows in LP
   
-  - *mt/s*: Time interval between two consecutive information printouts during **LP re-optimization**
+  - *mt/s*: time interval of two continus infomation printing for **re-optimizing LP**
   
-  - *spt/s*: Time interval between two consecutive information printouts during **column generation**
+  - *spt/s*: time interval of two continus infomation printing for **column generation**
   
-  - *lpval*: Objective value of LP
+  - *lpval*: objective value of LP
   
-  - *lb*: Global lower bound
+  - *lb*: global lower bound
   
-  - *ub*: Global upper bound
+  - *ub*: global upper bound
 
 - **ArcElimination**:
   
-  - *half_forwarding/s*: Time spent in half_forward labeling
+  - *half_forwarding/s*: time spent in half_forward labeling
   
-  - *concatenate/s*: Time spent in concatenation, used for the extension of a few labels
+  - *concatenate/s*: time spent in concatenation used for the extension of few labels
   
-  - *left_half/s:* Time spent in left_half_forward labeling
+  - *left_half/s:* time spent in left_half_forward labeling
   
-  - *BucketArcs*: Number of remaining bucket arcs
+  - *BucketArcs*: # of bucket arcs remained
   
-  - *prev.*: Ratio of current bucket arcs number to the number from the last ArcElimination
+  - *prev.*: ratio of # of current bucket arcs compared to these of last ArcElimination
   
-  - *max.*: Ratio of current bucket arcs number to the total bucket arcs
+  - *max.*: ratio of # of current bucket arcs compared to all bucket arcs
   
-  - *JumpArcs*: Number of jump arcs generated
+  - *JumpArcs*: # of jump arcs generated
 
 - **EnumerateRoutes**:
   
-  - *num_labels*: Number of labels generated in half_forward labeling
+  - *num_labels*: # of labels generated in half_forward labeling
   
-  - *num_routes*: Number of routes generated in half_forward labeling
+  - *num_routes*: # of routes generated in half_forward labeling
   
-  - *num_routes_now*: Total number of routes
+  - *num_routes_now*: # of routes in total
   
-  - *concatenate*: Time spent in concatenation
+  - *concatenate*: time spent in concatenation
   
-  - *all_routes*: Total number of revised routes (used in generating the column pool)
+  - *all_routes*: # of revised routes in total (used in generating the column pool)
