@@ -147,9 +147,9 @@ The library accepts two kinds of parameters: (RouteOpt_VRPTW for VRPTW)
 ## Additional Information
 
 For details on:
-- Log outputs
-- Parameter adjustments
+- Log outputs,
+- Parameter adjustments,
 - Toggling techniques,
-- Branching strategies
+- Branching strategies,
 
 please refer to the [User Manual](https://github.com/Zhengzhong-You/RouteOpt-usermanual).
