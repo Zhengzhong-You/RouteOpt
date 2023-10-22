@@ -4,18 +4,47 @@
 
 ## Note:
 
-- This is a demo of the CVRP (Capacitated Vehicle Routing Problem) module and the VRPTW (Vehicle Routing Problem with Time Windows )
+- This solver is designed for solving the CVRP (Capacitated Vehicle Routing Problem) and the VRPTW (Vehicle Routing
+  Problem with Time Windows).
 
-- This executable (compiled using Linux) is intended *for academic use only*.
+- This is intended *for academic use only*.
+
+1. The solver consists of the following modules:
+    1. **Default Setting (Setting I)**: All mentioned features are enabled, offering the highest computational performance.
+    2. **Setting II**: Used exclusively for comparing different branching strategies.
+    3. **Setting for open instances**: Requires the assistance of supercomputing. Detailed explanations of these
+       features can be found
+       in [Two-Stage Learning](https://www.researchgate.net/publication/374553305_Two-Stage_Learning_to_Branch_in_Branch-Price-and-Cut_Algorithms_for_Solving_Vehicle_Routing_Problems_Exactly).
+       For specific usage, please refer to the [User Manual](https://github.com/Zhengzhong-You/RouteOpt-usermanual).
+
+2. Currently, the solver is configured to assemble with the two-stage learning to branch module for CVRP and VRPTW. This
+   solver's current parameter configuration is suitable for most instances, except for those instances where pricing is
+   extremely challenging (for example, CVRP instances with long routes). For solving instances with long routes, the
+   parameters that need to be adjusted can be found in
+   the [User Manual](https://github.com/Zhengzhong-You/RouteOpt-usermanual).
+
+3. The VRPTW module of RouteOpt is currently optimized only for the quick solution of type-2 instances, meaning those
+   with very loose capacity constraints. This is due to the adaptive strategies mentioned
+   in [Bucket Graph](https://pubsonline.informs.org/doi/abs/10.1287/trsc.2020.0985). Please refrain from using RouteOpt
+   for solving type-1 instances, as the performance will be subpar! If you must solve the type-1 instances, please turn
+   to the [VRPSolver](https://vrpsolver.math.u-bordeaux.fr/) with configuration one.
+
+4. The design workflow, techniques and even outputs of RouteOpt pay a high tribute
+   to [VRPSolver](https://vrpsolver.math.u-bordeaux.fr/). The scientific workflow settings of VRPSolver, combined with
+   its ingenious computational techniques, taught me invaluable knowledge. I am deeply grateful for contributions to the
+   VRPSolver by scholars like Artur Pessoa, Ruslan Sadykov, Eduardo Uchoa, and François Vanderbeck and others. Special
+   thanks to Dr. Ruslan Sadykov for generously granting the rights to access the VRPSolver and assisting me with tuning
+   VRPSolver to find research directions. Without the VRPSolver, RouteOpt would not have been possible.
 
 ## Requirements
 
 ---
 
-- [CMake](https://cmake.org/download/) version 3.16 or higher.
-- [GUROBI](https://www.gurobi.com/downloads/gurobi-software/) version 10.0
+- [CMake](https://cmake.org/download/) version 3.16 or higher (required).
+- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) version 3.4.0 or higher (required).
+- [XGBoost](https://xgboost.readthedocs.io/en/latest/build.html) version 1.4.2 or higher (required).
+- [GUROBI](https://www.gurobi.com/downloads/gurobi-software/) version 10.0 or higher (recommended).
 - [CVRPSEP](https://econ.au.dk/research/researcher-websites/jens-lysgaard/cvrpsep/)
-- [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) version 3.4.0
 
 Please ensure these requirements are met before proceeding with the usage of the RouteOpt.
 
@@ -26,13 +55,13 @@ Please ensure these requirements are met before proceeding with the usage of the
 **Step 1:** Clone the RouteOpt repository:
 
 ```
-https://github.com/Zhengzhong-You/open-RouteOpt.git
+https://github.com/Zhengzhong-You/pub-RouteOpt.git
 ```
 
 **Step 2:** Construct the project directory tree:
 
 ```
-cd open-RouteOpt-CVRP && mkdir Zips Dependency && cd Dependency
+cd pub-RouteOpt && mkdir Zips Dependency && cd Dependency
 ```
 
 **Step 3:** Build the cvrpsep library:
@@ -52,7 +81,8 @@ unzip eigen-3.4.0.zip && mv eigen-3.4.0.zip ../Zips
 
 **Step 5:** Set the `GUROBI_HOME` environment variable:
 
-In Linux, `vim ~/.bashrc`. In MacOS, `vim ~/.bash_profile`. After adding the following command line, `source ~/.bashrc` or `source ~/.bash_profile`
+In Linux, `vim ~/.bashrc`. In MacOS, `vim ~/.bash_profile`. After adding the following command line, `source ~/.bashrc`
+or `source ~/.bash_profile`
 
 ```
 export GUROBI_HOME=<gurobi_root>/<gurobi_version>/<OS>
@@ -62,7 +92,7 @@ Example: `export GUROBI_HOME=${HOME}/gurobi1000/linux64`
 
 **Step 6:** Revise `FindGUROBI.cmake`:
 
-It's in `<path to solver>/open-RouteOpt/Application/CVRP/CVRP7/package`
+It's in `<path to solver>/pub-RouteOpt/Application/CVRP/CVRP/package`
 
 ```
 find_library(<package>_LIBRARY
@@ -82,109 +112,44 @@ For example, if we use `gurobi1000`, the lib will be `libgurobi100.so` in Linux 
 The library accepts two kinds of parameters: (RouteOpt_VRPTW for VRPTW)
 
 1. Utilize the `idx/<ins_file.ins>` (Recommended)
-   
+
    ```
-   ./RouteOpt_CVRP-d idx/<ins_file.ins> -n -u
+   ./CVRP -d idx/<ins_file.ins> -n -u
    ```
-   
-   In this command, `-d` denotes the `.ins` file and `-n` stands for the instance corresponding to the `n`-th line of the file. Note that `-u` is an optional parameter indicating the initial upper bound, and it should be written without a space following `-u`.
-   
+
+   In this command, `-d` denotes the `.ins` file and `-n` stands for the instance corresponding to the `n`-th line of
+   the file. Note that `-u` is an optional parameter indicating the initial upper bound, and it should be written
+   without a space following `-u`.
+
    For instance, you can enter:
-   
+
    ```
-   ./RouteOpt_CVRP -d idx/OldIns.ins -n 33 -u27592
+   ./CVRP -d idx/OldIns.ins -n 33 -u27592
    ```
-   
+
    This command will read the instance from the `33`-rd line of the `OldIns.ins` file.
-   
+
    Alternatively, you can just enter:
-   
+
    ```
-   ./RouteOpt_CVRP -d idx/OldIns.ins -n 33 
+   ./CVRP -d idx/OldIns.ins -n 33 
    ```
-   
-   In this case, if the `.ins` file contains an Upper Bound (UB), it will be automatically read from the file. If no UB is provided, it will be initialized as 1e9.
+
+   In this case, if the `.ins` file contains an Upper Bound (UB), it will be automatically read from the file. If no UB
+   is provided, it will be initialized as 1e9.
 
 2. Specify the complete path
-   
+
    ```
-   ./RouteOpt_CVRP ./../../../DataForCVRP/OldIns/X-n101-k25.vrp -u27592
+   ./CVRP ./../../../DataForCVRP/OldIns/X-n101-k25.vrp -u27592
    ```
 
-## Output:
+## Additional Information
 
----
+For details on:
+- Log outputs
+- Parameter adjustments
+- Toggling techniques,
+- Branching strategies
 
-- **Branching**:
-  
-  - *nd_ind*: Node index
-  
-  - *nd_col*: Number of columns in the node's Linear Programming (LP)
-  
-  - *nd_val*: The value assigned to the node (used by the **priority queue** during branching)
-  
-  - *nd_dep*: The depth of the node in the branch-and-bound tree (BBT) (tree level)
-  
-  - *nd_rmn*: The remaining nodes in the BBT
-  
-  - *et/s*: Elapsed time up until the current point
-  
-  - *lb*: Global lower bound
-  
-  - *ub*: Global upper bound
-
-- **Cutting**:
-  
-  - *rcc*: Number of rounded capacity cuts generated
-  
-  - *r3*: Number of rank1-3 cuts
-  
-  - *r1*: Number of rank1-1 cuts
-
-- **Pricing**:
-  
-  - *it*: Number of iterations
-  
-  - *chgcol*: Number of columns generated in Column Generation (CG)
-  
-  - *ncol*: Number of columns in LP
-  
-  - *ncstr*: Number of rows in LP
-  
-  - *mt/s*: Time interval between two consecutive information printouts during **LP re-optimization**
-  
-  - *spt/s*: Time interval between two consecutive information printouts during **column generation**
-  
-  - *lpval*: Objective value of LP
-  
-  - *lb*: Global lower bound
-  
-  - *ub*: Global upper bound
-
-- **ArcElimination**:
-  
-  - *half_forwarding/s*: Time spent in half_forward labeling
-  
-  - *concatenate/s*: Time spent in concatenation, used for the extension of a few labels
-  
-  - *left_half/s:* Time spent in left_half_forward labeling
-  
-  - *BucketArcs*: Number of remaining bucket arcs
-  
-  - *prev.*: Ratio of current bucket arcs number to the number from the last ArcElimination
-  
-  - *max.*: Ratio of current bucket arcs number to the total bucket arcs
-  
-  - *JumpArcs*: Number of jump arcs generated
-
-- **EnumerateRoutes**:
-  
-  - *num_labels*: Number of labels generated in half_forward labeling
-  
-  - *num_routes*: Number of routes generated in half_forward labeling
-  
-  - *num_routes_now*: Total number of routes
-  
-  - *concatenate*: Time spent in concatenation
-  
-  - *all_routes*: Total number of revised routes (used in generating the column pool)
+please refer to the [User Manual](https://github.com/Zhengzhong-You/RouteOpt-usermanual).
