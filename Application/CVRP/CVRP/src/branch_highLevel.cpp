@@ -1,8 +1,16 @@
 
 #include "CVRP.hpp"
+#include <boost/math/special_functions/gamma.hpp>
+#include <boost/math/tools/roots.hpp>
+#include <boost/math/quadrature/gauss_kronrod.hpp>
+#include <cmath>
+#include <functional>
 
 using namespace std;
 using namespace std::chrono;
+using namespace boost::math::tools;
+using namespace std::placeholders;
+using namespace boost::math;
 
 void CVRP::doSB(BbNode *node, pair<int, int> &info) {
   if (node->is_terminated) return;
@@ -15,6 +23,7 @@ void CVRP::doSB(BbNode *node, pair<int, int> &info) {
 	case 2:generateModelInPhase2(node);
 	  break;
 	case 3: useMLInGeneralFramework(node);
+//	  findAccML(node);
 	  break;
 #ifdef USE_M_DYNAMICS
 	case 4:useMLVaryLPTesting(node);
@@ -52,6 +61,34 @@ void CVRP::useDefaultSB(BbNode *node) {
 }
 
 #ifdef MASTER_VALVE_ML
+
+void CVRP::findAccML(BbNode *node) {
+  if (if_in_enu_state) throw runtime_error("findAccInitialML: not in enu state");
+  initialScreen(node, true, true, ml.give_initial_screening_num_candidates(), Config::Frac4sudoCostBranPhase0);
+  int num = min(ml.give_testing_num_candidates(node->tree_level), int(branch_pair.size()));
+  auto commonSet = branch_pair;
+  useModelPhase1Separate(node, num);
+  useModelInPhase2(node, Config::BranPhase2);
+  auto initialS = branch_pair;
+  branch_pair.clear();
+  branch_pair = commonSet;
+  testCG(node, true, true, false, true);
+  auto overallS = branch_pair_val;
+  self_mkdir("testAcc");
+  ofstream out("testAcc/" + file_name + ".txt", ios::app);
+  out << "---------------------" << endl;
+  out << "MLS: " << endl;
+  for (auto &edge : initialS) {
+	out << edge.first << " " << edge.second << ", ";
+  }
+  out << endl;
+  out << "overallS: " << endl;
+  for (auto &edge : overallS) {
+	out << edge.first.first << " " << edge.first.second << " " << edge.second << ", ";
+  }
+  out << endl;
+  out.close();
+}
 
 void CVRP::generateModelInPhase1(BbNode *node) {
   initialScreen(node, true, true, ml.give_initial_screening_num_candidates(), Config::Frac4sudoCostBranPhase0);
@@ -113,72 +150,161 @@ void CVRP::useMLVaryLPTesting(BbNode *node) {
   if (node->index == 0) evaluateM1();
 }
 
+double getLBTk(double omega, double alpha, double B, double k) {
+  return (omega + k) * pow(B, 1 / (1 - alpha / (k + 1)));
+}
+
+double getUBTk(double omega, double alpha, double B, double k) {
+  double exponent = alpha / (1.0 - alpha) * log(B);
+  double omega_term = boost::math::gamma_p(k, exponent);
+  return (omega + k) * k * pow(B, 1 / (1 - alpha)) * pow(exponent, -k) * omega_term;
+}
+
+double getRealTk(double omega, double alpha, double B, double k) {
+  using namespace boost::math::quadrature;
+
+  // Define the integrand directly within the getRealTk function
+  auto integrand = [&](double x) {
+	return k * std::pow(x, k - 1) * std::pow(B, 1.0 / (alpha * x + 1 - alpha));
+  };
+
+  double error;
+  double result = boost::math::quadrature::gauss_kronrod<double, 15>::integrate(
+	  integrand,
+	  0.0,
+	  1.0,
+	  15,
+	  std::numeric_limits<double>::epsilon(),
+	  &error
+  );
+
+  return result * (omega + k);
+}
+
+void getRange(double omega,
+			  double alpha,
+			  double B,
+			  double target,
+			  double k1,
+			  double est_m,
+			  int &lb_k,
+			  int &ub_k) {
+  std::function<double(double)> bound_equation =
+	  [omega, alpha, B, target](double k) {
+		return getLBTk(omega, alpha, B, k) - target;
+	  };
+
+  // Define the search ranges
+  std::array<std::pair<double, double>, 2> search_ranges = {
+	  std::make_pair(1., k1),
+	  std::make_pair(k1, est_m)
+  };
+
+  boost::uintmax_t max_iterations = 1000; // Maximum number of iterations
+
+  int cnt = 0;
+  for (const auto &range : search_ranges) {
+	try {
+	  auto result = boost::math::tools::toms748_solve(
+		  bound_equation,
+		  range.first,
+		  range.second,
+		  boost::math::tools::eps_tolerance<double>(6),
+		  max_iterations
+	  );
+	  if (cnt == 0) {
+		lb_k = int(ceil(result.second));
+	  } else {
+		ub_k = int(floor(result.first));
+	  }
+	} catch (const std::exception &e) {
+	  if (cnt == 0) {
+		lb_k = 1;
+	  } else {
+		ub_k = int(est_m);
+	  }
+	}
+	++cnt;
+  }
+}
+
 void CVRP::giveDynamicM(BbNode *node, int &num) {
   if (node->index == 0) {
 	num = min(ml.give_initial_screening_num_candidates(), int(branch_pair.size()));
-	esti_k = num;
+	opt_k = num;
 	cout << "we directly use the max n= " << num << endl;
 	return;
   }
-  if (is_use_full_k) {
-	num = min(int(esti_m), int(branch_pair.size()));
-	esti_k = num;
-	cout << "we directly use the full n= " << num << endl;
+  double beta = (ub - node->value - f) / node->geo_r_star;
+  if (is_use_full_k || beta > 16) {
+	num = min(int(est_m), int(branch_pair.size()));
+	opt_k = num;
+	cout << "we directly use the full m= " << num << endl;
 	return;
   }
-  double t_for_one_lp = node->t_for_one_lp;
-  double r_star = node->geo_r_star;
-  double c = node->c;
-  double n = ml.give_initial_screening_num_candidates();
-  double G = ub - node->value;
 
-  double A = r_star * t_for_one_lp * pow(n + 1, 2);
-  double B = t_for_one_lp * (log(2) * (f - G) * n * (esti_m + 1) + 2 * r_star * (n - esti_m) * (n + 1));
-  double C = c * log(2) * (f - G) * n * (esti_m + 1) + r_star * t_for_one_lp * pow(esti_m - n, 2);
+  double omega = node->c / node->t_for_one_lp;
+  double B = pow(2, beta);
 
-  double k1 = (-B + sqrt(pow(B, 2) - 4 * A * C)) / (2 * A);
-  int k1_up = (int)max(min(ceil(k1), double(esti_m)), 1.);
-  int k1_down = (int)max(min(floor(k1), double(esti_m)), 1.);
+  double alpha_beta = alpha * beta * log(sqrt(2));
+  double k1 = sqrt(alpha_beta * (alpha_beta + 2 * alpha + 2 * omega - 2)) + alpha_beta + alpha - 1;
+  int k1_up = (int)max(min(ceil(k1), double(est_m)), 1.);
+  int k1_down = (int)max(min(floor(k1), double(est_m)), 1.);
+  cout << "alpha= " << alpha << " beta= " << beta << " omega= " << omega;
 
-  cout << "___________________" << endl;
-  cout << "G= " << G << " f= " << f << " c= " << c << " t_for_one_lp= " << t_for_one_lp << " r_star= " << r_star
-	   << " n= " << n
-	   << " m= " << esti_m << " k1= " << k1 << endl;
-
-  unordered_set<int> tmp{k1_up, k1_down};
-
-  double least_T_N_ratio = numeric_limits<double>::max();
-  for (auto i : tmp) {
-	double
-		T_N_ratio =
-		(c + i * t_for_one_lp) * pow(2, (G - f) / (r_star * ((esti_m + 1) / n * i / (i + 1) + 1 - esti_m / n)));
-	if (T_N_ratio == numeric_limits<double>::infinity()) {
-	  num = k1_up;
-	  break;
+  if (k1_up == k1_down) {
+	k1 = k1_up;
+  } else {
+	double k1_up_val = getLBTk(omega, alpha, B, k1_up);
+	double k1_down_val = getLBTk(omega, alpha, B, k1_down);
+	if (k1_up_val < k1_down_val) {
+	  k1 = k1_up;
+	} else {
+	  k1 = k1_down;
 	}
-	if (T_N_ratio < least_T_N_ratio) {
-	  least_T_N_ratio = T_N_ratio;
-	  num = i;
-	}
-	cout << "i= " << i << " T_N_ratio= " << T_N_ratio << ", ";
   }
-  num = min(num, int(esti_m));
+  cout << " k1= " << k1 << endl;
+
+  //calculate the UB
+  double ub_tk = getUBTk(omega, alpha, B, k1);
+  int lb_k, ub_k;
+  getRange(omega, alpha, B, ub_tk, k1, est_m, lb_k, ub_k);
+  cout << "lb_k= " << lb_k << " ub_k= " << ub_k << endl;
+  if (lb_k == ub_k) {
+	num = lb_k;
+  } else {
+	double real_tk = getRealTk(omega, alpha, B, k1);
+	getRange(omega, alpha, B, real_tk, k1, est_m, lb_k, ub_k);
+	cout << "revise: lb_k= " << lb_k << " ub_k= " << ub_k << endl;
+	if (lb_k == ub_k) {
+	  num = lb_k;
+	} else {
+	  vector<double> tmp;
+	  for (int i = lb_k; i <= ub_k; ++i) {
+		tmp.emplace_back(getRealTk(omega, alpha, B, i));
+	  }
+	  auto it = min_element(tmp.begin(), tmp.end()) - tmp.begin() + lb_k;
+	  num = (int)it;
+	}
+  }
+
+  num = min(num, int(est_m));
   num = min(num, int(branch_pair.size()));
-  esti_k = num;
-  cout << " num= " << num << endl;
+  opt_k = num;
+  cout << "opt_k= " << opt_k << endl;
 }
 
 void CVRP::evaluateM1() {
-  esti_m = double(find(cp_branch_pair.begin(), cp_branch_pair.end(), branch_pair[0]) - cp_branch_pair.begin()) + 1;
+  est_m = double(find(cp_branch_pair.begin(), cp_branch_pair.end(), branch_pair[0]) - cp_branch_pair.begin()) + 1;
 #ifdef SOLVER_VRPTW
-  esti_m = max(21., esti_m);
+  est_m = max(21., est_m);
 #else
-  esti_m = max(20., esti_m);
+  est_m = max(20., est_m);
 #endif
-  esti_m = min(esti_m, double(ml.give_initial_screening_num_candidates()));
+  est_m = min(est_m, double(ml.give_initial_screening_num_candidates()));
   cp_branch_pair.clear();
-  cout << "m= " << esti_m << endl;
+  alpha = min(est_m / double(ml.give_initial_screening_num_candidates()), 0.9);
+  cout << "m= " << est_m << " alpha= " << alpha << endl;
 }
-
 #endif
 #endif

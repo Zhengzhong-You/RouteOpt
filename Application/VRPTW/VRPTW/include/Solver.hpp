@@ -22,6 +22,7 @@ using SOLVERenv = GRBenv;
 #define SOLVER_INFEASIBLE 3
 #define SOLVER_INF_OR_UNBD 4
 #define SOLVER_UNBOUNDED 5
+#define SOLVER_INFINITY GRB_INFINITY
 #define SOLVER_PRIMAL_SIMPLEX 0
 #define SOLVER_DUAL_SIMPLEX 1
 #define SOLVER_MAX_SENSE (-1)
@@ -194,11 +195,19 @@ class Solver {
 
   [[nodiscard]] int setEnvCutoff(double value);
 
+  [[nodiscard]] int getEnvCutoff(double *value);
+
+  [[nodiscard]] int getEnvLazyConstrStat(int *value);
+
+  [[nodiscard]] int setEnvLazyConstrStat(int value);
+
   [[nodiscard]] int setEnvTimeLimit(double value);
 
   [[nodiscard]] int setModelSense(int value);
 
   [[nodiscard]] int getSense(int first, int len, char *sense);
+
+  [[nodiscard]]  int setcallbackfunc(int (__stdcall *cb)(CB_ARGS), void *usrdata);
 };
 
 #ifdef SOLVER_STATISTICS

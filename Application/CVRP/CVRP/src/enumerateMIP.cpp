@@ -35,7 +35,7 @@ void CVRP::solveMIP(BbNode *const node, bool if_inEnu) {
     safe_solver(node->solver.getObjVal(&lp_val))
   }
   auto end = high_resolution_clock::now();
-  auto eps = duration<double>(beg-end).count();
+  auto eps = duration<double>(end-beg).count();
   cout << "MIP used " << eps << " seconds!" << endl;
 
   safe_solver(node->solver.setEnvCutoff(1e100))
@@ -1095,7 +1095,7 @@ void CVRP::addColumnsByInspection(BbNode *const node, const vector<int> &Col_add
   double nonZeros = 0;
   SparseMatrix<double, ColMajor> tmp_mat(num_row, (int) Col_added.size());
   vector<Triplet<double>> triplets;
-  triplets.reserve((int)Col_added.size() * num_row * 0.1);
+  triplets.reserve(int((double)Col_added.size() * num_row * 0.1));
   size_t num = 0;
   for (auto &it : mat) {
     nonZeros += (double) it.nonZeros();

@@ -30,7 +30,7 @@
 #define MAX_NUM_R1C_MULTI 512//exit(-3)
 #define CST_LIMIT 3000//exit(-3)
 #define FACTOR_NUM_LABEL 100//assign labels in the bucket graph
-#define LABEL_ASSIGN 800000
+#define LABEL_ASSIGN 8000000
 #define MAX_ROUTE_MEMORY 100000
 #define MAX_ROUTE_PRICING 1600000
 #define LABEL_LIMIT_PER_BIN 128
@@ -79,6 +79,7 @@ struct PairHasher {
 
 #ifdef SOLVER_VRPTW
 #define SYMMETRY_PROHIBIT
+#define VRPTW_DISTANCE_TOLERANCE 1e-4
 #else
 #define CAPACITY_AS_MAIN_RESOURCE
 #endif
@@ -91,4 +92,7 @@ struct PairHasher {
 #define USE_M_DYNAMICS
 #endif
 
+#if defined(GENERATE_COL_BY_MIP) && defined(SOLVER_VRPTW)
+#error "GENERATE_COL_BY_MIP and SOLVER_VRPTW cannot be defined at the same time"
+#endif
 #endif //CVRP_MACRO_HPP

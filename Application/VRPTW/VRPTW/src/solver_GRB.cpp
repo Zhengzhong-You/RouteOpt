@@ -648,6 +648,22 @@ int Solver::setEnvCutoff(double value) {
   return error;
 }
 
+int Solver::getEnvCutoff(double *value) {
+  return GRBgetdblparam(GRBgetenv(model), "Cutoff", value);
+}
+
+int Solver::getEnvLazyConstrStat(int *value) {
+  return GRBgetintparam(GRBgetenv(model), "LazyConstraints", value);
+}
+
+int Solver::setEnvLazyConstrStat(int value) {
+  return GRBsetintparam(GRBgetenv(model), "LazyConstraints", value);
+}
+
+int Solver::setcallbackfunc(int (__stdcall *cb)(CB_ARGS), void *usrdata) {
+  return GRBsetcallbackfunc(model, cb, usrdata);
+}
+
 int Solver::setVTypeArray(int first, int len, char *const newvalues) {
 #ifdef SOLVER_STATISTICS
   ++STATISTICS::calls_SOLVERsetVTypearray;

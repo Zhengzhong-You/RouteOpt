@@ -67,7 +67,7 @@ class BbNode {
 
   explicit BbNode(int num, int p_col, CVRP *cvrp);
 
-  BbNode(BbNode *node, BidirectionalLinkedList *ptr, int p_col, int idx, const Brc &bf, int num_buckets_per_vertex);
+  BbNode(BbNode *node, BidirectionalLinkedList *p_ptr, int p_col, int idx, const Brc &bf, int num_buckets_per_vertex);
 
   BbNode(BbNode *node, int num_buckets_per_vertex, int num_col, const bool *if_use_arc);
 
@@ -88,6 +88,10 @@ class BbNode {
   Bucket **all_backward_buckets{};
 #ifdef READ_ENUMERATION_TREES
   explicit BbNode(int num);
+#endif
+
+#ifdef GENERATE_COL_BY_MIP
+  Solver solver_mip{};
 #endif
 };
 

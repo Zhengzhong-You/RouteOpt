@@ -94,10 +94,10 @@ double Config::ChangeDualByTimeRatio{numeric_limits<double>::max()};
 throw std::runtime_error("ChangeDual is not well defined!");
 #endif
 
-#if ADJUST_MIP_TIME_LIMIT == 0
+#if ADJUST_MIP_TIME_LIMIT == 1
 double Config::MIPInEnumerationTimeLimit{10000000};
 int Config::MinNumRoute4MIP{10000};
-#elif ADJUST_MIP_TIME_LIMIT == 1
+#elif ADJUST_MIP_TIME_LIMIT == 0
 double Config::MIPInEnumerationTimeLimit{20};
 int Config::MinNumRoute4MIP{3000};
 #else

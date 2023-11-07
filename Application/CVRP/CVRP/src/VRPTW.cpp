@@ -37,7 +37,7 @@ void VRPTW::setResourceInBucketGraph() {
 }
 
 double VRPTW::transformCost(double x) {
-  return (floor(10 * (x+ TOLERANCE))) / 10;
+  return (floor(10 * (x+ VRPTW_DISTANCE_TOLERANCE))) / 10;
 }
 
 void VRPTW::getLowerBoundofMinimumNumberCars() {

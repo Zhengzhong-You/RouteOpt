@@ -36,17 +36,19 @@
 
 #define ADJUST_MIP_TIME_LIMIT 1
 /**
- * 0. by default
- * 1. force to use
+ * 0. by default (not fully implemented yet)
+ * 1. forbid to use
  */
 
 #define SETTING 1
 /**
  * 1. default: all function works
- * 2.forbid enumeration
- * 	 forbid cutting at non-root
- * 	 forbid roll back
+ * 2. forbid enumeration
+ * 	  forbid cutting at non-root
+ * 	  forbid roll back
  */
+
+//#define GENERATE_COL_BY_MIP (not fully implemented yet)
 
 //#define HGS_APPLIED
 

@@ -1113,6 +1113,8 @@ class CVRP {
 
   int forwardConcatenateInArcElimination(const double *r1c_to_pi, const double *r1c_multi_to_pi);
 
+  void findAccML(BbNode *node);
+
   void eliminateBucketArcs(BbNode *node,
 						   const double *r1c_to_pi,
 						   const double *r1c_multi_to_pi,
@@ -1249,9 +1251,10 @@ class CVRP {
   void giveDynamicM(BbNode *node, int &num);
   void evaluateM1();
   std::vector<std::pair<int, int>> cp_branch_pair{};
-  double esti_m{};
+  double alpha{};
+  double est_m{};
   double f{};
-  double esti_k{};
+  double opt_k{};
   bool is_use_full_k{};
 #endif
 
@@ -1269,6 +1272,18 @@ class CVRP {
 
 #endif
 
+#ifdef GENERATE_COL_BY_MIP
+  int num_mip_var{};
+  int num_mip_edge{};
+  int num_mip_constr{};
+  std::unordered_map<std::pair<int, int>, int, PairHasher> map_edge_mip_idx{};
+  std::unordered_map<int, std::pair<int, int>> map_mip_idx_edge{};
+  void findNgSubTour(const std::vector<double> &sol, std::vector<int> &tour);
+  void findBucketArcTour();
+  void setObjCoeffs(BbNode *node);
+  void buildMIPModel(BbNode *node);
+  void cbSolve(BbNode *node);
+#endif
 };
 
 bool operator==(const Rcc &lhs, const Rcc &rhs);

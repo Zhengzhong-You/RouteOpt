@@ -140,8 +140,6 @@ bool CVRP::solveSBModel() {
       printCutsInformation(node);
 #endif
     }
-
-
 /**
  * once mem is written, cannot delete any column before the branching selection and cg!
  */

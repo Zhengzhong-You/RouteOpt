@@ -30,19 +30,19 @@ int main(int argc, char *argv[]) {
   double heur_UB;
   HGS(p, true, 1, 10 + 2 * pow((solver->dim / 20.), 2), sol, heur_UB);
   if (Config::ub > heur_UB + TOLERANCE) {
-    Config::ub = heur_UB;
-    cout << "ub updated by HGS: " << Config::ub << endl;
-    solver->ip_opt_sol.reserve(sol.size());
-    for (auto &route : sol) {
-      if (route.empty()) continue;
-      vector<int> tmp(route.size() + 2);
-      tmp[0] = 0;
-      tmp[route.size() + 1] = 0;
-      for (int i = 0; i < route.size(); ++i) {
-        tmp[i + 1] = route[i];
-      }
-      solver->ip_opt_sol.emplace_back(std::move(tmp));
-    }
+	Config::ub = heur_UB;
+	cout << "ub updated by HGS: " << Config::ub << endl;
+	solver->ip_opt_sol.reserve(sol.size());
+	for (auto &route : sol) {
+	  if (route.empty()) continue;
+	  vector<int> tmp(route.size() + 2);
+	  tmp[0] = 0;
+	  tmp[route.size() + 1] = 0;
+	  for (int i = 0; i < route.size(); ++i) {
+		tmp[i + 1] = route[i];
+	  }
+	  solver->ip_opt_sol.emplace_back(std::move(tmp));
+	}
   }
 #else
   cout << "HGS_APPLIED cannot run in VRPTW" << endl;

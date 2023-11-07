@@ -7,11 +7,11 @@ using namespace std;
 using namespace std::chrono;
 
 void CVRP::testCG(BbNode *node, bool if_exact_CG, bool if_record_product_val,
-					 bool if_record_improvement, bool if_force_complete) {
+				  bool if_record_improvement, bool if_force_complete) {
   if (branch_pair.size() == 1) {
 	cout << "testCG: branch_pair.size() == 1, return!" << endl;
 #ifdef USE_M_DYNAMICS
-	node->objective_change[branch_pair[0]] = {0, 0, esti_k};
+	node->objective_change[branch_pair[0]] = {0, 0, opt_k};
 #endif
 	return;
   }
@@ -63,23 +63,23 @@ void CVRP::testCG(BbNode *node, bool if_exact_CG, bool if_record_product_val,
 	getNewConstraintCoefficientByEdge(node, edge, solver_ind.data(), solver_val.data(), numnz);
 	if (!if_changed) {
 	  safe_solver(addBranchConstraint(numnz,
-								  solver_ind.data(),
-								  solver_val.data(),
-								  SOLVER_LESS_EQUAL,
-								  0,
-								  nullptr,
-								  node->solver))
+									  solver_ind.data(),
+									  solver_val.data(),
+									  SOLVER_LESS_EQUAL,
+									  0,
+									  nullptr,
+									  node->solver))
 	  if_changed = true;
 	} else {
 	  changeBranchConstraint(solver_val3.data(),
-					  solver_ind2.data(),
-					  solver_ind1.data(),
-					  numnz,
-					  solver_ind.data(),
-					  solver_val.data(),
-					  SOLVER_LESS_EQUAL,
-					  0,
-					  node->solver);
+							 solver_ind2.data(),
+							 solver_ind1.data(),
+							 numnz,
+							 solver_ind.data(),
+							 solver_val.data(),
+							 SOLVER_LESS_EQUAL,
+							 0,
+							 node->solver);
 	}
 	safe_solver(node->solver.updateModel())
 	node->brcs.back().edge = {ai, aj};
@@ -98,7 +98,7 @@ void CVRP::testCG(BbNode *node, bool if_exact_CG, bool if_record_product_val,
 	cout << SMALL_PHASE_SEPARATION;
 	int len = num_col - col_start;
 	if (const_for_branching.size() < len) {
-	  int arr_beg = const_for_branching.size();
+	  int arr_beg = (int)const_for_branching.size();
 	  int arr_val = const_for_branching.back() + 1;
 	  const_for_branching.resize(len);
 	  iota(const_for_branching.begin() + arr_beg, const_for_branching.end(), arr_val);
@@ -123,7 +123,7 @@ void CVRP::testCG(BbNode *node, bool if_exact_CG, bool if_record_product_val,
 		 << left << product << endl;
 	len = num_col - col_start;
 	if (const_for_branching.size() < len) {
-	  int arr_beg = const_for_branching.size();
+	  int arr_beg = (int)const_for_branching.size();
 	  int arr_val = const_for_branching.back() + 1;
 	  const_for_branching.resize(len);
 	  iota(const_for_branching.begin() + arr_beg, const_for_branching.end(), arr_val);
@@ -174,7 +174,8 @@ void CVRP::testCG(BbNode *node, bool if_exact_CG, bool if_record_product_val,
   }
   node->brcs.pop_back();
 #ifdef USE_M_DYNAMICS
-  node->objective_change[branch_pair[0]] = {objective_change[branch_pair[0]].first, objective_change[branch_pair[0]].second, esti_k};
+  node->objective_change[branch_pair[0]] =
+	  {objective_change[branch_pair[0]].first, objective_change[branch_pair[0]].second, opt_k};
 #endif
   /**
    * is_terminated, value. these two cannot be deleted! since when exact cg could determine if this node is no promising to be solved
@@ -215,7 +216,7 @@ void CVRP::useModelInPhase2(BbNode *node, int num) {
   auto eps = duration<double>(end - beg).count();
 
 #ifdef USE_M_DYNAMICS
-  double average_t = eps / 2 / Branch_Val.size();
+  double average_t = eps / 2 / (double)Branch_Val.size();
   BbNode::updateState(average_t, node->t_for_one_lp, (int)node->brcs.size());
   cout << "eps= " << eps << " average_t= " << average_t << " t_for_one_lp= " << node->t_for_one_lp << endl;
 #endif
@@ -249,23 +250,23 @@ void CVRP::getTrainingDataInPhase2(BbNode *node) {
 	getNewConstraintCoefficientByEdge(node, edge, solver_ind.data(), solver_val.data(), numnz);
 	if (!if_changed) {
 	  safe_solver(addBranchConstraint(numnz,
-								  solver_ind.data(),
-								  solver_val.data(),
-								  SOLVER_LESS_EQUAL,
-								  0,
-								  nullptr,
-								  node->solver))
+									  solver_ind.data(),
+									  solver_val.data(),
+									  SOLVER_LESS_EQUAL,
+									  0,
+									  nullptr,
+									  node->solver))
 	  if_changed = true;
 	} else {
 	  changeBranchConstraint(solver_val3.data(),
-					  solver_ind2.data(),
-					  solver_ind1.data(),
-					  numnz,
-					  solver_ind.data(),
-					  solver_val.data(),
-					  SOLVER_LESS_EQUAL,
-					  0,
-					  node->solver);
+							 solver_ind2.data(),
+							 solver_ind1.data(),
+							 numnz,
+							 solver_ind.data(),
+							 solver_val.data(),
+							 SOLVER_LESS_EQUAL,
+							 0,
+							 node->solver);
 	}
 	safe_solver(node->solver.reoptimize())
 	safe_solver(node->solver.getObjVal(&tmp_val))
@@ -292,7 +293,7 @@ void CVRP::getTrainingDataInPhase2(BbNode *node) {
 #endif
 
 void CVRP::addBranchConstraint2ColPoolInEnumByColMap(BbNode *node,
-									   const pair<int, int> &edge) {
+													 const pair<int, int> &edge) {
   auto &mat = node->matrix_in_enumeration;
   int size = node->size_enumeration_col_pool;
   if (!size) return;

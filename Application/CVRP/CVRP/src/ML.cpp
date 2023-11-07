@@ -266,7 +266,8 @@ void ML::collect_edge_related_features(BbNode *node, double org_val) {
 	e.basic_features.emplace_back("EdgeRes_ratio", aver_res / max_main_resource);
 #else
 	e.basic_features.emplace_back("EdgeRes_ratio",
-								 main_resource_across_arcs_in_forward_sense[edge.first][edge.second] / max_main_resource);
+								  main_resource_across_arcs_in_forward_sense[edge.first][edge.second]
+									  / max_main_resource);
 #endif
 	e.basic_features.emplace_back("EdgeDis2Depot_ratio",
 								  mid_point_edge_cord_2_depot[edge.first][edge.second]

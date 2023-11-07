@@ -27,12 +27,12 @@ BbNode::BbNode(int num) {
 #endif
 
 BbNode::BbNode(BbNode *node,
-			   BidirectionalLinkedList *ptr,
+			   BidirectionalLinkedList *p_ptr,
 			   int p_col,
 			   int idx,
 			   const Brc &bf,
 			   int num_buckets_per_vertex) {
-  ptr = ptr;
+  ptr = p_ptr;
   num_parent_cols = p_col;
   index = idx;
 
@@ -345,10 +345,9 @@ void BbNode::calculateRStar(double lift, double &new_r_star, CVRP *cvrp) {
   auto r = get<1>(info);
 
   auto bar_r = sqrt(l * r);
-  double m = cvrp->esti_m;
-  int n = cvrp->ml.give_initial_screening_num_candidates();
-  auto k = min(get<2>(info) + 0., m);// generalize the root node branching decision
-  new_r_star = bar_r / ((m + 1.0) / n * k / (k + 1.0) + 1.0 - m / n);
+  double alpha = cvrp->alpha;
+  auto k = min(get<2>(info) + 0., cvrp->est_m);// generalize the root node branching decision
+  new_r_star = bar_r / (1 - alpha / (k + 1));
   cout << "new_r_star = " << new_r_star << endl;
   cout << "l_r_ratio1 = " << l_r_ratio << endl;
   auto new_l_r = get<0>(info) / get<1>(info);

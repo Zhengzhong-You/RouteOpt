@@ -134,6 +134,7 @@ void takeDataFromFile(std::string &file_name, InstanceData &data) {
 	  ++tmp_j;
 	}
   }
+//  data.dim = 10;
   data.info_vertex.resize(data.dim);
 #endif
   file.close();

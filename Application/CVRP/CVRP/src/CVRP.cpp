@@ -232,6 +232,10 @@ void CVRP::buildModel() {
   safe_solver(node->solver.getNumCol(&num_col))
   safe_solver(node->solver.optimize())
 
+#ifdef GENERATE_COL_BY_MIP
+  buildMIPModel(node);
+#endif
+
   idx_node = 0;
   node->tree_level = 0;
   node->value = 0;
@@ -299,6 +303,8 @@ void CVRP::solveLPInLabeling(BbNode *node, bool if_open_heur, bool if_open_exact
     if (runColumnGenerationType(node, 3)) {
 	  goto QUIT;
 	}
+//	cout<<"here is the test for new technique!"<<endl;
+//	cbSolve(node);
     if (num_col > LP_COL_FINAL_LIMIT) cleanIndexColForNode(node, node->num_parent_cols);
     if_can_arc_elimination_by_exact_cg = true;
   }
@@ -1027,14 +1033,14 @@ void CVRP::writeColumnToMemory(BbNode *node) {
 }
 
 void CVRP::constructMap(BbNode *node, int beg) const {
-  auto edge_map = &(node->ptr->edge_to_cols);
+  auto &edge_map = node->ptr->edge_to_cols;
   for (int i = beg; i < num_col; ++i) {
     for (size_t j = node->index_columns[i];; ++j) {
       int ai = col_pool4_mem[j], aj = col_pool4_mem[j + 1];
       if (ai > aj) {
-        (*edge_map)[aj * dim + ai].emplace_back(i);
+		edge_map[aj * dim + ai].emplace_back(i);
       } else {
-        (*edge_map)[ai * dim + aj].emplace_back(i);
+		edge_map[ai * dim + aj].emplace_back(i);
       }
       if (!aj) break;
     }
