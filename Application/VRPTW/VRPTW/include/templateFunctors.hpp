@@ -12,12 +12,7 @@ int CVRP::extendKernel4Exact(Label *&ki,
   int state = 0;
   int bj;
   bool if_suc;
-  /**
-   *
-   */
-#ifdef test_time
-  double test_time1 = 0, test_time2 = 0;
-#endif
+
   for (auto &pair : arc) {
     int j;
     if constexpr (std::is_same<T, int>::value) {
@@ -26,28 +21,16 @@ int CVRP::extendKernel4Exact(Label *&ki,
       j = pair.second;
       res = pair.first;
     }
-#ifdef test_time
-    auto beg = std::chrono::high_resolution_clock::now();
-#endif
+
     updateLabel<dir, if_last_half, if_symmetry, false, false>(res, ki, i, j, bj, r1c_to_pi, r1c_multi_to_pi,
                                                               min_sorted_b,
                                                               if_suc);
-#ifdef test_time
-    auto end = std::chrono::high_resolution_clock::now();
-    if constexpr (if_last_half)
-      test_time1 += std::chrono::duration<double>(end - beg).count();
-#endif
+
     if (!if_suc) continue;
 
-#ifdef test_time
-    beg = std::chrono::high_resolution_clock::now();
-#endif
+
     doDominance<dir>(ki, j, bj, r1c_to_pi, r1c_multi_to_pi, if_suc);
-#ifdef test_time
-    end = std::chrono::high_resolution_clock::now();
-    if constexpr (if_last_half)
-      test_time2 += std::chrono::duration<double>(end - beg).count();
-#endif
+
     if (!if_suc) continue;
 
     if constexpr (!if_last_half) {
@@ -65,12 +48,7 @@ int CVRP::extendKernel4Exact(Label *&ki,
     }
   }
   QUIT:
-#ifdef test_time
-  if constexpr (if_last_half) {
-    test_time_map["updateLabel"] += test_time1;
-    test_time_map["doDominance"] += test_time2;
-  }
-#endif
+
   return state;
 }
 
@@ -608,14 +586,10 @@ void CVRP::runLabeling(BbNode *node, const PtrAllR1CS &ptrAllR1Cs) {
   }
   auto beg = std::chrono::high_resolution_clock::now();
   auto end = beg;
-#ifdef test_time
-  auto new_beg = beg;
-#endif
+
   double eps;
   int min_sorted_b = dir ? -1 : num_buckets_per_vertex;
-#ifdef test_time
-  double test_time1 = 0, test_time2 = 0, test_time3 = 0, test_time4 = 0;
-#endif
+
   for (int b = (dir ? 0 : num_buckets_per_vertex - 1); (dir ? b < num_buckets_per_vertex : b >= 0); (dir ? ++b : --b)) {
     int i = 1;
     STILL_EXIST:
@@ -628,20 +602,12 @@ void CVRP::runLabeling(BbNode *node, const PtrAllR1CS &ptrAllR1Cs) {
       for (int vec_index = 0; vec_index < valid_num; ++vec_index) {
         auto &ki = label_array[vec_index];
         if (ki->is_extended) continue;
-#ifdef test_time
-        new_beg = std::chrono::high_resolution_clock::now();
-#endif
 
         checkIfDominated<dir>(ki, i, b, r1c_to_pi, r1c_multi_to_pi, if_suc);
-#ifdef test_time
-        end = std::chrono::high_resolution_clock::now();
-        test_time1 += std::chrono::duration<double>(end - new_beg).count();
-#endif
+
         ki->is_extended = true;
         if (!if_suc)continue;
-#ifdef test_time
-        new_beg = std::chrono::high_resolution_clock::now();
-#endif
+
         auto sig = extendKernel4Exact<int,
                                       dir, if_last_half, if_symmetry>(ki, i, ki->sum_main_resource,
                                                                       dir ? node->all_forward_buckets[i][b].bucket_arcs
@@ -649,24 +615,16 @@ void CVRP::runLabeling(BbNode *node, const PtrAllR1CS &ptrAllR1Cs) {
                                                                       r1c_to_pi,
                                                                       r1c_multi_to_pi,
                                                                       min_sorted_b);
-#ifdef test_time
-        end = std::chrono::high_resolution_clock::now();
-        test_time2 += std::chrono::duration<double>(end - new_beg).count();
-#endif
+
         if (sig == 2) goto populateBin;
-#ifdef test_time
-        new_beg = std::chrono::high_resolution_clock::now();
-#endif
+
         sig = extendKernel4Exact<std::pair<double, int>,
                                  dir, if_last_half, if_symmetry>(ki, i, 0,
                                                                  dir ? node->all_forward_buckets[i][b].jump_arcs
                                                                      : node->all_backward_buckets[i][b].jump_arcs,
                                                                  r1c_to_pi,
                                                                  r1c_multi_to_pi, min_sorted_b);
-#ifdef test_time
-        end = std::chrono::high_resolution_clock::now();
-        test_time3 += std::chrono::duration<double>(end - new_beg).count();
-#endif
+
         if (sig == 2) goto populateBin;
       }
       valid_num = 0;
@@ -717,279 +675,10 @@ void CVRP::runLabeling(BbNode *node, const PtrAllR1CS &ptrAllR1Cs) {
       }
     }
   }
-#ifdef test_time
-  else {
-    std::cout << "if_dominated= " << test_time1 << std::endl;
-    std::cout << "bucket_extend= " << test_time2 << std::endl;
-    std::cout << "jump_extend= " << test_time3 << std::endl;
-    for (auto &it : test_time_map) {
-      std::cout << it.first << " " << it.second << std::endl;
-    }
-    test_time_map.clear();
-  }
-#endif
+
   populateRC2TillThisBinNRC2Bin<dir>(node);
 
   QUIT:
-#ifdef DETAILED_EXACT_PRINT_INFO
-  cout << "这里是测试！" << endl;
-  {
-    if (gap_between_last_smallest_rc_and_rc_threshold < TOLERANCE) {
-      cout << "we find if there exists extra labels that can be dominated but saved for some reasons!" << endl;
-      safe_solver(node->solver.getDual(0, num_row, pi))
-      int all_num = int(node->r1cs.size() + node->r1cs_multi.size());
-      vector<int> denominator(all_num);
-      vector<double> pi(all_num);
-      vector<vector<std::pair<int, int>>> cuts(dim);//cut_idx, cut_augment
-      vector<unordered_set<int>> mem(dim);
-      vector<vector<int>> no_mem(dim);
-      int cnt = 0;
-      for (auto &r1c : node->r1cs) {
-        for (auto &i : r1c.info_r1c) {
-          cuts[i].emplace_back(cnt, 1);
-          mem[i].emplace(cnt);
-        }
-        for (auto &i : r1c.mem) {
-          mem[i].emplace(cnt);
-        }
-        denominator[cnt] = 2;
-        pi[cnt] = pi[r1c.idx_r1c];
-        ++cnt;
-      }
-
-      for (auto &r1c : node->r1cs_multi) {
-        auto &plan = map_rank1_multiplier[(int) r1c.info_r1c.first.size()][r1c.info_r1c.second];
-        auto &multi = std::get<0>(plan);
-        int deno = std::get<1>(plan);
-        int count = 0;
-        for (auto &i : r1c.info_r1c.first) {
-          cuts[i].emplace_back(cnt, multi[count]);
-          mem[i].emplace(cnt);
-          ++count;
-        }
-        for (auto &v : r1c.mem) {
-          mem[v].emplace(cnt);
-        }
-        denominator[cnt] = deno;
-        pi[cnt] = pi[r1c.idx_r1c];
-        ++cnt;
-      }
-
-      for (int i = 1; i < dim; ++i) {
-        for (int j = 0; j < all_num; ++j) {
-          if (mem[i].find(j) == mem[i].end()) {
-            no_mem[i].emplace_back(j);
-          }
-        }
-      }
-
-      for (int b = 0; b < num_buckets_per_vertex; ++b) {
-        for (int i = 1; i < dim; ++i) {
-          auto &label_list = label_array_in_forward_sense[i][b].first;
-          auto &valid_num = label_array_in_forward_sense[i][b].second;
-          int label_count = 0;
-          HERE:
-          if (valid_num <= label_count) continue;
-          auto ki = label_list[label_count++];
-          auto ng = ki->pi;
-          for (int j = label_count; j < valid_num; ++j) {
-            auto kj = label_list[j];
-            if (ki->sum_main_resource < kj->sum_main_resource) {
-              if (((kj->pi & ng) ^ (ng)).none()) {
-                double rc_dif = kj->rc - ki->rc;
-                if (rc_dif > TOLERANCE) {
-                  vector<int> seq_ki;
-                  vector<int> seq_kj;
-                  auto tmp_ki = ki;
-                  while (tmp_ki->p_label) {
-                    seq_ki.emplace_back(tmp_ki->end_vertex);
-                    tmp_ki = tmp_ki->p_label;
-                  }
-                  std::reverse(seq_ki.begin(), seq_ki.end());
-                  auto tmp_kj = kj;
-                  while (tmp_kj->p_label) {
-                    seq_kj.emplace_back(tmp_kj->end_vertex);
-                    tmp_kj = tmp_kj->p_label;
-                  }
-                  std::reverse(seq_kj.begin(), seq_kj.end());
-                  vector<int> state_ki(all_num, 0);
-                  vector<int> state_kj(all_num, 0);
-                  for (auto &v : seq_ki) {
-                    if (v == 0) continue;
-                    for (auto &cut : cuts[v]) {
-                      state_ki[cut.first] += cut.second;
-                      if (state_ki[cut.first] >= denominator[cut.first]) {
-                        state_ki[cut.first] -= denominator[cut.first];
-                      }
-                    }
-                    for (auto &cut : no_mem[v]) {
-                      state_ki[cut] = 0;
-                    }
-                  }
-                  for (auto &v : seq_kj) {
-                    if (v == 0) continue;
-                    for (auto &cut : cuts[v]) {
-                      state_kj[cut.first] += cut.second;
-                      if (state_kj[cut.first] >= denominator[cut.first]) {
-                        state_kj[cut.first] -= denominator[cut.first];
-                      }
-                    }
-                    for (auto &cut : no_mem[v]) {
-                      state_kj[cut] = 0;
-                    }
-                  }
-
-                  double diff = 0;
-                  for (int k = 0; k < all_num; ++k) {
-                    if (state_ki[k] > state_kj[k]) diff -= pi[k];
-                  }
-                  cout << "diff: " << diff << " rc_dif: " << rc_dif << endl;
-                  auto min_it = min_element(pi.begin(), pi.end());
-                  vector<std::pair<double, int>> pi_copy;
-                  for (int k = 0; k < pi.size(); ++k) {
-                    if (k >= node->r1cs.size()) {
-                      int num = k - node->r1cs.size();
-                      pi_copy.emplace_back(pi[k], node->r1cs_multi[num].info_r1c.first.size());
-                    } else {
-                      pi_copy.emplace_back(pi[k], node->r1cs[k].info_r1c.size());
-                    }
-                  }
-                  sort(pi_copy.begin(), pi_copy.end(), [](const std::pair<double, bool> &a, const std::pair<double, bool> &b) {
-                    return a.first < b.first;
-                  });
-                  for (int k = 0; k < pi_copy.size(); ++k) {
-                    cout << "(" << pi_copy[k].first << ", " << pi_copy[k].second << ") ";
-                  }
-                  cout << endl;
-                  cout << "min pi: " << *min_it << endl;
-                  int cut = min_it - pi.begin();
-                  if (cut > node->r1cs.size()) {
-                    cut -= node->r1cs.size();
-                    for (int i = 0; i < cut; ++i) {
-                      auto &r1c = node->r1cs_multi[i];
-                      auto &plan = map_rank1_multiplier[(int) r1c.info_r1c.first.size()][r1c.info_r1c.second];
-                      auto &multi = std::get<0>(plan);
-                      int deno = std::get<1>(plan);
-                      int count = 0;
-                      for (auto &i : r1c.info_r1c.first) {
-                        cout << i << " ";
-                      }
-                      cout << endl;
-                      cout << "multi: ";
-                      for (auto &i : multi) {
-                        cout << i << " ";
-                      }
-                      cout << endl;
-                      cout << "deno: " << deno << endl;
-                    }
-                  } else {
-                    auto &r1c = node->r1cs[cut];
-                    for (auto &i : r1c.info_r1c) {
-                      cout << i << " ";
-                    }
-                    cout << endl;
-                  }
-
-                  if (diff < rc_dif) {
-                    cout << "diff: " << diff << " rc_dif: " << rc_dif << endl;
-                    cout << "seq_ki: ";
-                    for (auto &v : seq_ki) {
-                      cout << v << " ";
-                    }
-                    cout << endl;
-                    cout << "seq_kj: ";
-                    for (auto &v : seq_kj) {
-                      cout << v << " ";
-                    }
-                    cout << endl;
-                    cout << "state_ki: ";
-                    for (auto &v : state_ki) {
-                      cout << v << " ";
-                    }
-                    cout << endl;
-                    cout << "state_kj: ";
-                    for (auto &v : state_kj) {
-                      cout << v << " ";
-                    }
-                    cout << endl;
-                    cout << "pi: ";
-                    for (auto &v : pi) {
-                      cout << v << " ";
-                    }
-                    cout << endl;
-                    cout << "denominator: ";
-                    for (auto &v : denominator) {
-                      cout << v << " ";
-                    }
-                    cout << endl;
-                    cout << "cuts: " << endl;
-                    for (auto &v : cuts) {
-                      for (auto &vv : v) {
-                        cout << vv.first << " " << vv.second << " ";
-                      }
-                      cout << endl;
-                    }
-                    cout << "no_mem: " << endl;
-                    for (auto &v : no_mem) {
-                      for (auto &vv : v) {
-                        cout << vv << " ";
-                      }
-                      cout << endl;
-                    }
-                    cout << "mem: " << endl;
-                    for (auto &v : mem) {
-                      for (auto &vv : v) {
-                        cout << vv << " ";
-                      }
-                      cout << endl;
-                    }
-                  }
-                }
-              } else goto HERE;
-            }
-
-          }
-        }
-      }
-    }
-  }
-  vector<int> tmp_forwad_soft;
-  int times = 0;
-  int hard_times = 0;
-  for (int i = 1; i < dim; ++i) {
-    for (int b = 0; b < num_buckets_per_vertex; ++b) {
-      tmp_forwad_soft.emplace_back(label_array_in_forward_sense[i][b].second);
-    }
-  }
-  std::sort(tmp_forwad_soft.begin(), tmp_forwad_soft.end(), greater<>());
-  int top_0_5 = (int) ((double) tmp_forwad_soft.size() * 0.005);
-  int top_1 = (int) ((double) tmp_forwad_soft.size() * 0.01);
-  int top_5 = (int) ((double) tmp_forwad_soft.size() * 0.05);
-  cout << "for forward exact///max= " << tmp_forwad_soft[0] << "  0.5%=" << tmp_forwad_soft[top_0_5]
-       << "  1%=" << tmp_forwad_soft[top_1] << "  5%=" << tmp_forwad_soft[top_5] << endl;
-
-  vector<std::pair<int, double>> record;
-  record.reserve(num_row);
-
-  for (int i = 0; i < node->r1cs.size(); ++i) {
-    int row_idx = node->r1cs[i].idx_r1c;
-    record.emplace_back(i, abs(pi[row_idx]) * pow(node->r1cs[i].mem.size(), Config::MemFactor));
-  }
-
-  for (int i = 0; i < node->r1cs_multi.size(); ++i) {
-    int row_idx = node->r1cs_multi[i].idx_r1c;
-    record.emplace_back(i + node->r1cs.size(),
-                        abs(pi[row_idx]) * pow(node->r1cs_multi[i].mem.size(), Config::MemFactor));
-  }
-
-  double
-      sum = accumulate(record.begin(), record.end(), 0.0, [](double a, std::pair<int, double> b) { return a + b.second; });
-
-  cout << "sum= " << sum << endl;
-  end = std::chrono::high_resolution_clock::now();
-  eps = std::chrono::duration<double>(end - beg).count();
-  cout << "forward exact time= " << eps << endl;
-#endif
   if (rollback == 1) {
     std::cout << "rollback to original states!" << std::endl;
   } else if (rollback == 2) {
@@ -1081,83 +770,6 @@ void CVRP::eliminateBucketArcs(BbNode *node, const double *r1c_to_pi,
                                                                    r1c_multi_to_pi);
     }
   }
-#ifdef find_lost_arcs
-  int i = 37, b = 10, j = 32, map = i * dim + j;
-  int latest = -1;
-  auto &label_array = label_array_in_forward_sense[i][b].first;
-  auto &label_num = label_array_in_forward_sense[i][b].second;
-  for (int vec_index_i = 0; vec_index_i < label_num; ++vec_index_i) {
-    auto *ki = label_array[vec_index_i];
-    if (!increaseMainResourceConsumption(ki->sum_main_resource, tmp_mainResource, i, j)) continue;
-    tmp_rc = ki->rc + chg_cost_mat4_vertex[i][j];
-#ifdef SYMMETRY_PROHIBIT
-    int arr_bj = max(int((tmp_mainResource) / step_size), latest + 1);
-          for (int bj = num_buckets_per_vertex - 1; bj >= arr_bj; --bj) {
-            if (tmp_rc + rc2_bin_in_backward_sense[j][bj] > opt_gap)continue;
-            auto &label_arr = label_array_in_backward_sense[j][bj].first;
-            auto &label_valid_num = label_array_in_backward_sense[j][bj].second;
-#else
-    int arr_bj = int((max_main_resource - tmp_mainResource) / step_size);
-    for (int bj = 0; bj <= arr_bj; ++bj) {
-      if (tmp_rc + rc2_bin_in_forward_sense[j][bj] > opt_gap)continue;
-      auto &label_arr = label_array_in_forward_sense[j][bj].first;
-      auto &label_valid_num = label_array_in_forward_sense[j][bj].second;
-#endif
-      for (int vec_index = 0; vec_index < label_valid_num; ++vec_index) {
-        auto &kj = label_arr[vec_index];
-        if ((kj->pi & ki->pi).any()) continue;
-#ifdef SYMMETRY_PROHIBIT
-        if (tmp_mainResource > kj->sum_main_resource) continue;
-#else
-        if (tmp_mainResource + kj->sum_main_resource > max_main_resource) continue;
-#endif
-        path_rc = tmp_rc + kj->rc;
-        if (path_rc > opt_gap) break;
-
-        if (ki->num_valid_rank1_cut < kj->num_valid_rank1_cut) {
-          for (int l = 0; l < ki->num_valid_rank1_cut; ++l) {
-            if (kj->rank1_cut_mem[ki->valid_rank1_cut[l]])path_rc -= r1c_to_pi[ki->valid_rank1_cut[l]];
-          }
-        } else {
-          for (int l = 0; l < kj->num_valid_rank1_cut; ++l) {
-            if (ki->rank1_cut_mem[kj->valid_rank1_cut[l]])path_rc -= r1c_to_pi[kj->valid_rank1_cut[l]];
-          }
-        }
-
-        if (ki->num_valid_rank1_cut_multi < kj->num_valid_rank1_cut_multi) {
-          for (int l = 0; l < ki->num_valid_rank1_cut_multi; ++l) {
-            int tmp_cut = ki->valid_rank1_cut_multi[l];
-            if (kj->rank1_cut_mem_multi[tmp_cut] +
-                ki->rank1_cut_mem_multi[tmp_cut]
-                >= r1c_multi_denominator_in_cg[tmp_cut]
-                )
-              path_rc -= r1c_multi_to_pi[tmp_cut];
-          }
-        } else {
-          for (int l = 0; l < kj->num_valid_rank1_cut_multi; ++l) {
-            int tmp_cut = kj->valid_rank1_cut_multi[l];
-            if (ki->rank1_cut_mem_multi[tmp_cut] +
-                kj->rank1_cut_mem_multi[tmp_cut]
-                >= r1c_multi_denominator_in_cg[tmp_cut]
-                )
-              path_rc -= r1c_multi_to_pi[tmp_cut];
-          }
-        }
-
-        if (path_rc < opt_gap) {
-          std::cout << "arc should exists!" <<  std::endl;
-          std::cout << "bin= " << bj <<  std::endl;
-          latest = bj;
-          break;
-        }
-      }
-    }
-  }
-  if (latest != -1) {
-    int chg_latest = int((max_main_resource - latest * step_size) / step_size);
-    std::cout << "tell= " << tell_which_bin4_arc_elimination_in_forward_sense[map + chg_latest * dim_sq] <<  std::endl;
-  }
-#endif
 
   std::vector<int> tmp_vec;
   tmp_vec.reserve(dim);
@@ -1384,21 +996,14 @@ int CVRP::generateColsByBidir(BbNode *node) {
     if constexpr (!if_symmetry) {
       double dif = abs(NumExistedLabels - NumExistedLabel_back);
       double over = dif / std::min(NumExistedLabels, NumExistedLabel_back);
-#ifdef DETAILED_EXACT_PRINT_INFO
-      std::cout << "over= " << over << std::endl;
-#endif
+
       if (over > Config::NumberOfOverLabelsInMeetPoint) {
-#ifdef DETAILED_EXACT_PRINT_INFO
-        std::cout << "we adjust the meetpoint!" << std::endl;
-#endif
+
         if (NumExistedLabels > NumExistedLabel_back) {
           meet_point_resource_in_bi_dir *= (1 - Config::MeetPointFactor);
         } else {
           meet_point_resource_in_bi_dir *= (1 + Config::MeetPointFactor);
         }
-#ifdef DETAILED_EXACT_PRINT_INFO
-        std::cout << "meet_point_resource_in_bi_dir= " << meet_point_resource_in_bi_dir << std::endl;
-#endif
       }
     }
   }
@@ -1416,16 +1021,10 @@ int CVRP::generateColsByBidir(BbNode *node) {
         return 0;
       }
     }
-#ifdef DETAILED_EXACT_PRINT_INFO
-    std::cout << "Smallest= " << smallest_rc << endl;
-#endif
   } else {
     smallest_rc = 0;
     gap_between_last_smallest_rc_and_rc_threshold = 0;
   }
-#ifdef DETAILED_EXACT_PRINT_INFO
-  std::cout << "ccnt= " << ccnt << endl;
-#endif
   if (!ccnt) return 0;
 
   addColumns(node, ccnt);
