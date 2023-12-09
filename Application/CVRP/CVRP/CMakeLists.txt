@@ -15,6 +15,7 @@ set(Boost_LIBRARY_DIR "<boost_lib_path>")
 set(ENV{XGB_HOME} ./../../../Dependency/xgboost)
 set(ENV{CVRPSEP_HOME} ./../../../Dependency/cvrpsep)
 set(ENV{EIGEN_HOME} ./../../../Dependency/eigen-3.4.0)
+# set(ENV{HGS_HOME} ./../../../Dependency/hgs)
 
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -29,10 +30,12 @@ find_package(Boost REQUIRED)
 find_package(GUROBI REQUIRED)
 find_package(XGB REQUIRED)
 find_package(CVRPSEP REQUIRED)
+# find_package(HGS REQUIRED)
 include_directories(${GUROBI_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${XGB_INCLUDE_DIRS})
 include_directories(${CVRPSEP_INCLUDE_DIRS})
+# include_directories(${HGS_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/include) 
 include_directories($ENV{EIGEN_HOME}) 
 
@@ -46,6 +49,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
         ${GUROBI_LIBRARIES}
         ${Boost_MATH_LIBRARY}
 	${XGB_LIBRARIES}
+# ${HGS_LIBRARIES}
        ${CVRPSEP_LIBRARIES}
         )
 
