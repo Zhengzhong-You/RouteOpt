@@ -126,30 +126,29 @@ The library accepts two kinds of parameters: (RouteOpt_VRPTW for VRPTW)
    ```
 
    In this command, `-d` is followed by `.ins` file, and `-n` gets the instance name in the `n`-th line of
-   the file. Note that `-u` is an optional parameter to provide an initial upper bound (UB) if a valid one is available.
-   It should directly follow `-u`  without a space.
+   the file. Note that `-u` is an optional parameter to provide an initial upper bound (UB) if a valid one is available. 
+
 
    For instance, you can type in:
 
    ```
-   ./CVRP -d idx/OldIns.ins -n 33 -u27592
+   ./CVRP -d idx/<ins file>.ins -n 0 -u 1000
    ```
 
-   This command will read the instance from the `33`-rd line of the `OldIns.ins` file.
+   This command will read the instance from the `0`-th line of the `.ins` file with the initial UB as 1000.
 
-   Alternatively, you can just enter:
-
-   ```
-   ./CVRP -d idx/OldIns.ins -n 33 
-   ```
-
-   In this case, if the `.ins` file contains a UB, it will be automatically read from the file. If no UB is provided, it
-   will be initialized to 1e9.
-
-2. Specify the complete path
+   Note that, if the `.ins` file contains a UB, it will be automatically read from the file, and the UB provided by -u will be ignored. The ins given in idx folder all contain a UB (optimal value).
+   
+    For instance, you can type in:
 
    ```
-   ./CVRP ./../../../DataForCVRP/OldIns/X-n101-k25.vrp -u27592
+   ./CVRP -d idx/cvrp_200_200_opt.ins -n 0
+   ```
+
+3. Specify the complete path
+
+   ```
+   ./CVRP ./../../../DataForCVRP/BML/200_200/CVRP_200_154.vrp -u 30972.0
    ```
 
 ## Additional Information
