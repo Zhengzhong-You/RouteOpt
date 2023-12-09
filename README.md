@@ -45,7 +45,7 @@
 - [XGBoost](https://xgboost.readthedocs.io/en/latest/build.html) version 1.4.2 or higher (required).
 - [GUROBI](https://www.gurobi.com/downloads/gurobi-software/) version 10.0 or higher (recommended).
 - [Boost](https://www.boost.org/users/download/) version 1.76.0 or higher (recommended).
-- [CVRPSEP](https://github.com/Zhengzhong-You/cvrpsep) (recommended), where the original is (https://econ.au.dk/research/researcher-websites/jens-lysgaard/cvrpsep/).
+- [CVRPSEP](https://github.com/Zhengzhong-You/cvrpsep) (recommended this revised fork: https://github.com/Zhengzhong-You/cvrpsep). The original is https://econ.au.dk/research/researcher-websites/jens-lysgaard/cvrpsep/.
 
 Please ensure these requirements are met before proceeding with the following steps.
 
