@@ -137,7 +137,7 @@ The library accepts two kinds of parameters: (RouteOpt_VRPTW for VRPTW)
 
    This command will read the instance from the `0`-th line of the `.ins` file with the initial UB as 1000.
 
-   Note that, if the `.ins` file contains a UB, it will be automatically read from the file, and the UB provided by -u will be ignored. The ins given in idx folder all contain a UB (optimal value).
+   Note that, if the `.ins` file contains a UB, it will be automatically read from the file, and the UB provided by -u will be ignored. The `.ins` files in idx folder now all contain a UB (optimal value).
    
     For instance, you can type in:
 
