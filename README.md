@@ -45,7 +45,11 @@
 - [XGBoost](https://xgboost.readthedocs.io/en/latest/build.html) version 1.4.2 or higher (required).
 - [GUROBI](https://www.gurobi.com/downloads/gurobi-software/) version 10.0 or higher (recommended).
 - [Boost](https://www.boost.org/users/download/) version 1.76.0 or higher (recommended).
-- [CVRPSEP](https://github.com/Zhengzhong-You/cvrpsep) (recommended this revised fork: https://github.com/Zhengzhong-You/cvrpsep). The original is https://econ.au.dk/research/researcher-websites/jens-lysgaard/cvrpsep/.
+- [CVRPSEP](https://github.com/Zhengzhong-You/cvrpsep) (recommend this revised
+  fork: https://github.com/Zhengzhong-You/cvrpsep). The original
+  is https://econ.au.dk/research/researcher-websites/jens-lysgaard/cvrpsep/.
+- [HGS](https://github.com/Zhengzhong-You/hgs) (recommend this revised fork: https://github.com/Zhengzhong-You/hgs). The
+  original is https://github.com/vidalt/HGS-CVRP. (This is optional for getting good UBs for CVRP instances)
 
 Please ensure these requirements are met before proceeding with the following steps.
 
@@ -79,6 +83,9 @@ cd ../
 wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip
 unzip eigen-3.4.0.zip && mv eigen-3.4.0.zip ../Zips
 ```
+
+**Step 4.5:** Build the hgs library (optional): follow the instructions in https://github.com/Zhengzhong-You/hgs.
+Uncomment the corresponding lines in `CMakeLists.txt` to enable the hgs library.
 
 **Step 5:** Set the `GUROBI_HOME` environment variable :
 
@@ -126,19 +133,19 @@ The library accepts two kinds of parameters: (RouteOpt_VRPTW for VRPTW)
    ```
 
    In this command, `-d` is followed by `.ins` file, and `-n` gets the instance name in the `n`-th line of
-   the file. Note that `-u` is an optional parameter to provide an initial upper bound (UB) if a valid one is available. 
+   the file. Note that `-u` is an optional parameter to provide an initial upper bound (UB) if a valid one is available.
 
-
-   For instance, you can type in:
+For instance, you can type in:
 
    ```
    ./CVRP -d idx/<ins file>.ins -n 0 -u 1000
    ```
 
-   This command will read the instance from the `0`-th line of the `.ins` file with the initial UB as 1000.
+This command will read the instance from the `0`-th line of the `.ins` file with the initial UB as 1000.
 
-   Note that, if the `.ins` file contains a UB, it will be automatically read from the file, and the UB provided by -u will be ignored. The `.ins` files in idx folder now all contain a UB (optimal value).
-   
+Note that, if the `.ins` file contains a UB, it will be automatically read from the file, and the UB provided by -u will
+be ignored. The `.ins` files in idx folder now all contain a UB (optimal value).
+
     For instance, you can type in:
 
    ```
