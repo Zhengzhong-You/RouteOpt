@@ -84,8 +84,13 @@ wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.zip
 unzip eigen-3.4.0.zip && mv eigen-3.4.0.zip ../Zips
 ```
 
-**Step 4.5:** Build the hgs library (optional): follow the instructions in https://github.com/Zhengzhong-You/hgs.
+**Step 4.5.1:** Build the hgs library (optional): follow the instructions in https://github.com/Zhengzhong-You/hgs.
 Uncomment the corresponding lines in `CMakeLists.txt` to enable the hgs library.
+
+**Step 4.5.2:** Build the xgboost library: follow the instructions
+in https://xgboost.readthedocs.io/en/latest/build.html.
+
+Please make sure these libraries are built in the `Dependency` folder.
 
 **Step 5:** Set the `GUROBI_HOME` environment variable :
 
@@ -93,7 +98,9 @@ On Linux, use `vim ~/.bashrc`. On MacOS, use `vim ~/.bash_profile` to open the c
 following line to it.
 
 ```
+
 export GUROBI_HOME=<gurobi_root>/<gurobi_version>/<OS>
+
 ```
 
 Example: `export GUROBI_HOME=${HOME}/gurobi1000/linux64`
@@ -106,10 +113,12 @@ or `source ~/.bash_profile` to reload the update file.
 It's located in `<path to solver>/RouteOpt/Application/CVRP/CVRP/package`
 
 ```
+
 find_library(<package>_LIBRARY
-        NAMES <lib>
-        PATHS "$ENV{<package>_HOME}/lib"
-        )
+NAMES <lib>
+PATHS "$ENV{<package>_HOME}/lib"
+)
+
 ```
 
 Replace the `<lib>` with the right `lib`.
@@ -120,6 +129,15 @@ For example, if you use `gurobi1000`, the lib will be `libgurobi100.so` on Linux
 
 Revise path of Boost Library in the CMakeLists.txt.
 
+for example:
+
+```
+
+set(Boost_ROOT "/home/yzz/boost_1_83_0")
+set(Boost_LIBRARY_DIR "/home/yzz/boost_1_83_0/stage/lib")
+
+```
+
 ## Useage
 
 ---
@@ -127,14 +145,18 @@ Revise path of Boost Library in the CMakeLists.txt.
 1. Use the `idx/<ins_file.ins>` (Recommended)
 
    ```
-   ./CVRP -d idx/<ins_file.ins> -n -u
+
+./CVRP -d idx/<ins_file.ins> -n -u
+
    ```
 
    In this command, `-d` is followed by `.ins` file, and `-n` gets the instance name in the `n`-th line of
    the file. Note that `-u` is an optional parameter to provide an initial upper bound (UB) if a valid one is available. For instance, you can type：
 
    ```
-   ./CVRP -d idx/<ins file>.ins -n 0 -u 1000
+
+./CVRP -d idx/<ins file>.ins -n 0 -u 1000
+
    ```
 
    This command will read the instance from the `0`-th line of the `.ins` file with the initial UB as 1000.
@@ -143,13 +165,17 @@ Revise path of Boost Library in the CMakeLists.txt.
    be ignored. The `.ins` files in idx folder now all contain a UB (optimal value). For instance, you can type：
 
    ```
-   ./CVRP -d idx/cvrp_200_200_opt.ins -n 0
+
+./CVRP -d idx/cvrp_200_200_opt.ins -n 0
+
    ```
 
 2. Specify the complete path
 
    ```
-   ./CVRP ./../../../DataForCVRP/BML/200_200/CVRP_200_154.vrp -u 30972.0
+
+./CVRP ./../../../DataForCVRP/BML/200_200/CVRP_200_154.vrp -u 30972.0
+
    ```
 
 ## Additional Information
