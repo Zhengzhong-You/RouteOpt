@@ -133,9 +133,7 @@ The library accepts two kinds of parameters: (RouteOpt_VRPTW for VRPTW)
    ```
 
    In this command, `-d` is followed by `.ins` file, and `-n` gets the instance name in the `n`-th line of
-   the file. Note that `-u` is an optional parameter to provide an initial upper bound (UB) if a valid one is available.
-
-For instance, you can type in:
+   the file. Note that `-u` is an optional parameter to provide an initial upper bound (UB) if a valid one is available. For instance, you can type：
 
    ```
    ./CVRP -d idx/<ins file>.ins -n 0 -u 1000
@@ -144,7 +142,7 @@ For instance, you can type in:
 This command will read the instance from the `0`-th line of the `.ins` file with the initial UB as 1000.
 
 Note that, if the `.ins` file contains a UB, it will be automatically read from the file, and the UB provided by -u will
-be ignored. The `.ins` files in idx folder now all contain a UB (optimal value). For instance, you can type in:
+be ignored. The `.ins` files in idx folder now all contain a UB (optimal value). For instance, you can type：
 
    ```
    ./CVRP -d idx/cvrp_200_200_opt.ins -n 0
