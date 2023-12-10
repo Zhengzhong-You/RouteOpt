@@ -60,13 +60,13 @@ Please ensure these requirements are met before proceeding with the following st
 **Step 1:** Clone the RouteOpt repository:
 
 ```
-https://github.com/Zhengzhong-You/pub-RouteOpt.git
+https://github.com/Zhengzhong-You/RouteOpt.git
 ```
 
 **Step 2:** Construct the project directory tree:
 
 ```
-cd pub-RouteOpt && mkdir Zips Dependency && cd Dependency
+cd RouteOpt && mkdir Zips Dependency && cd Dependency
 ```
 
 **Step 3:** Build the cvrpsep library:
@@ -103,7 +103,7 @@ or `source ~/.bash_profile` to reload the update file.
 
 **Step 6:** Revise `FindGUROBI.cmake`:
 
-It's located in `<path to solver>/pub-RouteOpt/Application/CVRP/CVRP/package`
+It's located in `<path to solver>/RouteOpt/Application/CVRP/CVRP/package`
 
 ```
 find_library(<package>_LIBRARY
