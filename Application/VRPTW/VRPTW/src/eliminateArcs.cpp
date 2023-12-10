@@ -16,8 +16,10 @@ void CVRP::eliminateArcs(BbNode *const node) {
 
   double time_labeling, time_elimination, time_obtainjump;
 
+#if VERBOSE_MODE==1
   cout << BIG_PHASE_SEPARATION;
   cout << "run ArcElimination..." << endl;
+#endif
 
   populateTellWhichBin4ArcElimination<true>();
 #ifdef SYMMETRY_PROHIBIT
@@ -68,10 +70,12 @@ void CVRP::eliminateArcs(BbNode *const node) {
 
   time_obtainjump = (double) eps.count() * 1e-3;
 
+#if VERBOSE_MODE==1
   cout << "time summary= " << endl;
   cout << "runLabelingForArcElimination= " << time_labeling << endl;
   cout << "eliminateBucketArcs= " << time_elimination << endl;
   cout << "obtainJumpArcs= " << time_obtainjump << endl;
+#endif
   if_arc_elimination_succeed = true;
   QUIT:
   cout << BIG_PHASE_SEPARATION;
@@ -108,7 +112,9 @@ void CVRP::runLabelingForArcElimination(BbNode *const node, const PtrAllR1CS &pt
 
   time_end = chrono::high_resolution_clock::now();
   time_eps = chrono::duration<double>(time_end - time_beg).count();
+#if VERBOSE_MODE==1
   cout << "Last half forward labeling= " << time_eps << endl;
+#endif
 
   QUIT:
   return;

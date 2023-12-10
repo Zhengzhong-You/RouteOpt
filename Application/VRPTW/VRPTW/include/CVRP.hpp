@@ -1260,17 +1260,15 @@ class CVRP {
 
 #endif
 
-#ifdef VERBOSE_MODE
-
   void printBrDecisions();
 
   static void printInfoLabeling(int iter, int num_added_col, int num_col,
 								int num_row,
 								double mt, double spt, double et,
 								double lp, double lb_val, double ub);
-  void printOptIntSol();
 
-#endif
+  static void printInfoLabeling(int num_col, int num_row, double et, double lp, double ub);
+  void printOptIntSol();
 
 #ifdef GENERATE_COL_BY_MIP
   int num_mip_var{};

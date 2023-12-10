@@ -91,9 +91,7 @@ void CVRP::separateRCCs(BbNode *&node) {
       CMGR_MoveCnstr(MyCutsCMP, MyOldCutsCMP, i, 0);
     }
 
-#ifdef VERBOSE_MODE
     cout << "Cuts added...  rcc= " << cnt << endl;
-#endif
     MyCutsCMP->Size = 0;
 
     solveLPInLabeling(node);
@@ -116,10 +114,8 @@ void CVRP::separateRCCs(BbNode *&node) {
       break;
     }
 
-#ifdef VERBOSE_MODE
     cout << "gap= " << (double(ub - lb) / ub > TOLERANCE ? double(ub - lb) / ub * 100 : 0) << "%\n";
     cout << SMALL_PHASE_SEPARATION;
-#endif
   }
 
   QUIT:
@@ -245,9 +241,7 @@ void CVRP::separateHybridCuts(BbNode *&node) {
 
     setTailOffStandardAndRollBackStandard();
   } else {
-#ifdef VERBOSE_MODE
     cout << "Begin Hybrid separation...\n";
-#endif
   }
 
   HYBRID:
@@ -283,12 +277,16 @@ void CVRP::separateHybridCuts(BbNode *&node) {
       }
       goto QUIT;
     }
+	#if VERBOSE_MODE==1
     cout << "cuts_sum: " << cuts_sum << endl;
+	#endif
     t1 = chrono::high_resolution_clock::now();
     safe_solver(node->solver.reoptimize())
     t2 = chrono::high_resolution_clock::now();
     duration = chrono::duration<double>(t2 - t1).count();
+	#if VERBOSE_MODE==1
     cout << "re-optimize time: " << duration << endl;
+	#endif
 
     deleteNonActiveCutsSafely(node, oldNum);
 
@@ -328,7 +326,10 @@ void CVRP::separateHybridCuts(BbNode *&node) {
       cleanIndexColForNode(node, node->num_parent_cols, true);
       findNonActiveCuts(node);
     }
+
+	#if VERBOSE_MODE==1
     cout << "after deleting those inactivate cuts! We left with cols: " << num_col << " rows: " << num_row << endl;
+	#endif
 
     standard = calculateGapImprovement(node->value, prior_nodeVal);
     cout << "local gap= " << (double(ub - node->value) / ub > TOLERANCE ? double(ub - node->value) / ub * 100 : 0) << endl;
@@ -1553,9 +1554,11 @@ void CVRP::newGenerateAllR1Cs(BbNode *node, int aggressive_level) {
   auto end = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration<double>(end - beg).count();
 
+#if VERBOSE_MODE==1
   cout << "findR1CMulti time: " << duration << endl;
 
   cout << "cuts.size() = " << cuts.size() << endl;
+#endif
 
   if (if_in_enu_state) {
     addR1CAtOnceInEnum(node, cuts);
@@ -1565,7 +1568,11 @@ void CVRP::newGenerateAllR1Cs(BbNode *node, int aggressive_level) {
     addR1CAtOnce(node, full_cuts);
   }
 
+#if VERBOSE_MODE==1
+
   cout << "now num_row=  " << num_row << endl;
+
+#endif
   safe_Hyperparameter(num_row > CST_LIMIT)
 }
 
@@ -3244,7 +3251,9 @@ void CVRP::fillMemoryFirst(BbNode *node,
     }
     ++idx;
   }
+#if VERBOSE_MODE==1
   cout << "num_add_mem= " << num_add_mem << endl;
+#endif
   if (num_add_mem) if_fill_mem = true;
   else if_fill_mem = false;
 }

@@ -287,7 +287,6 @@ void CVRP::getTrainingDataInPhase2(BbNode *node) {
   safe_solver(node->solver.delConstraints(1, &BeforeNumRow))
   safe_solver(node->solver.reoptimize())
   node->brcs.pop_back();
-  cout << "getTrainingDataInPhase2!" << endl;
 }
 
 #endif

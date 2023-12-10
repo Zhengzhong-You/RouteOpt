@@ -7,7 +7,7 @@ using namespace std;
 using namespace std::chrono;
 
 void CVRP::testLP(BbNode *node, int num, bool if_writeBranch_pair, bool if_record_sb_scores,
-					 bool if_record_LP_improvement) {
+				  bool if_record_LP_improvement) {
   if (branch_pair.size() == 1) {
 	cout << "No LP Testing: a single candidate" << endl;
 	return;
@@ -28,23 +28,23 @@ void CVRP::testLP(BbNode *node, int num, bool if_writeBranch_pair, bool if_recor
 	getNewConstraintCoefficientByEdge(node, edge, solver_ind.data(), solver_val.data(), numnz);
 	if (!if_changed) {
 	  safe_solver(addBranchConstraint(numnz,
-								  solver_ind.data(),
-								  solver_val.data(),
-								  SOLVER_LESS_EQUAL,
-								  0,
-								  nullptr,
-								  node->solver))
+									  solver_ind.data(),
+									  solver_val.data(),
+									  SOLVER_LESS_EQUAL,
+									  0,
+									  nullptr,
+									  node->solver))
 	  if_changed = true;
 	} else {
 	  changeBranchConstraint(solver_val3.data(),
-					  solver_ind2.data(),
-					  solver_ind1.data(),
-					  numnz,
-					  solver_ind.data(),
-					  solver_val.data(),
-					  SOLVER_LESS_EQUAL,
-					  0,
-					  node->solver);
+							 solver_ind2.data(),
+							 solver_ind1.data(),
+							 numnz,
+							 solver_ind.data(),
+							 solver_val.data(),
+							 SOLVER_LESS_EQUAL,
+							 0,
+							 node->solver);
 	}
 	safe_solver(node->solver.reoptimize())
 	safe_solver(node->solver.getObjVal(&tmp_val))
@@ -158,7 +158,9 @@ void CVRP::useModelPhase1Separate(BbNode *node, int num) {
 			  return a.first;
 			});
   branch_pair.resize(num);
+#if VERBOSE_MODE == 1
   cout << "candidates in phase1: " << branch_pair.size() << endl;
+#endif
 }
 
 void CVRP::getTrainingDataPhase1(BbNode *node) {

@@ -116,10 +116,13 @@ void CVRP::initialScreen(BbNode *node,
     transform(fracEdges.begin(), fracEdges.begin() + frac_cap, branch_pair_from_fractional.begin(), [](const auto &a) {
       return make_pair(get<0>(a), get<1>(a));
     });
-    cout << "pseudo: " << sudo_cap << endl;
-    cout << "frac: " << frac_cap << endl;
+#if VERBOSE_MODE==1
+    cout << "pseudo: " << sudo_cap << " | "<< "frac: " << frac_cap << endl;
+#endif
   }
+#if VERBOSE_MODE==1
   cout << "initialScreen branch_pair size: " << branch_pair.size() << endl;
+#endif
 }
 
 void CVRP::writeMapEdgeColIndexInEnum(BbNode *node) {

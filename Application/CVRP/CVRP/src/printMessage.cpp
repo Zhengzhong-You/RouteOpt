@@ -5,8 +5,6 @@
 using namespace std;
 using namespace chrono;
 
-#ifdef VERBOSE_MODE
-
 void printSolution(std::ostream &os, const vector<vector<int>> &ip_opt_sol, double ub,
 				   double glo_eps, int num_explored_nodes, double global_gap, const string &file_name, double cap) {
   os << "<Solution> " << endl;
@@ -85,9 +83,7 @@ void CVRP::printOptIntSol() {
 	}
   acc_file.close();
 #endif
-#ifdef VERBOSE_MODE
   printBrDecisions();
-#endif
 }
 
 void CVRP::printBrDecisions() {
@@ -118,7 +114,16 @@ void CVRP::printInfoLabeling(int iter, int num_added_col, int num_col, int num_r
   cout.copyfmt(init);
 }
 
-#endif
+void CVRP::printInfoLabeling(int num_col, int num_row, double et, double lp, double ub) {
+  ios init(nullptr);
+  init.copyfmt(cout);
+  cout << fixed << setprecision(2);
+  cout << "ncol= " << setw(2) << left << num_col
+	   << "  ncstr= " << setw(2) << left << num_row
+	   << "  et= " << setw(2) << left << et << "  lpval= " << setw(2) << left << lp << "  ub= " << setw(2)
+	   << left << ub << endl;
+  cout.copyfmt(init);
+}
 
 void CVRP::printCutsInformation(BbNode *node) const {
   map<size_t, pair<int, double>> cuts_mem;
@@ -131,7 +136,8 @@ void CVRP::printCutsInformation(BbNode *node) const {
 	cuts_mem[r1c.info_r1c.first.size()].second += (int)r1c.mem.size();
 	++cuts_mem[r1c.info_r1c.first.size()].first;
   }
-
+  
+#if VERBOSE_MODE == 1
   cout << SMALL_PHASE_SEPARATION;
   cout << "rccs= " << node->rccs.size() << endl;
   cout << "r1cs= " << node->r1cs.size() + node->r1cs_multi.size() << endl;
@@ -141,5 +147,13 @@ void CVRP::printCutsInformation(BbNode *node) const {
   }
   cout << "num_row= " << num_row << endl;
   cout << SMALL_PHASE_SEPARATION;
+#endif
+
+#if VERBOSE_MODE == 2
+  cout << SMALL_PHASE_SEPARATION;
+  cout << "rccs= " << node->rccs.size() << " | " << "r1cs= " << node->r1cs.size() + node->r1cs_multi.size() << " | "
+	   << "num_row= " << num_row << endl;
+  cout << SMALL_PHASE_SEPARATION;
+#endif
 }
 

@@ -1,6 +1,9 @@
 
 #include "CVRP.hpp"
+#include "techniqueControl.hpp"
 
+#ifndef TEMPLATEFUNCTORS_HPP
+#define TEMPLATEFUNCTORS_HPP
 template<typename T, bool dir, bool if_last_half, bool if_symmetry>
 int CVRP::extendKernel4Exact(Label *&ki,
                              int i,
@@ -679,11 +682,14 @@ void CVRP::runLabeling(BbNode *node, const PtrAllR1CS &ptrAllR1Cs) {
   populateRC2TillThisBinNRC2Bin<dir>(node);
 
   QUIT:
+  #if VERBOSE_MODE==1
   if (rollback == 1) {
     std::cout << "rollback to original states!" << std::endl;
   } else if (rollback == 2) {
     std::cout << "rollback with larger mem!" << std::endl;
   }
+  #endif
+  ;
 }
 
 template<bool dir, bool if_symmetry>
@@ -725,7 +731,9 @@ void CVRP::concatenatePhaseInArcElimination(const double *r1c_to_pi,
   eps = std::chrono::duration<double>(end - beg).count();
   if (eps > Config::HardTimeThresholdInArcEliminationMidConcatenate) {
     rollback = 1;
+#if VERBOSE_MODE==1
     std::cout << "concatenatePhaseInArcElimination time= " << eps << " failed!" << std::endl;
+#endif
   }
   QUIT:
   return;
@@ -789,11 +797,12 @@ void CVRP::eliminateBucketArcs(BbNode *node, const double *r1c_to_pi,
   }
 
   eliminatebuketArc4Depot<dir, if_symmetry>(node);
-
+#if VERBOSE_MODE==1
   std::cout << "Num of " << (dir ? "Forward" : "Backward") << " bucket_arcs= " << num_bucket_arcs << " prev.= "
             << double(num_bucket_arcs) / (dir ? node->num_forward_bucket_arcs : node->num_backward_bucket_arcs) * 100 << "%"
             << " max.= " << double(num_bucket_arcs) / max_num_forward_graph_arc * 100 << "%"
             << std::endl;
+#endif
   (dir ? node->num_forward_bucket_arcs : node->num_backward_bucket_arcs) = num_bucket_arcs;
 }
 
@@ -1096,7 +1105,6 @@ void CVRP::populateTellWhichBin4ArcElimination() {
   } else {
     if (!tell_which_bin4_arc_elimination_in_backward_sense.empty()) return;
   }
-  std::cout << "populateTellWhichBin4ArcElimination" << std::endl;
   size_t size = dim * dim * num_buckets_per_vertex;
   int dim_sq = dim * dim;
   double tmp_mainResource;
@@ -1183,8 +1191,9 @@ void CVRP::obtainjumpArcs(BbNode *node, std::bitset<2> **bitMap) const {
   }
 
   (dir ? node->num_forward_jump_arcs : node->num_backward_jump_arcs) = num_jump_arcs;
-
+#if VERBOSE_MODE==1
   std::cout << "Obtain" << (dir ? "Forward" : "Backward") << " Jump Arcs= " << num_jump_arcs << std::endl;
+#endif
 }
 
 template<bool dir, bool if_symmetry>
@@ -1542,10 +1551,12 @@ int CVRP::enumerateHalfwardRoutes(BbNode *node,
     delete[]copy_bucket[i];
   }
   delete[] copy_bucket;
+#if VERBOSE_MODE==1
   std::cout << "Half" << (dir ? "Forward" : "Backward") << " labeling: num_labels= "
             << (dir ? num_forward_labels_in_enu : num_backward_labels_in_enu)
             << " num_routes= " << num_routes_now <<
             std::endl;
+#endif
   if (status)return status;
 
   for (int i = 1; i < dim; ++i) {
@@ -1556,3 +1567,6 @@ int CVRP::enumerateHalfwardRoutes(BbNode *node,
   }
   return 0;
 }
+
+#endif //TEMPLATEFUNCTORS_HPP
+

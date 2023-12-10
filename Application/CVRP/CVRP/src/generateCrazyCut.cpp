@@ -490,7 +490,9 @@ void CVRP::searchCrazy(const std::vector<std::vector<int>> &routes,
 					   const std::vector<double> &frac_routes,
 					   std::vector<std::unordered_map<int, int>> &v_r_map,
 					   std::vector<std::pair<std::vector<int>, int>> &cuts) {
+#if VERBOSE_MODE==1
   cout << "searchCrazy!" << endl;
+#endif
   vector<pair<vector<int>, vector<int>>> c_N_noC;
   constructVRMapAndSeedCrazy(routes, v_r_map, c_N_noC);
 

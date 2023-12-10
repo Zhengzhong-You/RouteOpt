@@ -154,7 +154,9 @@ void CVRP::enumerateMIP(BbNode *&node) {
   if (if_succeed) {
     cout << "enumeration time= " << time_labeling << " and succeed!" << endl;
   } else {
-    cout << "RollBack= " << rollback << endl;
+#if VERBOSE_MODE==1
+	cout << "RollBack= " << rollback << endl;
+#endif
     cout << "enumeration time= " << time_labeling << " but failed!" << endl;
   }
 
@@ -189,8 +191,10 @@ void CVRP::enumerateMIP(BbNode *&node) {
     last_enumeration_fail_gap = gap * Config::EnumerationFailFactor;//set a smaller gap!
     if_enumeration_suc = false;
   }
+#if VERBOSE_MODE==1
   cout << "last_enumeration_fail_gap= " << last_enumeration_fail_gap << endl;
   cout << BIG_PHASE_SEPARATION;
+#endif
 }
 
 bool CVRP::enumerateRoutes(BbNode *const node, const PtrAllR1CS &ptrAllR1Cs) {
@@ -249,8 +253,9 @@ bool CVRP::enumerateRoutes(BbNode *const node, const PtrAllR1CS &ptrAllR1Cs) {
 
   auto end = high_resolution_clock::now();
   auto eps = duration<double> (end-beg).count();
+#if VERBOSE_MODE==1
   cout << "Half Forward time= " << eps << "s" << endl;
-
+#endif
   if (status || rollback) {
     if (status == 1)
       cout << "the number of labels in Forward reached its limit!" << endl;
@@ -269,7 +274,9 @@ bool CVRP::enumerateRoutes(BbNode *const node, const PtrAllR1CS &ptrAllR1Cs) {
 
   end = high_resolution_clock::now();
   eps = duration<double> (end-beg).count();
+  #if VERBOSE_MODE==1
   cout << "Half Backward time= " << eps << "s" << endl;
+  #endif
 
   if (status || rollback) {
     if (status == 1)
@@ -285,7 +292,9 @@ bool CVRP::enumerateRoutes(BbNode *const node, const PtrAllR1CS &ptrAllR1Cs) {
 
   end = high_resolution_clock::now();
   eps = duration<double> (end-beg).count();
+#if VERBOSE_MODE==1
   cout << "Concatenate time= " << eps << "s" << endl;
+#endif
 
   if (status) {
     cout << "the number of routes reached its limit!" << endl;
@@ -1165,10 +1174,14 @@ void CVRP::regenerateEnumMat(BbNode *node, BbNode *node2, bool if_force) {
     if (!if_force) {
       auto left = double(node->size_enumeration_col_pool - del_size) / node->size_enumeration_col_pool;
       if (left > Config::LeftThresholdRCFixing4EnumerationPool) {
+#if VERBOSE_MODE==1
         cout << "stash_size= " << del_size << endl;
+#endif
         return;
       } else {
+#if VERBOSE_MODE==1
         cout << "del_size= " << del_size << endl;
+#endif
       }
     }
   } else {
@@ -1778,6 +1791,21 @@ void CVRP::terminateNode(BbNode *&root_node) {
 	  }
 	}
 
+#ifdef DELUXING_APPLIED
+	if(num_col + node->valid_size < 100000 && num_col + node->valid_size> 50000){
+	  cout << "apply DELUXING..." << endl;
+	  applyRCF(node, DELUXING_APPLIED, true);
+	  solveLPByInspection(node, false, false, true);
+	  if (num_col + node->valid_size <= max_num_route4_mip) {
+		terminateByMIP(node);
+		if (node->is_terminated) {
+		  delete node;
+		  continue;
+		}
+	  }
+	}
+#endif
+
 #ifdef WRITE_ENUMERATION_TREES
     writeEnuTree(node);
     delete node;
@@ -1797,7 +1825,9 @@ void CVRP::terminateNode(BbNode *&root_node) {
 	  double new_r;
 	  node->calculateRStar(node->value - old_val, new_r, this);
 	  BbNode::updateState(new_r, node->geo_r_star, (int)node->brcs.size() - 1);
+#if VERBOSE_MODE==1
 	  cout << "node->c= " << node->c << " node->geo_r_star= " << node->geo_r_star << endl;
+#endif
 	}
 #endif
 
@@ -1862,7 +1892,7 @@ CVRP::addBranchCutToUnsolvedInEnum(BbNode *const node, const std::pair<int, int>
 
 void CVRP::reviseEnumColInfoByBrC(BbNode *node, BbNode *out_node, const Brc &bf) {
   int ai = bf.edge.first, aj = bf.edge.second;
-  if (ai >= aj) cerr << "Wrong in reviseEnumColInfoByBrC!" << endl;
+  if (ai >= aj) throw runtime_error("Wrong in reviseEnumColInfoByBrC!");
   int col_idx;
   int size_pool = int(node->size_enumeration_col_pool);
   auto &deleted_columns_in_enumeration_pool = out_node->deleted_columns_in_enumeration_pool;
@@ -2200,9 +2230,7 @@ void CVRP::deleteNonActiveCutsSafely(BbNode *const node, int old_num) {
       deleted_cstrs.emplace_back(i);
     }
   }
-  if (deleted_cstrs.empty()) {
-    goto QUIT;
-  }
+  if (deleted_cstrs.empty())  goto QUIT;
   std::sort(deleted_cstrs.begin(), deleted_cstrs.end());
   stop_sign = deleted_cstrs.end() - 1;
   for (auto i = deleted_cstrs.begin(); i < stop_sign; ++i) {

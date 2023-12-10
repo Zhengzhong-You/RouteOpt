@@ -621,7 +621,9 @@ void CVRP::recordOptimalColumn(BbNode *node, bool if_force_rewrite) {
   }
 
   if (node->index_for_lp_solutions_in_column_pool == tmp_solindex) {
+#if VERBOSE_MODE==1
     cout << "sol remains the same" << endl;
+#endif
     if (if_force_rewrite) {
       goto REWRITE;
     } else {
@@ -1304,23 +1306,22 @@ void CVRP::determineIfArcElimination(BbNode *node) {
   double now_gap, required_gap;
   if (!if_can_arc_elimination_by_exact_cg) {
     final_decision_4_arc_elimination = false;
-    cerr << "Error: if_can_arc_elimination_by_exact_cg is false, but tries to call arcElimination!" << endl;
-    exit(-1);
+	throw runtime_error("Error: if_can_arc_elimination_by_exact_cg is false, but tries to call arc elimination!");
   } else if_can_arc_elimination_by_exact_cg = false;
   if (if_stop_arc_elimination) {
     final_decision_4_arc_elimination = false;
     if_stop_arc_elimination = false;
-    cout << "ArcEliminationNEnumeration is banned!" << endl;
+    cout << "arc elimination is banned!" << endl;
     goto QUIT;
   }
   if (final_decision_4_arc_elimination) {
-    cout << "ArcEliminationNEnumeration must be performed!" << endl;
+	cout<<"arc elimination and enumeration must be performed!"<<endl;
     goto QUIT;
   }
   if (abs(old_ub - ub) < TOLERANCE) {
-    cout << "old_ub is updated from " << old_ub << " to " << ub << endl;
-    cout << "ArcEliminationNEnumeration must be performed!" << endl;
-    old_ub = ub;
+    cout << "old ub is updated from " << old_ub << " to " << ub << endl;
+	cout<<"arc elimination and enumeration must be performed!"<<endl;
+	old_ub = ub;
     final_decision_4_arc_elimination = true;
     goto QUIT;
   }
@@ -1340,10 +1341,10 @@ void CVRP::determineIfArcElimination(BbNode *node) {
 void CVRP::determineIfEnumeration(BbNode *node) {
   double gap;
   if (final_decision_4_enumeration) {
-    cout << "Enumeration must be performed!" << endl;
+    cout << "enumeration must be performed!" << endl;
     enumeration_mode = !if_arc_elimination_succeed;
     if (!if_arc_elimination_succeed) {
-      cout << "But ArcElimination is failed! So skip enumeration!" << endl;
+	  cout<<"arc elimination is failed! skip enumeration!"<<endl;
       final_decision_4_enumeration = false;
     }
     goto QUIT;
@@ -1353,8 +1354,8 @@ void CVRP::determineIfEnumeration(BbNode *node) {
   }
 
   if (abs(old_ub - ub) < TOLERANCE) {
-    cout << "old_ub is updated from " << old_ub << " to " << ub << endl;
-    cout << "ArcEliminationNEnumeration must be performed!" << endl;
+    cout << "old ub is updated from " << old_ub << " to " << ub << endl;
+    cout << "arc elimination and enumeration must be performed!" << endl;
     old_ub = ub;
     final_decision_4_enumeration = true;
     enumeration_mode = !if_arc_elimination_succeed;
@@ -1657,6 +1658,7 @@ bool CVRP::runColumnGenerationType(BbNode *node, int mode) {
   if (node->is_terminated) return true;
   int status = 0;
   bool switch_is_on = true;
+#if VERBOSE_MODE==1
   switch (mode) {
     case 1:cout << "LighterHeur phase begin...\n";
       break;
@@ -1664,9 +1666,9 @@ bool CVRP::runColumnGenerationType(BbNode *node, int mode) {
       break;
     case 3:cout << "Exact phase begin...\n";
       break;
-    default:cerr << "None of these modes are used!\n";
-      exit(-1);
+    default:throw runtime_error("Error: runColumnGenerationType is called with wrong mode!");
   }
+#endif
   int iter = 0, ccnt = 0, old_ncol = num_col, tag;
   double eps_CG = 0, eps_LP = 0, b4_node_val = node->value;
   auto beg = chrono::high_resolution_clock::now();
@@ -1710,8 +1712,7 @@ bool CVRP::runColumnGenerationType(BbNode *node, int mode) {
         }
 
         break;
-      default:cerr << "None of these modes are used!\n";
-        exit(-1);
+      default:throw runtime_error("Error: runColumnGenerationType is called with wrong mode!");
     }
 
     end = chrono::high_resolution_clock::now();
@@ -1747,9 +1748,11 @@ bool CVRP::runColumnGenerationType(BbNode *node, int mode) {
       REPORT:
       glo_end = chrono::high_resolution_clock::now();
       glo_eps = chrono::duration<double>(glo_end - glo_beg).count();
+#if VERBOSE_MODE==1
       printInfoLabeling(iter, num_col - old_ncol, num_col, num_row, eps_LP,
                         eps_CG, glo_eps,
                         lp_val, lb, ub);
+#endif
       if (!switch_is_on) {
         goto QUIT;
       }
@@ -1766,8 +1769,12 @@ bool CVRP::runColumnGenerationType(BbNode *node, int mode) {
   if (mode == 3) {
     if_exact_labeling_cg = false;
     force_not_rollback = old_force;
-    if (if_tail_off && !rollback)
-      rollback = 3;
+    if (if_tail_off && !rollback) rollback = 3;
+#if VERBOSE_MODE==2
+	glo_end = chrono::high_resolution_clock::now();
+	glo_eps = chrono::duration<double>(glo_end - glo_beg).count();
+	printInfoLabeling(num_col, num_row, glo_eps, lp_val, ub);
+#endif
   }
   return status;
 }
@@ -1836,12 +1843,6 @@ void CVRP::getEdgeInfo(BbNode *node, bool if_br) const {
 }
 
 
-#ifdef DELUXING_APPLIED
-void CVRP::applyRCF(BbNode *node, int round, bool if_verbose) {
-  cout << "WARNING: RCF can only be applied by GRB model!" << endl;
-  throw runtime_error("Error: RCF is not seen by far!");
-}
-#endif
 
 void CVRP::regenerateGraphBucket(BbNode *node) {
   if (abs(step_size / 2) < 1 - TOLERANCE) return;

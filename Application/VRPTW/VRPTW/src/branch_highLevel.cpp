@@ -250,7 +250,9 @@ void CVRP::giveDynamicM(BbNode *node, int &num) {
   double k1 = sqrt(alpha_beta * (alpha_beta + 2 * alpha + 2 * omega - 2)) + alpha_beta + alpha - 1;
   int k1_up = (int)max(min(ceil(k1), double(est_m)), 1.);
   int k1_down = (int)max(min(floor(k1), double(est_m)), 1.);
+#if VERBOSE_MODE == 1
   cout << "alpha= " << alpha << " beta= " << beta << " omega= " << omega;
+#endif
 
   if (k1_up == k1_down) {
 	k1 = k1_up;
@@ -263,19 +265,25 @@ void CVRP::giveDynamicM(BbNode *node, int &num) {
 	  k1 = k1_down;
 	}
   }
+#if VERBOSE_MODE == 1
   cout << " k1= " << k1 << endl;
+#endif
 
   //calculate the UB
   double ub_tk = getUBTk(omega, alpha, B, k1);
   int lb_k, ub_k;
   getRange(omega, alpha, B, ub_tk, k1, est_m, lb_k, ub_k);
+#if VERBOSE_MODE == 1
   cout << "lb_k= " << lb_k << " ub_k= " << ub_k << endl;
+#endif
   if (lb_k == ub_k) {
 	num = lb_k;
   } else {
 	double real_tk = getRealTk(omega, alpha, B, k1);
 	getRange(omega, alpha, B, real_tk, k1, est_m, lb_k, ub_k);
+#if VERBOSE_MODE == 1
 	cout << "revise: lb_k= " << lb_k << " ub_k= " << ub_k << endl;
+#endif
 	if (lb_k == ub_k) {
 	  num = lb_k;
 	} else {
@@ -291,7 +299,9 @@ void CVRP::giveDynamicM(BbNode *node, int &num) {
   num = min(num, int(est_m));
   num = min(num, int(branch_pair.size()));
   opt_k = num;
+#if VERBOSE_MODE == 1
   cout << "opt_k= " << opt_k << endl;
+#endif
 }
 
 void CVRP::evaluateM1() {
@@ -304,7 +314,9 @@ void CVRP::evaluateM1() {
   est_m = min(est_m, double(ml.give_initial_screening_num_candidates()));
   cp_branch_pair.clear();
   alpha = min(est_m / double(ml.give_initial_screening_num_candidates()), 0.9);
+#if VERBOSE_MODE == 1
   cout << "m= " << est_m << " alpha= " << alpha << endl;
+#endif
 }
 #endif
 #endif

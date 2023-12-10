@@ -95,10 +95,10 @@ throw std::runtime_error("ChangeDual is not well defined!");
 #endif
 
 #if ADJUST_MIP_TIME_LIMIT == 1
-double Config::MIPInEnumerationTimeLimit{10000000};
+double Config::MIPInEnumerationTimeLimit{1000000000};
 int Config::MinNumRoute4MIP{10000};
 #elif ADJUST_MIP_TIME_LIMIT == 0
-double Config::MIPInEnumerationTimeLimit{20};
+double Config::MIPInEnumerationTimeLimit{25};
 int Config::MinNumRoute4MIP{3000};
 #else
 throw std::runtime_error("ADJUST_MIP_TIME_LIMIT is not well defined!");

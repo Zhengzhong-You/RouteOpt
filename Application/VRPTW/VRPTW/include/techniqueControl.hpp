@@ -57,5 +57,10 @@
  * DELUXING_ROUND
  */
 
+#define VERBOSE_MODE 2
+/**
+ * 1. all possible output log
+ * 2. highly reduced output log
+ */
 
 #endif //FINDINSBYCERTAINSETTING_HPP_

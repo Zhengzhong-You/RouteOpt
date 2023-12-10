@@ -348,10 +348,15 @@ void BbNode::calculateRStar(double lift, double &new_r_star, CVRP *cvrp) {
   double alpha = cvrp->alpha;
   auto k = min(get<2>(info) + 0., cvrp->est_m);// generalize the root node branching decision
   new_r_star = bar_r / (1 - alpha / (k + 1));
-  cout << "new_r_star = " << new_r_star << endl;
-  cout << "l_r_ratio1 = " << l_r_ratio << endl;
+#if VERBOSE_MODE == 1
+  cout<<BIG_PHASE_SEPARATION;
+  cout << "new_r_star = " << new_r_star << " | " << "l_r_ratio = " << l_r_ratio << " | updated: ";
+#endif
   auto new_l_r = get<0>(info) / get<1>(info);
   updateState(new_l_r, l_r_ratio, (int)brcs.size() - 1);
-  cout << "l_r_ratio2 = " << l_r_ratio << endl;
+#if VERBOSE_MODE == 1
+  cout << "l_r_ratio = " << l_r_ratio << endl;
+  cout<<BIG_PHASE_SEPARATION;
+#endif
 }
 #endif
