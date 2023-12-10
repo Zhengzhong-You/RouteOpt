@@ -124,8 +124,6 @@ Revise path of Boost Library in the CMakeLists.txt.
 
 ---
 
-The library accepts two kinds of parameters: (RouteOpt_VRPTW for VRPTW)
-
 1. Use the `idx/<ins_file.ins>` (Recommended)
 
    ```
