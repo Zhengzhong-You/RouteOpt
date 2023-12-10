@@ -144,15 +144,13 @@ For instance, you can type in:
 This command will read the instance from the `0`-th line of the `.ins` file with the initial UB as 1000.
 
 Note that, if the `.ins` file contains a UB, it will be automatically read from the file, and the UB provided by -u will
-be ignored. The `.ins` files in idx folder now all contain a UB (optimal value).
-
-    For instance, you can type in:
+be ignored. The `.ins` files in idx folder now all contain a UB (optimal value). For instance, you can type in:
 
    ```
    ./CVRP -d idx/cvrp_200_200_opt.ins -n 0
    ```
 
-3. Specify the complete path
+2. Specify the complete path
 
    ```
    ./CVRP ./../../../DataForCVRP/BML/200_200/CVRP_200_154.vrp -u 30972.0
