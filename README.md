@@ -137,6 +137,24 @@ set(Boost_ROOT "/home/yzz/boost_1_83_0")
 set(Boost_LIBRARY_DIR "/home/yzz/boost_1_83_0/stage/lib")
 
 ```
+**Note:** Take CVRP as an example, the source code is currently built under `/RouteOpt/Application/CVRP/CVRP` for personal convenience. However,
+a more standardized way will be:
+
+1. **Create a build directory**:
+   ```bash
+   mkdir build
+   cd build
+   ```
+
+2. **Run CMake and Make**:
+   ```bash
+   cmake ..
+   make
+   ```
+
+This process results in the executable file being located in the `build` directory. Please note, the relative paths of
+the instances should be adjusted accordingly, which includes the `idx` folder and the contents of the `.ins` files (if
+you use `.ins` to run the code). We will change to the standardized way in next release. For now, building the code in the `CVRP` folder is recommended.
 
 ## Useage
 
