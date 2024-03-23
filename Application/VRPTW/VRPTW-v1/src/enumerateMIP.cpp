@@ -77,8 +77,6 @@ void CVRP::enumerateMIP(BbNode *&node) {
   cout<<"In setting II, we do not do enumeration!"<<endl;
   return;
 #endif
-  cout<<"In this cut testing, we do not do enumeration!"<<endl;
-  return;
 
   determineIfEnumeration(node);
   if (!final_decision_4_enumeration) return;
