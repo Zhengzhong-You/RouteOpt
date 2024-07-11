@@ -7,6 +7,7 @@
 #include "Config.hpp"
 #include "Solver.hpp"
 #include "capsep.h"
+#include "cnstrmgr.h"
 #include "ML.hpp"
 #include "InstanceData.hpp"
 #include <cstdio>
