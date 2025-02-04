@@ -2,6 +2,7 @@
 #include <filesystem>
 
 #include "branching.hpp"
+#include "read_node_in.hpp"
 using namespace std;
 using namespace chrono;
 
@@ -23,19 +24,19 @@ void printSolution(std::ostream &os, const vector<vector<int> > &ip_opt_sol,
         os << "-0" << endl;
     }
 #ifdef HEURISTIC
-  if (Heuristic::if_fail) {
-	os << "<Optval  " << ub << ">  <Etime  " << -Heuristic::heuristic_mip_time
-	   << ">  <Nodes_explored  " << 0 << ">"
-	   << "  <BaseBranching::global_gap  " << BaseBranching::global_gap * 100 << "%>" << endl;
-  } else {
-	os << "<Optval  " << ub << ">  <Etime  " << BaseBranching::glo_eps
-	   << ">  <Nodes_explored  " << num_explored_nodes << ">"
-	   << "  <BaseBranching::global_gap  " << BaseBranching::global_gap * 100 << "%>" << endl;
-  }
+    if (Heuristic::if_fail) {
+        os << "<Optval  " << BaseBranching::ub << ">  <Etime  " << -Heuristic::heuristic_mip_time
+                << ">  <Nodes_explored  " << 0 << ">"
+                << "  <global_gap  " << BaseBranching::global_gap * 100 << "%>" << endl;
+    } else {
+        os << "<Optval  " << BaseBranching::ub << ">  <Etime  " << BaseBranching::glo_eps
+                << ">  <Nodes_explored  " << num_explored_nodes << ">"
+                << "  <global_gap  " << BaseBranching::global_gap * 100 << "%>" << endl;
+    }
 #else
     os << "<Optval  " << BaseBranching::ub << ">  <Etime  " << BaseBranching::glo_eps
             << ">  <Nodes_explored  " << num_explored_nodes << ">"
-            << "  <BaseBranching::global_gap  " << BaseBranching::global_gap * 100 << "%>" << endl;
+            << "  <global_gap  " << BaseBranching::global_gap * 100 << "%>" << endl;
 #endif
     os << "<Instance  " << file_name << "  Capacity  " << cap << ">" << endl;
 }
@@ -74,7 +75,7 @@ void CVRP::printOptIntSol() {
                   cap);
     sol_file.close();
 #endif
-
+    read_node_in_call(ReadNodeIn::tryUpdateUB())
 #ifdef VERBOSE_MODE
     printBrDecisions();
 #endif

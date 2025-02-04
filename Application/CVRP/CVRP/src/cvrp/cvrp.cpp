@@ -29,11 +29,11 @@
 #include "combine_faster_smoothing.hpp"
 #endif
 
-#ifdef MASTER_VALVE_ML
+
 #include "machine_learning.hpp"
-#endif
 
 
+#include "read_node_in.hpp"
 #include "robust_control.hpp"
 
 using namespace std;
@@ -114,14 +114,10 @@ void CVRP::initialProcessing() {
     Rank1CutsSeparator::setInitialInfo(Config::MaxRowRank1, Config::MaxNumR1C3PerRound, Config::MaxNumR1CPerRound, dim,
                                        solver, cost_mat4_vertex);
     setResourceInBucketGraph();
-
-    auto tmp = int(double(resource.first_res) / num_buckets_per_vertex / pow(2, MAX_NUM_REGENERATE_BUCKET));
-    step_size = res_int(max(tmp * pow(2, MAX_NUM_REGENERATE_BUCKET), 1.)); //at least be 1!
-    num_buckets_per_vertex = (int) floor(resource.first_res / step_size) + 1;
-
     assignMemory();
-
+#ifndef READ_NODE_IN
     initializeBucketGraph();
+#endif
     initializeLabels();
 
     int candi_size = dim * dim / 2;
@@ -146,15 +142,15 @@ void CVRP::initializeLabels() {
         increaseMainResourceConsumption({}, all_label[i].res, 0, i);
     }
 #ifdef SYMMETRY_PROHIBIT
-  int max_num = 2 * dim - 1;
-  for (int i = dim; i < max_num; ++i) {
-	int point = i - dim + 1;
-	all_label[i].pi.set(point);
-	all_label[i].cost = cost_mat4_vertex[0][point];
-	all_label[i].end_vertex = point;
-	all_label[i].p_label = all_label;
-	decreaseMainResourceConsumption(resource, all_label[i].res, 0, point);
-  }
+    int max_num = 2 * dim - 1;
+    for (int i = dim; i < max_num; ++i) {
+        int point = i - dim + 1;
+        all_label[i].pi.set(point);
+        all_label[i].cost = cost_mat4_vertex[0][point];
+        all_label[i].end_vertex = point;
+        all_label[i].p_label = all_label;
+        decreaseMainResourceConsumption(resource, all_label[i].res, 0, point);
+    }
 #endif
 }
 
@@ -379,7 +375,7 @@ QUIT:dual_smoothing_call(DualSmoothing::freeLPMatrix())
         if (aver_ratio > Config::BucketResizeFactorRatioDominanceChecksNonDominant) {
             auto numArcs = node->num_forward_bucket_arcs + node->num_forward_jump_arcs;
 #ifdef SYMMETRY_PROHIBIT
-	  numArcs += node->num_backward_bucket_arcs + node->num_backward_jump_arcs;
+            numArcs += node->num_backward_bucket_arcs + node->num_backward_jump_arcs;
 #endif
             if (double(numArcs) / dim < Config::BucketResizeFactorNumBucketArcsPerVertex
                 && !if_force_not_regenerate_bucket_graph) {
@@ -458,8 +454,8 @@ void CVRP::priceBRC(BbNode *node, const std::vector<double> &pi_vector) {
             chg_cost_mat4_vertex[brc.edge.second][brc.edge.first] =
                     numeric_limits<float>::max(); //do not use double since the number will overflow
         } else {
-            chg_cost_mat4_vertex[brc.edge.first][brc.edge.second] -= pi_vector[brc.idx_br_c];
-            chg_cost_mat4_vertex[brc.edge.second][brc.edge.first] -= pi_vector[brc.idx_br_c];
+            chg_cost_mat4_vertex[brc.edge.first][brc.edge.second] -= pi_vector[brc.idx_brc];
+            chg_cost_mat4_vertex[brc.edge.second][brc.edge.first] -= pi_vector[brc.idx_brc];
         }
     }
 }
@@ -509,22 +505,22 @@ CVRP::~CVRP() {
     delete[]if_exist_extra_labels_in_forward_sense;
 
 #ifdef SYMMETRY_PROHIBIT
-  for (int i = 0; i < dim; ++i) {
-	delete[]rc2_till_this_bin_in_backward_sense[i];
-  }
-  delete[]rc2_till_this_bin_in_backward_sense;
-  for (int i = 0; i < dim; ++i) {
-	delete[]rc2_bin_in_backward_sense[i];
-  }
-  delete[]rc2_bin_in_backward_sense;
-  for (int i = 0; i < dim; ++i) {
-	delete[]label_array_in_backward_sense[i];
-  }
-  delete[]label_array_in_backward_sense;
-  for (int i = 0; i < dim; ++i) {
-	delete[]if_exist_extra_labels_in_backward_sense[i];
-  }
-  delete[]if_exist_extra_labels_in_backward_sense;
+    for (int i = 0; i < dim; ++i) {
+        delete[]rc2_till_this_bin_in_backward_sense[i];
+    }
+    delete[]rc2_till_this_bin_in_backward_sense;
+    for (int i = 0; i < dim; ++i) {
+        delete[]rc2_bin_in_backward_sense[i];
+    }
+    delete[]rc2_bin_in_backward_sense;
+    for (int i = 0; i < dim; ++i) {
+        delete[]label_array_in_backward_sense[i];
+    }
+    delete[]label_array_in_backward_sense;
+    for (int i = 0; i < dim; ++i) {
+        delete[]if_exist_extra_labels_in_backward_sense[i];
+    }
+    delete[]if_exist_extra_labels_in_backward_sense;
 #endif
 
     for (int i = 0; i < dim; ++i) {
@@ -624,7 +620,7 @@ REWRITE:
         }
     }
 
-    auto opt_size = (int) local_all_sol.first.size();
+    auto opt_size = static_cast<int>(local_all_sol.first.size());
     for (int i = 0; i < opt_size; ++i) {
         auto &seq = local_all_sol.first[i].col_seq;
         double val = local_all_sol.second[i];
@@ -676,10 +672,11 @@ REWRITE:
 
 int CVRP::optimizeLPForOneIteration(BbNode *node, double prior_value, int lp_method) {
 #if SOLVER_VRPTW == 1
-  START_OVER:
+START_OVER:
 #endif
 
-
+    // lp_method = SOLVER_DUAL_SIMPLEX;
+    // safe_solver(node->getSolver().setEnvOutputFlag(1, false))
     safe_solver(node->getSolver().reoptimize(lp_method))
     safe_solver(node->getSolver().getNumCol(&num_col))
     safe_solver(node->getSolver().getObjVal(&lp_val))
@@ -713,24 +710,24 @@ int CVRP::optimizeLPForOneIteration(BbNode *node, double prior_value, int lp_met
         if (lp_val + TOLERANCE < BaseBranching::ub) {
             updateIPOptSol(node, X);
 #if SOLVER_VRPTW == 1
-	  bool if_feasible;
-	  checkSolutionFeasibleByCapacity(if_feasible);
-	  if (if_feasible) {
-		BaseBranching::ub = lp_val;
-	  } else {
-		cout << "find an infeasible IP solution!" << endl;
-		ip_opt_sol.clear();
-		/**
-		 * add rcc cuts and they are non-removable before enumeration!
-		 */
-		if (!BaseBranching::if_test_cg) {
-		  verbose_call(cout << "add rcc cuts and they are non-removable before enumeration!" << endl;)
-		  if_force_keep_rcc = true;
-		  generateRCCs(node);
-		  if_force_keep_rcc = false;
-		  goto START_OVER;
-		}
-	  }
+            bool if_feasible;
+            checkSolutionFeasibleByCapacity(if_feasible);
+            if (if_feasible) {
+                BaseBranching::ub = lp_val;
+            } else {
+                cout << "find an infeasible IP solution!" << endl;
+                ip_opt_sol.clear();
+                /**
+                 * add rcc cuts and they are non-removable before enumeration!
+                 */
+                if (!BaseBranching::if_test_cg) {
+                    verbose_call(cout << "add rcc cuts and they are non-removable before enumeration!" << endl;)
+                    if_force_keep_rcc = true;
+                    generateRCCs(node);
+                    if_force_keep_rcc = false;
+                    goto START_OVER;
+                }
+            }
 #else
 
             BaseBranching::ub = lp_val;
@@ -874,19 +871,19 @@ void CVRP::cleanAllPointers(BbNode *const node, int mode, bool if_clear_concaten
         }
     }
 #ifdef SYMMETRY_PROHIBIT
-  else if (mode == 2) {
-	for (int i = 0; i < dim; ++i) {
-	  for (int b = 0; b < num_buckets_per_vertex; ++b) {
-		label_array_in_backward_sense[i][b].clear();
-		if_exist_extra_labels_in_backward_sense[i][b].second = 0;
-	  }
-	}
-  }
+    else if (mode == 2) {
+        for (int i = 0; i < dim; ++i) {
+            for (int b = 0; b < num_buckets_per_vertex; ++b) {
+                label_array_in_backward_sense[i][b].clear();
+                if_exist_extra_labels_in_backward_sense[i][b].second = 0;
+            }
+        }
+    }
 #endif
     if (if_clear_concatenate) {
         concatenate_labels_in_forward_cg.clear();
 #ifdef SYMMETRY_PROHIBIT
-	concatenate_labels_in_backward_cg.clear();
+        concatenate_labels_in_backward_cg.clear();
 #endif
     }
 }
@@ -896,25 +893,23 @@ double CVRP::calculateOptimalGap(BbNode *const node) const {
 }
 
 void CVRP::determineIfArcElimination(BbNode *node) {
-    double now_gap, required_gap;
+    double now_gap;
     if (!if_can_arc_elimination_by_exact_cg) {
         final_decision_4_arc_elimination = false;
+        verbose_call(cout<<"arc elimination is banned for exact cg is not performed!"<<endl;)
         goto QUIT;
-    } else if_can_arc_elimination_by_exact_cg = false;
+    }
+    if_can_arc_elimination_by_exact_cg = false;
     if (if_stop_arc_elimination) {
         final_decision_4_arc_elimination = false;
         if_stop_arc_elimination = false;
-#if VERBOSE_MODE == 1
-        cout << "arc elimination is banned!" << endl;
-#endif
+        verbose_call(cout << "arc elimination is banned!" << endl;)
         goto QUIT;
     }
     if (final_decision_4_arc_elimination) goto QUIT;
     if (abs(old_ub - BaseBranching::ub) > TOLERANCE) {
-#if VERBOSE_MODE == 1
-        cout << "BaseBranching::ub is updated from " << old_ub << " to " << BaseBranching::ub
-                << " and perform arc elimination!" << endl;
-#endif
+        verbose_call(cout << "BaseBranching::ub is updated from " << old_ub << " to " << BaseBranching::ub
+            << " and perform arc elimination!" << endl;)
         old_ub = BaseBranching::ub;
         final_decision_4_arc_elimination = true;
         goto QUIT;
@@ -924,10 +919,8 @@ void CVRP::determineIfArcElimination(BbNode *node) {
         || now_gap < gap_tolerance4_arc_elimination_n_enumeration) {
         node->last_gap = now_gap;
         final_decision_4_arc_elimination = true;
-        goto QUIT;
     }
-QUIT:
-    return;
+QUIT:;
 }
 
 void CVRP::determineIfEnumeration(BbNode *node) {
@@ -985,12 +978,12 @@ void CVRP::rollbackEasyWay(BbNode *const node, int old_num) {
     iota(delete_cuts.begin(), delete_cuts.end(), old_num);
     deleteNonactiveCuts(node, delete_cuts);
 
-    for (auto &i: reset_cut_mem) {
-        auto &cut = node->r1cs[get<0>(i)];
-        cut.arc_mem = get<2>(i);
-    }
+    // for (auto &i: reset_cut_mem) {
+    //     auto &cut = node->r1cs[get<0>(i)];
+    //     cut.arc_mem = get<2>(i);
+    // }
 
-    reset_cut_mem.clear();
+    // reset_cut_mem.clear();
     getVCutMapLP(node);
 
     if (rollback_solver.model) {
@@ -1044,22 +1037,22 @@ void CVRP::initializeBucketGraphForNode(BbNode *node) {
     max_num_forward_graph_arc = num_buckets_per_vertex * (real_dim - 1) * real_dim;
     node->num_forward_bucket_arcs = max_num_forward_graph_arc;
 #ifdef SYMMETRY_PROHIBIT
-  for (int i = 1; i < dim; ++i) {
-	for (int b = 0; b < num_buckets_per_vertex; ++b) {
-	  node->all_backward_buckets[i][b] = node->all_forward_buckets[i][0];
-	}
-  }
-  auto &bucket_back = node->all_backward_buckets[0][0];
-  cnt = 0;
-  bucket_back.bucket_arcs.resize(real_dim);
-  for (int i = 1; i < dim; ++i) {
-	ResTuple res{};
-	if (!decreaseMainResourceConsumption(resource, res, 0, i)) continue;
-	bucket_back.bucket_arcs[cnt++] = i;
-  }
-  bucket_back.bucket_arcs.resize(cnt);
-  max_num_backward_graph_arc = num_buckets_per_vertex * (real_dim - 1) * real_dim;
-  node->num_backward_bucket_arcs = max_num_backward_graph_arc;
+    for (int i = 1; i < dim; ++i) {
+        for (int b = 0; b < num_buckets_per_vertex; ++b) {
+            node->all_backward_buckets[i][b] = node->all_forward_buckets[i][0];
+        }
+    }
+    auto &bucket_back = node->all_backward_buckets[0][0];
+    cnt = 0;
+    bucket_back.bucket_arcs.resize(real_dim);
+    for (int i = 1; i < dim; ++i) {
+        ResTuple res{};
+        if (!decreaseMainResourceConsumption(resource, res, 0, i)) continue;
+        bucket_back.bucket_arcs[cnt++] = i;
+    }
+    bucket_back.bucket_arcs.resize(cnt);
+    max_num_backward_graph_arc = num_buckets_per_vertex * (real_dim - 1) * real_dim;
+    node->num_backward_bucket_arcs = max_num_backward_graph_arc;
 #endif
     getTopologicalOrder(node);
 }
@@ -1147,6 +1140,14 @@ string generateInstancePath(int argc, char *argv[]) {
         } else if (arg == "-t" && i + 1 < argc) {
             stringstream convert(argv[++i]);
             if (!(convert >> Config::tree_path)) {
+                printf("Invalid string: %s\n", argv[i]);
+                continue;
+            }
+            cout << Config::tree_path << endl;
+        } else if (arg == "-b" && i + 1 < argc) {
+            stringstream convert(argv[++i]);
+            if (!(convert >> Config::tree_path)) {
+                //share the tree path
                 printf("Invalid string: %s\n", argv[i]);
                 continue;
             }
@@ -1257,7 +1258,7 @@ bool CVRP::decreaseMainResourceConsumption(const ResTuple &nowResource,
 void CVRP::lighterHeuristic(BbNode *node, int &num) {
     num = generateColumnsByLighterHeuristic<
 #ifdef SYMMETRY_PROHIBIT
-	  false
+        false
 #else
         true
 #endif
@@ -1267,7 +1268,7 @@ void CVRP::lighterHeuristic(BbNode *node, int &num) {
 void CVRP::heavierHeuristic(BbNode *node, int &num) {
     num = generateColumnsByHeavierHeuristic<
 #ifdef SYMMETRY_PROHIBIT
-	  false
+        false
 #else
         true
 #endif
@@ -1277,7 +1278,7 @@ void CVRP::heavierHeuristic(BbNode *node, int &num) {
 void CVRP::exactLabeling(BbNode *node, int &num) {
     num = generateColsByBidir<
 #ifdef SYMMETRY_PROHIBIT
-	  false
+        false
 #else
         true
 #endif
@@ -1423,20 +1424,21 @@ void CVRP::assignInitialLabelingMemory() const {
             if_exist_extra_labels_in_forward_sense[i][b].first.resize(hard_max);
         }
 #ifdef SYMMETRY_PROHIBIT
-	min_num_labels = numeric_limits<int>::max();
-	for (int i = 0; i < dim; ++i) {
-	  if (label_array_in_backward_sense[i][b].size() && min_num_labels > label_array_in_backward_sense[i][b].size()) {
-		min_num_labels = label_array_in_backward_sense[i][b].size();
-	  }
-	}
-	if (min_num_labels == numeric_limits<int>::max()) {
-	  min_num_labels = 1;
-	}
-	for (int i = 0; i < dim; ++i) {
-	  int hard_max = max((int)label_array_in_backward_sense[i][b].size(), min_num_labels) * FACTOR_NUM_LABEL;
-	  hard_max = (int)(pow_self(2.0, (int)ceil(log(hard_max) / log(2))) + TOLERANCE);
-	  if_exist_extra_labels_in_backward_sense[i][b].first.resize(hard_max);
-	}
+        min_num_labels = numeric_limits<int>::max();
+        for (int i = 0; i < dim; ++i) {
+            if (label_array_in_backward_sense[i][b].size() && min_num_labels > label_array_in_backward_sense[i][b].
+                size()) {
+                min_num_labels = label_array_in_backward_sense[i][b].size();
+            }
+        }
+        if (min_num_labels == numeric_limits<int>::max()) {
+            min_num_labels = 1;
+        }
+        for (int i = 0; i < dim; ++i) {
+            int hard_max = max((int) label_array_in_backward_sense[i][b].size(), min_num_labels) * FACTOR_NUM_LABEL;
+            hard_max = (int) (pow_self(2.0, (int) ceil(log(hard_max) / log(2))) + TOLERANCE);
+            if_exist_extra_labels_in_backward_sense[i][b].first.resize(hard_max);
+        }
 #endif
     }
 }
@@ -1463,6 +1465,9 @@ void CVRP::getEdgeInfo(BbNode *node, bool if_br) const {
 }
 
 void CVRP::regenerateGraphBucket(BbNode *node) {
+    if (node->index)
+        throw runtime_error(
+            "error: regenerateGraphBucket should be banned since this node is not root node");
     if (step_size / 2 < 1) return;
     if (step_size % 2) {
         cout << "regenerateGraphBucket is banned since step_size is odd!" << endl;
@@ -1475,9 +1480,9 @@ void CVRP::regenerateGraphBucket(BbNode *node) {
     node->num_forward_bucket_arcs *= 2;
     node->num_forward_jump_arcs *= 2;
 #ifdef SYMMETRY_PROHIBIT
-  node->num_backward_bucket_arcs *= 2;
-  node->num_backward_jump_arcs *= 2;
-  max_num_backward_graph_arc *= 2;
+    node->num_backward_bucket_arcs *= 2;
+    node->num_backward_jump_arcs *= 2;
+    max_num_backward_graph_arc *= 2;
 #endif
 
     auto new_IfExistExtraLabelsInForwardSense = new VecLabel *[dim];
@@ -1500,22 +1505,22 @@ void CVRP::regenerateGraphBucket(BbNode *node) {
     }
 #ifdef SYMMETRY_PROHIBIT
 
-  auto new_IfExistExtraLabelsInBackwardSense = new VecLabel *[dim];
-  for (int i = 0; i < dim; ++i) {
-	new_IfExistExtraLabelsInBackwardSense[i] = new VecLabel[num_buckets_per_vertex];
-	for (int j = 0; j < num_buckets_per_vertex; ++j) {
-	  new_IfExistExtraLabelsInBackwardSense[i][j].first.resize(
-		  if_exist_extra_labels_in_backward_sense[i][j / 2].first.size() / 2);
-	}
-  }
-  for (int i = 0; i < dim; ++i) {
-	delete[]rc2_till_this_bin_in_backward_sense[i];
-	rc2_till_this_bin_in_backward_sense[i] = new double[num_buckets_per_vertex];
-  }
-  for (int i = 0; i < dim; ++i) {
-	delete[]rc2_bin_in_backward_sense[i];
-	rc2_bin_in_backward_sense[i] = new double[num_buckets_per_vertex];
-  }
+    auto new_IfExistExtraLabelsInBackwardSense = new VecLabel *[dim];
+    for (int i = 0; i < dim; ++i) {
+        new_IfExistExtraLabelsInBackwardSense[i] = new VecLabel[num_buckets_per_vertex];
+        for (int j = 0; j < num_buckets_per_vertex; ++j) {
+            new_IfExistExtraLabelsInBackwardSense[i][j].first.resize(
+                if_exist_extra_labels_in_backward_sense[i][j / 2].first.size() / 2);
+        }
+    }
+    for (int i = 0; i < dim; ++i) {
+        delete[]rc2_till_this_bin_in_backward_sense[i];
+        rc2_till_this_bin_in_backward_sense[i] = new double[num_buckets_per_vertex];
+    }
+    for (int i = 0; i < dim; ++i) {
+        delete[]rc2_bin_in_backward_sense[i];
+        rc2_bin_in_backward_sense[i] = new double[num_buckets_per_vertex];
+    }
 #endif
     for (int i = 0; i < dim; ++i) {
         delete[]label_array_in_forward_sense[i];
@@ -1529,15 +1534,15 @@ void CVRP::regenerateGraphBucket(BbNode *node) {
     if_exist_extra_labels_in_forward_sense = new_IfExistExtraLabelsInForwardSense;
 
 #ifdef SYMMETRY_PROHIBIT
-  for (int i = 0; i < dim; ++i) {
-	delete[]label_array_in_backward_sense[i];
-	label_array_in_backward_sense[i] = new ListLabel[num_buckets_per_vertex];
-  }
-  for (int i = 0; i < dim; ++i) {
-	delete[]if_exist_extra_labels_in_backward_sense[i];
-  }
-  delete[]if_exist_extra_labels_in_backward_sense;
-  if_exist_extra_labels_in_backward_sense = new_IfExistExtraLabelsInBackwardSense;
+    for (int i = 0; i < dim; ++i) {
+        delete[]label_array_in_backward_sense[i];
+        label_array_in_backward_sense[i] = new ListLabel[num_buckets_per_vertex];
+    }
+    for (int i = 0; i < dim; ++i) {
+        delete[]if_exist_extra_labels_in_backward_sense[i];
+    }
+    delete[]if_exist_extra_labels_in_backward_sense;
+    if_exist_extra_labels_in_backward_sense = new_IfExistExtraLabelsInBackwardSense;
 #endif
 
     auto new_AllForwardBuckets = new Bucket *[dim];
@@ -1548,13 +1553,13 @@ void CVRP::regenerateGraphBucket(BbNode *node) {
         }
     }
 #ifdef SYMMETRY_PROHIBIT
-  auto new_AllBackwardBuckets = new Bucket *[dim];
-  for (int i = 0; i < dim; ++i) {
-	new_AllBackwardBuckets[i] = new Bucket[num_buckets_per_vertex];
-	for (int j = 0; j < num_buckets_per_vertex; ++j) {
-	  new_AllBackwardBuckets[i][j] = node->all_backward_buckets[i][j / 2];
-	}
-  }
+    auto new_AllBackwardBuckets = new Bucket *[dim];
+    for (int i = 0; i < dim; ++i) {
+        new_AllBackwardBuckets[i] = new Bucket[num_buckets_per_vertex];
+        for (int j = 0; j < num_buckets_per_vertex; ++j) {
+            new_AllBackwardBuckets[i][j] = node->all_backward_buckets[i][j / 2];
+        }
+    }
 #endif
     for (int i = 0; i < dim; ++i) {
         delete[]node->all_forward_buckets[i];
@@ -1562,18 +1567,18 @@ void CVRP::regenerateGraphBucket(BbNode *node) {
     delete[]node->all_forward_buckets;
     node->all_forward_buckets = new_AllForwardBuckets;
 #ifdef SYMMETRY_PROHIBIT
-  for (int i = 0; i < dim; ++i) {
-	delete[]node->all_backward_buckets[i];
-  }
-  delete[]node->all_backward_buckets;
-  node->all_backward_buckets = new_AllBackwardBuckets;
+    for (int i = 0; i < dim; ++i) {
+        delete[]node->all_backward_buckets[i];
+    }
+    delete[]node->all_backward_buckets;
+    node->all_backward_buckets = new_AllBackwardBuckets;
 #endif
     tell_which_bin4_arc_elimination_in_forward_sense.clear();
     populateTellWhichBin4ArcElimination<true>();
 
 #ifdef SYMMETRY_PROHIBIT
-  tell_which_bin4_arc_elimination_in_backward_sense.clear();
-  populateTellWhichBin4ArcElimination<false>();
+    tell_which_bin4_arc_elimination_in_backward_sense.clear();
+    populateTellWhichBin4ArcElimination<false>();
 #endif
 
     getTopologicalOrder(node);
@@ -1835,9 +1840,9 @@ void CVRP::checkIfCutsLegal(BbNode *node) const {
         if_takeup[r1c.idx_r1c] = true;
     }
     for (auto &brc: node->getBrCs()) {
-        if (brc.idx_br_c != -1) {
-            if (if_takeup[brc.idx_br_c])throw std::runtime_error("Error in brcs");
-            if_takeup[brc.idx_br_c] = true;
+        if (brc.idx_brc != -1) {
+            if (if_takeup[brc.idx_brc])throw std::runtime_error("Error in brcs");
+            if_takeup[brc.idx_brc] = true;
         }
     }
     for (int i = 0; i < num_row; ++i) {
@@ -2096,13 +2101,16 @@ void CVRP::cuttingAfterEnu(BbNode *&node) {
     if (!node) goto QUIT;
 #else
     int ncol = num_col + node->valid_size;
-    if (ncol <= 40000) {
-        if (ncol > 1000) {
-            cout << "apply DELUXING..." << endl;
+    if (ncol <= DELUXING_NUMCOL_1) {
+        if (ncol > DELUXING_NUMCOL_2) {
+            verbose_call(cout << "apply DELUXING..." << endl;)
             applyRCF(node, DELUXING_APPLIED, true);
             solveLPByInspection(node, false, false, true);
+            tellIfEnterMIP(node);
+            if (!node) goto QUIT;
+        } else {
+            terminateByMIP(node);
         }
-        terminateByMIP(node);
     }
     if (node->getIfTerminated()) {
         BaseBranching::freeNode();

@@ -1,4 +1,3 @@
-
 #ifndef SOLVER_HPP
 #define SOLVER_HPP
 
@@ -10,169 +9,176 @@
 #include "solver_mindopt.hpp"
 
 class Solver {
- public://for test here
+public: //for test here
 
 #if SOLVER_TYPE == 0
-  SOLVERmodel *model;
-  SOLVERenv *env;
+    SOLVERmodel *model;
+    SOLVERenv *env;
 #elif SOLVER_TYPE == 1
-  SOLVERmodel model;
-  SOLVERenv env;
+    SOLVERmodel model;
+    SOLVERenv env;
 #elif SOLVER_TYPE == 2
-  Mindo::LinearModel model;
+    SOLVERmodel* model;
+    SOLVERenv* env;
 #endif
 
- public:
+public:
+    int getSolFromPool(int i, int first, int len, double *values) const;
 
-  int getSolFromPool(int i, int first, int len, double *values) const;
-  int getObjFromPool(int i, double *valueP) const;
-  int getSolCount(int *valueP) const;
+    int getObjFromPool(int i, double *valueP) const;
 
-  int setVBasis(int first, int len, int *vbasis);
-  int setCBasis(int first, int len, int *cbasis);
+    int getSolCount(int *valueP) const;
 
-  int getVBasis(int first, int len, int *vbasis) const;
+    int setVBasis(int first, int len, int *vbasis);
 
-  int getCBasis(int first, int len, int *cbasis) const;
+    int setCBasis(int first, int len, int *cbasis);
 
-  int getSlack(int first, int len, double *values) const;
+    int getVBasis(int first, int len, int *vbasis) const;
 
-  int getDual(int first, int len, double *values) const;
+    int getCBasis(int first, int len, int *cbasis) const;
 
-  int getCrossOver(int *valueP) const;
+    int getSlack(int first, int len, double *values) const;
 
-  int getNumRow(int *valueP) const;
+    int getDual(int first, int len, double *values) const;
 
-  int getNumCol(int *valueP) const;
+    int getCrossOver(int *valueP) const;
 
-  int delConstraints(int len, int *cind);
+    int getNumRow(int *valueP) const;
 
-  [[nodiscard]] int reoptimize(int method = SOLVER_DUAL_SIMPLEX);
+    int getNumCol(int *valueP) const;
 
-  [[nodiscard]] int optimize();
+    int delConstraints(int len, int *cind);
 
-  [[nodiscard]] int mipOptimize();
+    [[nodiscard]] int reoptimize(int method = SOLVER_DUAL_SIMPLEX);
 
-  int setVTypeArray(int first, int len, char *newvalues);
+    [[nodiscard]] int optimize();
+
+    [[nodiscard]] int mipOptimize();
+
+    int setVTypeArray(int first, int len, char *newvalues);
 
 #if SOLVER_TYPE == 0
-  [[nodiscard]] SOLVERmodel *copyModel() const;
-  [[nodiscard]] SOLVERenv *passEnv() const;
+    [[nodiscard]] SOLVERmodel *copyModel() const;
+
+    [[nodiscard]] SOLVERenv *passEnv() const;
 #elif SOLVER_TYPE == 1
-  [[nodiscard]] SOLVERmodel copyModel() const;
+    [[nodiscard]] SOLVERmodel copyModel() const;
 #elif SOLVER_TYPE == 2
-  [[nodiscard]] Solver* copyModel() const;
+    [[nodiscard]] SOLVERmodel* copyModel() const;
+    [[nodiscard]] SOLVERenv* passEnv() const;
 #endif
 
-  int freeModel();
+    int freeModel();
 
-  int newModel(const char *Pname, int numvars,
-			   double *obj, double *lb, double *ub, char *vtype,
-			   char **varnames);
+    int newModel(const char *Pname, int numvars,
+                 double *obj, double *lb, double *ub, char *vtype,
+                 char **varnames);
 
-  int addConstraints(int numconstrs, int numnz,
-					 int *cbeg, int *cind, double *cval,
-					 char *sense, double *rhs, char **constrnames);
+    int addConstraints(int numconstrs, int numnz,
+                       int *cbeg, int *cind, double *cval,
+                       char *sense, double *rhs, char **constrnames);
 
-  [[nodiscard]] int updateModel();
+    [[nodiscard]] int updateModel();
 
-  int write(const char *filename) const;
+    int write(const char *filename) const;
 
-  int delVars(int len, int *ind);
+    int delVars(int len, int *ind);
 
-  void freeEnv();
+    void freeEnv();
 
-  int getObjVal(double *valueP) const;
+    int getObjVal(double *valueP) const;
 
-  int getX(int first, int len, double *values) const;
+    int getX(int first, int len, double *values) const;
 
-  int getObj(int first, int len, double *values) const;
+    int getObj(int first, int len, double *values) const;
 
-  int getRhs(int first, int len, double *values) const;
+    int getRhs(int first, int len, double *values) const;
 
-  void getSolver(Solver *solver);
+    void getSolver(Solver *solver);
 
-  void getEnv(Solver *solver);
+    void getEnv(Solver *solver);
 
-  int getRC(int first, int len, double *values) const;
+    int getRC(int first, int len, double *values) const;
 
-  int changeObj(int first, int len, double *values);
+    int changeObj(int first, int len, double *values);
 
-  int changeCoeffs(int cnt, int *cind, int *vind, double *val);
+    int changeCoeffs(int cnt, int *cind, int *vind, double *val);
 
-  int XchangeCoeffs(size_t cnt, int *cind, int *vind, double *val);
+    int XchangeCoeffs(size_t cnt, int *cind, int *vind, double *val);
 
-  int setRhs(int first, int len, char *sense, double *newvalues);
+    int setRhs(int first, int len, char *sense, double *newvalues);
 
-  int setRhs(int first, int len, double *newvalues);
+    int setRhs(int first, int len, double *newvalues);
 
-  int setColLower(int col, double value);
+    int setColLower(int col, double value);
 
-  int setColUpper(int col, double value);
+    int setColUpper(int col, double value);
 
-  int removeColLower(int col);
+    int removeColLower(int col);
 
-  int removeColUpper(int col);
+    int removeColUpper(int col);
 
-  int addConstraint(int numnz, int *cind, double *cval,
-					char sense, double rhs, const char *constrname);
+    int addConstraint(int numnz, int *cind, double *cval,
+                      char sense, double rhs, const char *constrname);
 
-  int addVars(int numvars, int numnz,
-			  int *vbeg, int *vind, double *vval,
-			  double *obj, double *lb, double *ub, char *vtype,
-			  char **varnames);
+    int addVars(int numvars, int numnz,
+                int *vbeg, int *vind, double *vval,
+                double *obj, double *lb, double *ub, char *vtype,
+                char **varnames);
 
-  int addVar(int numnz, int *vind, double *vval,
-			 double obj, double lb, double ub, char vtype,
-			 const char *varname);
+    int addVar(int numnz, int *vind, double *vval,
+               double obj, double lb, double ub, char vtype,
+               const char *varname);
 
-  int XaddVars(int numvars, size_t numnz,
-			   size_t *vbeg, int *vind, double *vval,
-			   double *obj, double *lb, double *ub, char *vtype,
-			   char **varnames);
+    int XaddVars(int numvars, size_t numnz,
+                 size_t *vbeg, int *vind, double *vval,
+                 double *obj, double *lb, double *ub, char *vtype,
+                 char **varnames);
 
-  int XaddContraints(int numconstrs, size_t numnz,
-					 size_t *cbeg, int *cind, double *cval,
-					 char *sense, double *rhs, char **constrnames);
+    int XaddContraints(int numconstrs, size_t numnz,
+                       size_t *cbeg, int *cind, double *cval,
+                       char *sense, double *rhs, char **constrnames);
 
-  int XgetConstraints(size_t *numnzP, size_t *cbeg,
-					  int *cind, double *cval, int start, int len) const;
+    int XgetConstraints(size_t *numnzP, size_t *cbeg,
+                        int *cind, double *cval, int start, int len) const;
 
-  int XgetVars(size_t *numnzP, size_t *vbeg,
-			   int *vind, double *vval, int start, int len) const;
+    int XgetVars(size_t *numnzP, size_t *vbeg,
+                 int *vind, double *vval, int start, int len) const;
 
-  int getConstraints(int *numnzP, int *cbeg,
-					 int *cind, double *cval, int start, int len) const;
+    int getConstraints(int *numnzP, int *cbeg,
+                       int *cind, double *cval, int start, int len) const;
 
-  int getVars(int *numnzP, int *vbeg, int *vind, double *vval, int start, int len) const;
+    int getVars(int *numnzP, int *vbeg, int *vind, double *vval, int start, int len) const;
 
-  int getCoeff(int row, int col, double &value) const;
+    int getCoeff(int row, int col, double &value) const;
 
-  int getStatus(int *valueP) const;
+    int getStatus(int *valueP) const;
 
-  [[nodiscard]] int setEnvMethod(int value);
+    [[nodiscard]] int setEnvMethod(int value);
 
-  [[nodiscard]] int setEnvCrossOver(int value);
+    [[nodiscard]] int setEnvCrossOver(int value);
 
-  [[nodiscard]] int getEnvMethod(int *value) const;
+    [[nodiscard]] int getEnvMethod(int *value) const;
 
-  int loadEnv(const char *logfilename);
+    int loadEnv(const char *logfilename);
 
-  [[nodiscard]] int setEnvThreads(int value, bool if_model_free);
+    [[nodiscard]] int setEnvThreads(int value, bool if_model_free);
 
-  [[nodiscard]] int setEnvOutputFlag(int value, bool if_model_free);
+    [[nodiscard]] int setEnvOutputFlag(int value, bool if_model_free);
 
-  [[nodiscard]] int setEnvInfUnbdInfo(int value, bool if_model_free);
+    [[nodiscard]] int setEnvInfUnbdInfo(int value, bool if_model_free);
 
-  [[nodiscard]] int setEnvMIPGap(double value, bool if_model_free);
+    [[nodiscard]] int setEnvMIPGap(double value, bool if_model_free);
 
-  [[nodiscard]] int setEnvCutoff(double value);
+    [[nodiscard]] int setEnvCutoff(double value);
 
-  [[nodiscard]] int setEnvTimeLimit(double value);
+    [[nodiscard]] int setEnvTimeLimit(double value);
 
-  [[nodiscard]] int setModelSense(int value);
+    [[nodiscard]] int setModelSense(int value);
 
-  [[nodiscard]] int getSense(int first, int len, char *sense);
+    [[nodiscard]] int getSense(int first, int len, char *sense);
+
+    [[nodiscard]] int readModel(const char *filename);
 };
 
 #ifdef SOLVER_STATISTICS

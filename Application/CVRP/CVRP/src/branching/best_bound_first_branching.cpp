@@ -3,6 +3,7 @@
 //
 
 #include "best_bound_first_branching.hpp"
+#include "read_node_in.hpp"
 #ifdef WRITE_ENUMERATION_TREES
 #include "write_enumeration_tree.hpp"
 #endif
@@ -25,14 +26,15 @@ void BestBoundFirstBranching::solve(QueueTree &tree) {
   }
 #endif
     while (!tree.empty()) {
-        glo_end = std::chrono::high_resolution_clock::now();
+        glo_end = high_resolution_clock::now();
         glo_eps = duration<double>(glo_end - glo_beg).count();
 
         node = tree.top();
         updateLowerBound();
+        read_node_in_call(ReadNodeIn::tryUpdateUB())
         tree.pop();
         ++num_explored_nodes;
-        nd_rmn = (int) tree.size();
+        nd_rmn = static_cast<int>(tree.size());
 
         tellIfTerminateTree();
         if (if_terminate_tree) {
@@ -41,6 +43,17 @@ void BestBoundFirstBranching::solve(QueueTree &tree) {
         }
 
         resetEnv();
+
+        write_node_out_call(
+            if(nd_rmn>=1 && !cvrp->getIfInEnuState()) {
+            WriteNodeOut::writeNodeOut(node);
+            if (!node) {
+            --num_explored_nodes; //since it has been written out
+            continue;
+            }
+            }
+        )
+
         solveNode();
 
 
@@ -57,7 +70,7 @@ void BestBoundFirstBranching::solve(QueueTree &tree) {
     if (!cvrp->getIfInEnuState())lb_transformed = ub;
 QUIT:
     while (!tree.empty()) {
-        BbNode *extra_node = tree.top();
+        const BbNode *extra_node = tree.top();
         tree.pop();
         ++num_explored_nodes;
         delete extra_node;
@@ -68,6 +81,7 @@ QUIT:
         global_gap = (ub - lb_transformed) / ub;
         cvrp->printOptIntSol();
         write_enumeration_trees_call(WriteEnumerationTree::writeEnuCols())
+        read_node_in_call(ReadNodeIn::rmNodeFile())
     }
 }
 
@@ -82,6 +96,7 @@ void BestBoundFirstBranching::updateLowerBound() {
             tmp_lb = node->getCurrentNodeVal();
         }
     }
+    tmp_lb = std::min(tmp_lb, node->getCurrentNodeVal());
     if (lb != tmp_lb) {
         lb = tmp_lb;
         lb_transformed = cvrp->ceilTransformedNumberRelated(lb - TOLERANCE);
@@ -91,6 +106,7 @@ void BestBoundFirstBranching::updateLowerBound() {
     } else {
         tmp_lb = node->getCurrentNodeVal();
     }
+    tmp_lb = std::min(tmp_lb, node->getCurrentNodeVal());
     if (sub_lb != tmp_lb) {
         sub_lb = tmp_lb;
         sub_lb_transformed = cvrp->ceilTransformedNumberRelated(sub_lb - TOLERANCE);

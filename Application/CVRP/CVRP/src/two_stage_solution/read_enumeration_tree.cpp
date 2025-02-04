@@ -139,7 +139,7 @@ void parseBrC(Brc &brc, const std::string &line) {
   ss >> brc.edge.second;
   ss >> token;
   ss >> brc.br_dir;
-  brc.idx_br_c = -1;
+  brc.idx_brc = -1;
 }
 
 void ReadEnumerationTree::init(CVRP *pr_cvrp) {

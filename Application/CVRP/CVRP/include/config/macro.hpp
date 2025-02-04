@@ -11,7 +11,7 @@
 
 #define RESOURCE_FACTOR 100 //times 100 to make it integer
 #define MAX_NUM_REGENERATE_BUCKET 4
-#define MAX_NUM_CUSTOMERS 400
+#define MAX_NUM_CUSTOMERS 1002
 #define DUAL_TOLERANCE 1e-6
 #define PRINT_LABELING_STEP_SIZE 30 //30
 #define LARGE_FLOAT 3e30
@@ -26,7 +26,6 @@
 #define MAX_NUM_OF_CUTS 100
 #define LP_COL_FINAL_LIMIT 10000
 #define MAX_TIME_LIMIT_FOR_MIP 1000000000 //no status check for now
-
 #define FACTOR_NUM_LABEL 100//assign labels in the bucket graph
 #define LABEL_ASSIGN 8000000
 #define MAX_ROUTE_PRICING 6400000
@@ -36,7 +35,6 @@
 
 using res_int = int; //cannot be unsigned type
 using yzzLong = std::bitset<MAX_NUM_CUSTOMERS>;
-
 
 
 #define SMALL_PHASE_SEPARATION "---------------------------------------------------------------------------------------------------------------\n"

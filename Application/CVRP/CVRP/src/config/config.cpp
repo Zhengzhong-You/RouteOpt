@@ -24,9 +24,9 @@ double Config::MaxGap2TryEnumeration{0.05};
 #else
 double Config::MaxGap2TryEnumeration{0.008};
 #endif
-int Config::MaxNumLabelInEnumeration{500000};
+int Config::MaxNumLabelInEnumeration{500000}; //500000
 int Config::MaxNumRouteInEnumeration_half{10000};
-int Config::MaxNumRouteInEnumeration{5000000};
+int Config::MaxNumRouteInEnumeration{5000000}; //5000000
 double Config::MIPInEnumerationTimeLimitChgFactor{0.8};
 int Config::MaxNumRoute4Mip{10000};
 double Config::InitGapTolerance4ArcEliminationNEnumeration{1e-4};
@@ -78,12 +78,12 @@ double Config::HardTimeThresholdInArcEliminationMidConcatenate{10000000};
 double Config::HardTimeThresholdInArcEliminationLastHalf{10000000};
 #else
 double Config::RatioGapImprovedVSTimeIncreased_UB{0.05};
-double Config::HardTimeThresholdInAllEnumeration{60};
+double Config::HardTimeThresholdInAllEnumeration{100}; //60
 double Config::CutGenTimeThresholdInPricingInitial{6};
 #ifdef SOLVER_RVRPSTW
 double Config::HardTimeThresholdInPricing{25};
 #else
-double Config::HardTimeThresholdInPricing{10};
+double Config::HardTimeThresholdInPricing{20};
 #endif
 double Config::HardTimeThresholdInArcEliminationMidConcatenate{5};
 double Config::HardTimeThresholdInArcEliminationLastHalf{50};

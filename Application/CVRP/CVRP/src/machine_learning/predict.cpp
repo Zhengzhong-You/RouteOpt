@@ -375,7 +375,7 @@ void Predict::testCGOneSide(std::pair<std::pair<int, int>, bool> &info) {
     auto org_val = node->getCurrentNodeVal();
 
     Brc bf;
-    bf.idx_br_c = num_row;
+    bf.idx_brc = num_row;
     node->getBrCs().emplace_back(bf);
     int col_start = num_col;
 

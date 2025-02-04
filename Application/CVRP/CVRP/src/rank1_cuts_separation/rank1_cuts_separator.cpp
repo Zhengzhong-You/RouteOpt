@@ -88,7 +88,6 @@ void Rank1CutsSeparator::updateInfo(const int limited_memory_type,
 }
 
 
-
 void Rank1CutsSeparator::separateRank1Cuts() {
     fillMemory();
     generateR1C1();

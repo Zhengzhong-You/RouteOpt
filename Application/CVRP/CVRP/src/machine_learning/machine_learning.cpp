@@ -211,7 +211,7 @@ void MachineLearning::getFeatureDataPhase2() {
     auto org_val = node->getCurrentNodeVal();
 
     Brc bf;
-    bf.idx_br_c = cvrp->getNumRow();
+    bf.idx_brc = cvrp->getNumRow();
     node->getBrCs().emplace_back(bf);
 
     vector<int> solver_ind;

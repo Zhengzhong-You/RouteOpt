@@ -11,9 +11,10 @@
 #define HEURISTIC_ENUMERATION_ON //
 #define HEURISTIC_DELUXING_ON //
 
-#define GUESSED_OPT_GAP_PER 0.001 // overly large value will lead to a fail heuristic
+#define GUESSED_OPT_GAP_PER 0.002 // overly large value will lead to a fail heuristic
 #define NUM_COL_HEURISTIC_MIP 10000
-#define HEURISTIC_MIP_THREADS_NUM 1
+#define LOWER_FAKE_UB_RATIO 0.8
+#define HEURISTIC_MIP_THREADS_NUM 8
 
 #define HEURISTIC_DELUXING_ROUND 20
 #define HEURISTIC_DELUXING_BETA1 1000

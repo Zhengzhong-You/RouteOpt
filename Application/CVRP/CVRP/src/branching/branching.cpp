@@ -34,9 +34,14 @@
 #include "combine_faster_smoothing.hpp"
 #endif
 
+#include "write_node_out.hpp"
 
+#ifdef MASTER_VALVE_ML
 #include "train.hpp"
 #include "predict.hpp"
+#endif
+
+#include "read_node_in.hpp"
 #include "robust_control.hpp"
 
 CVRP *BaseBranching::cvrp{};
@@ -105,6 +110,9 @@ void BaseBranching::prepare() {
   ReadEnumerationTree::init(cvrp);
   ReadEnumerationTree::getPath();
   ReadEnumerationTree::restoreModel();
+#elif defined(READ_NODE_IN)
+    ReadNodeIn::init(cvrp);
+    ReadNodeIn::recoverNodeInfo();
 #else
     cvrp->buildModel();
 #endif
@@ -130,6 +138,7 @@ void BaseBranching::prepare() {
         MASTER_VALVE_ML == ML_USE_MODEL || MASTER_VALVE_ML == ML_USE_MODEL_1,
         (Predict::loadModel(1), Predict::loadModel(2)))
     dynamic_call(Dynamics::init(cvrp))
+    write_node_out_call(WriteNodeOut::init(cvrp))
 }
 
 
@@ -244,6 +253,7 @@ void BaseBranching::resetEnv() {
     combine_faster_call(CombineFasterSmoothing::updateNode(node))
     ml_call(MASTER_VALVE_ML, MachineLearning::updateNode(node))
     dynamic_call(Dynamics::updateNode(node))
+    write_node_out_call(WriteNodeOut::updateNode(node))
 }
 
 void BaseBranching::recordBranchingHistory(const Brc &brc, double old_val) {
@@ -272,13 +282,13 @@ void BaseBranching::recordBranchingHistory(const Brc &brc, double old_val) {
         ++exact_improvement_down[brc.edge].second;
     }
     getGeomean(increase, recordings, dif);
-    verbose_call(cout << "Branching history: " << endl;
-        for (int i = 0; i < increase_depth.size(); ++i) {
-        cout << "Tree level: " << i << " increase: " << increase_depth[i].first.first << " "
-        << increase_depth[i].second.first << endl;
-        cout << "left recoding: " << increase_depth[i].first.second << " right recording: "
-        << increase_depth[i].second.second << endl;
-        })
+    // verbose_call(cout << "Branching history: " << endl;
+    //     for (int i = 0; i < increase_depth.size(); ++i) {
+    //     cout << "Tree level: " << i << " increase: " << increase_depth[i].first.first << " "
+    //     << increase_depth[i].second.first << endl;
+    //     cout << "left recoding: " << increase_depth[i].first.second << " right recording: "
+    //     << increase_depth[i].second.second << endl;
+    //     })
     node->getNodeBrValueImproved() = tellBranchingValue();
 }
 
@@ -299,13 +309,14 @@ double BaseBranching::tellBranchingValue() {
     double r_star;
     if (left_increase.second == 0 || right_increase.second == 0) {
         r_star = numeric_limits<float>::max();
-        for (auto &r: branching_history.increase_depth) {
-            if (r.first.second == 0 || r.second.second == 0) continue;
-            r_star = min(r_star, sqrt(r.first.first * r.second.first));
+        for (auto &[fst, snd]: branching_history.increase_depth) {
+            if (fst.second == 0 || snd.second == 0) continue;
+            r_star = min(r_star, sqrt(fst.first * snd.first));
         }
         if (r_star == numeric_limits<float>::max()) {
-            double val = (left_increase.second == 0) ? right_increase.first : left_increase.first;
-            r_star = val * R_DISCOUNT * INITIAL_CUTTING_BRANCHING_RATIO;
+            const double val = (left_increase.second == 0) ? right_increase.first : left_increase.first;
+            r_star = val * INITIAL_CUTTING_BRANCHING_RATIO;
+            write_node_out_call(r_star/=INITIAL_CUTTING_BRANCHING_RATIO) //reverse the effect of the ratio
         }
     } else {
         r_star = sqrt(left_increase.first * right_increase.first);

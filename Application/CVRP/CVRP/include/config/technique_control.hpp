@@ -3,6 +3,8 @@
 
 //#define WRITE_ENUMERATION_TREES
 //#define READ_ENUMERATION_TREES
+// #define WRITE_NODE_OUT
+// #define READ_NODE_IN
 
 //#define FASTER_DUAL
 //#define DUAL_SMOOTHING
@@ -11,16 +13,17 @@
 #define INITIAL_CUTTING_BRANCHING_RATIO 0.2
 
 //#define DYNAMIC_ADD_CUTS
-//#define LESS_CUTS
+// #define LESS_CUTS
+// #define NO_RANK1_CUTS
 
-//#define HEURISTIC
+// #define HEURISTIC
 
 //#define CONTROL_ROOT_GAP 0.005
 
 #define SOLVER_TYPE 0
 //#define VRPSOLVER_CPLEX_PARAMETER
 
-//#define KILL_ENUMERATION_TREES
+// #define KILL_ENUMERATION_TREES
 
 #define USE_M_DYNAMICS
 #define FIX_M 60 //3PB parameter
@@ -42,11 +45,11 @@
  * 10. 5， 1
  * 11. 10, 1
  * 12. 15, 1
- * 13. 10, 3
+ * 13. 10, 3 yes!
  * 14. 40, 1
  */
 
-#define MASTER_VALVE_ML 3
+#define MASTER_VALVE_ML 0
 /**
  * 0. forbid to use
  * 1. get data 1
@@ -57,7 +60,7 @@
 
 #if MASTER_VALVE_ML != 0
 #undef FIX_M
-#define FIX_M 37 //for tw benchmark 45 would be better!
+#define FIX_M 60 //for tw benchmark 45 would be better! 37 for cvrp all;
 #endif
 
 #if MASTER_VALVE_ML == 2
@@ -99,10 +102,15 @@
 //#define HGS_APPLIED
 //#define FIND_ALL_SOLUTIONS
 
-#define DELUXING_APPLIED 20
+// #define DELUXING_APPLIED 20
 /**
  * HEURISTIC_DELUXING_ROUND
  */
+
+#ifdef DELUXING_APPLIED
+#define DELUXING_NUMCOL_1 500000
+#define DELUXING_NUMCOL_2 100000
+#endif
 
 //#define VALGRIND_CHECK
 

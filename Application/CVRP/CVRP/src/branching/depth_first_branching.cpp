@@ -3,6 +3,7 @@
  */
 
 #include "depth_first_branching.hpp"
+#include "read_node_in.hpp"
 #ifdef WRITE_ENUMERATION_TREES
 #include "write_enumeration_tree.hpp"
 #endif
@@ -24,6 +25,15 @@ void DepthFirstBranching::solveOne(StackTree &tree) {
     updateLowerBound();
 
     resetEnv();
+    write_node_out_call(
+        if(nd_rmn>=1 && !cvrp->getIfInEnuState()) {
+        WriteNodeOut::writeNodeOut(node);
+        if (!node) {
+        --num_explored_nodes; //since it has been written out
+        return;
+        }
+        }
+    )
     solveNode();
 }
 
@@ -35,6 +45,8 @@ BEGIN:
     solveOne(tree);
     double node_val2 = node ? node->getCurrentNodeVal() : numeric_limits<double>::max();
     auto node2 = node;
+
+    read_node_in_call(ReadNodeIn::tryUpdateUB())
 
     if (node1) {
         if (node2) {
@@ -58,7 +70,7 @@ BEGIN:
     }
 
     if (node) {
-        glo_end = std::chrono::high_resolution_clock::now();
+        glo_end = high_resolution_clock::now();
         glo_eps = duration<double>(glo_end - glo_beg).count();
 
         tellIfTerminateTree();
@@ -89,6 +101,7 @@ QUIT:
         global_gap = (ub - lb_transformed) / ub;
         cvrp->printOptIntSol();
         write_enumeration_trees_call(WriteEnumerationTree::writeEnuCols())
+        read_node_in_call(ReadNodeIn::rmNodeFile())
     }
 }
 
@@ -101,6 +114,7 @@ void DepthFirstBranching::updateLowerBound() {
     } else {
         tmp_lb = node->getCurrentNodeVal();
     }
+    tmp_lb = std::min(tmp_lb, node->getCurrentNodeVal());
     if (lb != tmp_lb) {
         lb = tmp_lb;
         lb_transformed = cvrp->ceilTransformedNumberRelated(lb - TOLERANCE);
@@ -112,6 +126,7 @@ void DepthFirstBranching::updateLowerBound() {
     } else {
         tmp_lb = node->getCurrentNodeVal();
     }
+    tmp_lb = std::min(tmp_lb, node->getCurrentNodeVal());
     if (sub_lb != tmp_lb) {
         sub_lb = tmp_lb;
         sub_lb_transformed = cvrp->ceilTransformedNumberRelated(sub_lb - TOLERANCE);
@@ -127,7 +142,7 @@ void DepthFirstBranching::takeNodeOut(StackTree &tree) {
         sub_bbt_set.remove(node);
     }
     ++num_explored_nodes;
-    nd_rmn = (int) tree.size();
+    nd_rmn = static_cast<int>(tree.size());
 }
 
 void DepthFirstBranching::addNodeIn(StackTree &tree, BbNode *pr_node) {

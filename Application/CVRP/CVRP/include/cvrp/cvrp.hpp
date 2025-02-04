@@ -133,7 +133,9 @@ public:
     double meet_point_resource_in_bi_dir{}, meet_point_resource_in_bi_dir_enu{};
     ResTuple resource{};
     int dim{}, num_vehicle{}, max_num_vehicle{};
-
+#if  SOLVER_VRPTW == 1
+    bool if_force_keep_rcc{};
+#endif
 
     std::vector<std::vector<double> > info_vertex{};
     std::vector<std::vector<double> > cost_mat4_vertex{};
@@ -214,8 +216,8 @@ public:
     std::vector<size_t> dump_idx4_left_br_col{}; //record the size_t idx in colPool
     std::vector<size_t> dump_idx4_right_br_col{};
 
-    std::vector<std::tuple<int, std::vector<int>, std::vector<std::pair<std::vector<int>, int> > > >
-    reset_cut_mem{}; //cut index in r1c  & memory
+    // std::vector<std::tuple<int, std::vector<int>, std::vector<std::pair<std::vector<int>, int> > > >
+    // reset_cut_mem{}; //cut index in r1c  & memory
 
     std::unordered_map<std::pair<int, int>, std::vector<std::pair<Label *, ResTuple> >, PairHasher>
     concatenate_labels_in_forward_cg{};

@@ -105,7 +105,7 @@ void CVRP::calculateColumnCoefficientsB4Enumeration(BbNode *node, sparseColMatri
     }
 
     for (auto &br: node->getBrCs()) {
-        int idx = br.idx_br_c;
+        int idx = br.idx_brc;
         if (idx == -1) continue;
         int ai = br.edge.first;
         int aj = br.edge.second;

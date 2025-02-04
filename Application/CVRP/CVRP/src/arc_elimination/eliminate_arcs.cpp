@@ -5,7 +5,6 @@ using namespace std;
 using namespace std::chrono;
 
 void CVRP::eliminateArcs(BbNode *const node) {
-
     bool if_ban_arc_elimination = false;
     setting_2_call(banArcElimination(node->index == 0, if_ban_arc_elimination))
     if (if_ban_arc_elimination) return;

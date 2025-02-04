@@ -37,7 +37,7 @@ void RobustControl::robustControl(int oldNum, double &prior_nodeVal, int &goto_s
         } else {
             if (cvrp->if_roll_back) {
                 cvrp->rollbackEasyWay(node, oldNum);
-                if (RobustControl::restoreCuts()) {
+                if (restoreCuts()) {
                     goto_state = 0; //goto pricing;
                     return;
                 }

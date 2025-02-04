@@ -21,6 +21,7 @@ void CVRP::separateHybridCuts(BbNode *&node) {
     if (if_ban_cuts) return;
 
     if (if_in_enu_state) goto HYBRID;
+
     if (!node->index) {
         force_not_rollback = true;
         solver_vrptw_call(augmentNonGuillotineRound(node))
@@ -31,13 +32,16 @@ void CVRP::separateHybridCuts(BbNode *&node) {
             if_opt = true;
             goto QUIT;
         }
+
         assignInitialLabelingMemory();
         RobustControl::val_b4_rank1 = node->getCurrentNodeVal();
     }
 
 HYBRID:
 
-
+#ifdef NO_RANK1_CUTS
+    goto QUIT;
+#endif
     cout << MID_PHASE_SEPARATION;
     cout << "Switch on Hybrid...\n";
     while (true) {
@@ -113,21 +117,22 @@ HYBRID:
             int goto_state;
             RobustControl::robustControl(oldNum, prior_nodeVal, goto_state);
             if (goto_state == 0) goto PRICING;
-            else if (goto_state == 1) goto QUIT;
-
-            if (node->index == 0) BaseBranching::updateLowerBound();
+            if (goto_state == 1) goto QUIT;
 
             eliminateArcs(node);
             enumerateMIP(node);
             if (!node) goto QUIT;
 
+            if (node->index == 0) BaseBranching::updateLowerBound();
             cleanIndexColForNode(node, true);
             findNonActiveCuts(node); //cannot be freely deleted in enu since change matrix is very expensive!
         }
 
         standard = calculateGapImprovement(node->getCurrentNodeVal(), prior_nodeVal);
 
-        verbose_call(cout << "local gap= " << (double(BaseBranching::ub - node->getCurrentNodeVal()) / BaseBranching::ub > TOLERANCE ?
+        verbose_call(
+            cout << "local gap= " << (double(BaseBranching::ub - node->getCurrentNodeVal()) / BaseBranching::ub >
+                TOLERANCE ?
                 double(BaseBranching::ub - node->getCurrentNodeVal()) / BaseBranching::ub * 100 : 0)
             << endl;
             cout << "gap improved= " << standard << endl;
@@ -138,7 +143,9 @@ HYBRID:
         }
         if (node->index != 0) {
             verbose_call(cout << "br_value_improved= " << node->br_value_improved << endl;)
-            if (node->getCurrentNodeVal() - prior_nodeVal < CUTTING_BRANCHING_RATIO * node->br_value_improved) goto QUIT;
+            if (node->getCurrentNodeVal() - prior_nodeVal < CUTTING_BRANCHING_RATIO * node->br_value_improved)
+                goto QUIT
+                        ;
         }
 #ifdef CONTROL_ROOT_GAP
 	if (1 - node->getCurrentNodeVal() / BaseBranching::ub < CONTROL_ROOT_GAP) {
@@ -185,7 +192,8 @@ QUIT:
         }
     } else {
         verbose_call(
-            cout << "Hybrid tail off detected. Halting cut separation. Columns remaining: " << num_col << endl;)
+            cout << "Hybrid tail off detected. Halting cut separation. Columns remaining: " << num_col << " num_row= "
+            << num_row << endl;)
         cout << BIG_PHASE_SEPARATION;
     }
     if (node) {
@@ -194,10 +202,6 @@ QUIT:
             BaseBranching::updateLowerBound();
     }
 }
-
-
-
-
 
 
 void CVRP::separateRCCs(BbNode *&node) {

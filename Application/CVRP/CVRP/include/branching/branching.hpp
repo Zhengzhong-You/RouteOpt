@@ -116,7 +116,6 @@ public:
 
 template<typename SubTreeType>
 void BaseBranching::prepareEnuTree(SubTreeType &sub_bbt) {
-
     cvrp->prepareSolveEnuTree(node);
 
     sub_bbt.push(node);

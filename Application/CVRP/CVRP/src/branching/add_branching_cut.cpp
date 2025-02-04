@@ -1,4 +1,5 @@
 #include "cvrp.hpp"
+#include "write_node_out.hpp"
 #if SOLUTION_TYPE == 1
 #include "best_bound_first_branching.hpp"
 #elif SOLUTION_TYPE == 2
@@ -14,10 +15,10 @@ void CVRP::addBranchCutToUnsolved(
 ) {
     if (node->getIfTerminated()) return;
 
-    int c = num_row;
+    const int c = num_row;
     Brc bf;
     bf.edge = info;
-    bf.idx_br_c = c;
+    bf.idx_brc = c;
     ++node->getTreeLevel();
     vector<int> solver_ind;
     vector<double> solver_val;
@@ -28,11 +29,12 @@ void CVRP::addBranchCutToUnsolved(
     safe_solver(addBranchConstraint(solver_ind, solver_val, SOLVER_EQUAL, 1, nullptr, node2->solver))
 
     bf.br_dir = false;
-    bf.idx_br_c = -1;
+    bf.idx_brc = -1;
     node->getBrCs().emplace_back(bf);
 
-    auto it = std::find(solver_ind.begin(), solver_ind.end(), 0);
-    if (it != solver_ind.end()) solver_ind.erase(it);
+    if (const auto it = std::find(solver_ind.begin(), solver_ind.end(), 0); it != solver_ind.end())
+        solver_ind.
+                erase(it);
 
     rmLPCols(node, solver_ind);
     deleteArcByFalseBranchConstraint(node->all_forward_buckets, info);
@@ -42,12 +44,14 @@ void CVRP::addBranchCutToUnsolved(
     node->index = ++idx_node;
     ++idx_node;
 
+    write_node_out_call(WriteNodeOut::writeNodeOut(node2))
+    //write node2 out, if node1 out, change the following line
 #if SOLUTION_TYPE == 1
-    BestBoundFirstBranching::bbt.push(node2); //solve true first
-    BestBoundFirstBranching::bbt.push(node);
+    if (node2)BestBoundFirstBranching::bbt.push(node2); //solve true first
+    if (node)BestBoundFirstBranching::bbt.push(node); //this if is necessary!
 #elif SOLUTION_TYPE == 2
-  DepthFirstBranching::addNodeIn(DepthFirstBranching::bbt, node2);
-  DepthFirstBranching::addNodeIn(DepthFirstBranching::bbt, node);
+  if (node2)DepthFirstBranching::addNodeIn(DepthFirstBranching::bbt, node2);
+ if (node)DepthFirstBranching::addNodeIn(DepthFirstBranching::bbt, node);
 #endif
 }
 
@@ -73,7 +77,7 @@ void CVRP::addBranchConstraint2ColPoolInEnumByColMap(BbNode *node,
                     if (!current_node) break;
                     if (current_node == ai) {
                         if (col_pool4_pricing[j + 1] == aj || col_pool4_pricing[j - 1] == aj)
-                            triplets[cnt++] = {0, (int) it.col(), 1};
+                            triplets[cnt++] = {0, static_cast<int>(it.col()), 1};
                     }
                 }
             }
@@ -83,15 +87,14 @@ void CVRP::addBranchConstraint2ColPoolInEnumByColMap(BbNode *node,
             if (it.value() > 0.5) {
                 auto j = node->index_columns_in_enumeration_column_pool[it.col()] + 1;
                 if (col_pool4_pricing[j] == aj) {
-                    triplets[cnt++] = {0, (int) it.col(), 1};
+                    triplets[cnt++] = {0, static_cast<int>(it.col()), 1};
                     continue;
                 }
                 for (;; ++j) {
-                    int current_node = col_pool4_pricing[j];
-                    if (!current_node) break;
+                    if (int current_node = col_pool4_pricing[j]; !current_node) break;
                 }
                 if (col_pool4_pricing[j - 1] == aj) {
-                    triplets[cnt++] = {0, (int) it.col(), 1};
+                    triplets[cnt++] = {0, static_cast<int>(it.col()), 1};
                 }
             }
         }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include "cvrp.hpp"
 #include "template_functors.hpp"
+#include "write_node_out.hpp"
 #if SOLUTION_TYPE == 1
 #include "best_bound_first_branching.hpp"
 #elif SOLUTION_TYPE == 2
@@ -100,8 +101,8 @@ void CVRP::enumerateMIP(BbNode *&node) {
     if_succeed = enumerateRoutes(node);
 
     auto end = high_resolution_clock::now();
-    auto eps = duration_cast<milliseconds>(end - beg);
-    time_labeling = (double) eps.count() * 1e-3;
+    auto eps = duration<double>(end - beg).count();
+    time_labeling = eps;
 
     if (if_succeed) {
         cout << "enumeration time= " << time_labeling << " and succeed!" << endl;
@@ -135,6 +136,13 @@ void CVRP::enumerateMIP(BbNode *&node) {
 #endif
 
         if_enumeration_suc = true;
+        write_node_out_call(
+            cout<<"num_explored_nodes= "<<BaseBranching::num_explored_nodes<<endl;
+            if(BaseBranching::num_explored_nodes>1) {
+            WriteNodeOut::writeNodeOut(node, LARGE_MEMORY_USE);
+            --BaseBranching::num_explored_nodes;
+            goto PASS;
+            })
         beg = high_resolution_clock::now();
 #if SOLUTION_TYPE == 1
         BaseBranching::prepareEnuTree(BestBoundFirstBranching::sub_bbt);
@@ -144,6 +152,7 @@ void CVRP::enumerateMIP(BbNode *&node) {
 	DepthFirstBranching::solve(DepthFirstBranching::sub_bbt);
 #endif
         end = high_resolution_clock::now();
+    PASS:;
     } else {
         if_enumeration_suc = false;
     }
@@ -219,6 +228,8 @@ bool CVRP::enumerateRoutes(BbNode *const node) {
             cout << "the number of labels in Forward reached its limit!" << endl;
         return false;
     }
+
+    write_node_out_call(if(BaseBranching::num_explored_nodes>1)return true)
 
 #ifdef SYMMETRY_PROHIBIT
   beg = high_resolution_clock::now();
@@ -637,6 +648,7 @@ void CVRP::regenerateEnumMat(BbNode *node, BbNode *node2, bool if_force) {
         for (int i = 0; i < size_pool; ++i) {
             if (deleted_columns_in_enumeration_pool[i]) ++del_size;
         }
+        if (del_size == 0) return;
         node->valid_size = size_pool - del_size;
         if (!if_force) {
             auto left = double(node->size_enumeration_col_pool - del_size) / node->size_enumeration_col_pool;
@@ -853,7 +865,7 @@ void CVRP::deleteBranchCutsAndR1C1s(BbNode *const node) {
                     solver_beg.data(),
                     solver_ind.data(),
                     solver_val.data(),
-                    brc.idx_br_c,
+                    brc.idx_brc,
                     1))
                 for (int j = 0; j < solver_ind[0]; ++j)if (aj_col[j] || ai_col[j]) delete_col.insert(j);
                 for (size_t i = 1; i < numnzP; ++i)
@@ -881,8 +893,8 @@ void CVRP::deleteBranchCutsAndR1C1s(BbNode *const node) {
     deleted_cstrs.reserve(num_row);
     iota(local_cstr_index, local_cstr_index + num_row, 0);
     for (auto &brc: node->getBrCs()) {
-        if (brc.idx_br_c == -1) continue;
-        keep = brc.idx_br_c;
+        if (brc.idx_brc == -1) continue;
+        keep = brc.idx_brc;
         solver_ind[len++] = keep;
         local_cstr_index[keep] = -1;
         deleted_cstrs.emplace_back(keep);
@@ -920,7 +932,7 @@ void CVRP::deleteBranchCutsAndR1C1s(BbNode *const node) {
         }
     }
 
-    for (auto &brc: node->getBrCs()) brc.idx_br_c = -1;
+    for (auto &brc: node->getBrCs()) brc.idx_brc = -1;
 
     safe_solver(node->getSolver().delConstraints(len, solver_ind.data()))
     safe_solver(node->getSolver().reoptimize())
@@ -970,7 +982,8 @@ void CVRP::recoverR1CsInEnum(BbNode *const node) {
     }
 
 
-    safe_solver(node->getSolver().XchangeCoeffs(solver_ind.size(), solver_ind.data(), solver_ind2.data(), solver_val.data()))
+    safe_solver(
+        node->getSolver().XchangeCoeffs(solver_ind.size(), solver_ind.data(), solver_ind2.data(), solver_val.data()))
     safe_solver(node->getSolver().reoptimize())
     safe_solver(node->getSolver().getObjVal(&lp_val))
 #if VERBOSE_MODE == 1
@@ -1093,7 +1106,7 @@ CVRP::addBranchCutToUnsolvedInEnu(BbNode *const node, const std::pair<int, int> 
     ++node->getTreeLevel();
 
     bf.br_dir = true;
-    bf.idx_br_c = -1;
+    bf.idx_brc = -1;
 
     cstr_index.resize(num_row);
     iota(cstr_index.begin(), cstr_index.end(), 0);
@@ -1500,8 +1513,8 @@ void CVRP::deleteNonactiveCuts(BbNode *node, std::vector<int> &nonactive_cuts) {
         cstr_index = std::move(local_cstr_index);
     } else {
         for (auto &i: node->getBrCs()) {
-            if (i.idx_br_c != -1) {
-                i.idx_br_c = local_cstr_index[i.idx_br_c];
+            if (i.idx_brc != -1) {
+                i.idx_brc = local_cstr_index[i.idx_brc];
             }
         }
     }

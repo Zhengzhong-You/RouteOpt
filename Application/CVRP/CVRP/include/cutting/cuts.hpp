@@ -29,7 +29,7 @@ struct Rcc {
 
 struct Brc {
     std::pair<int, int> edge;
-    int idx_br_c;
+    int idx_brc;
     bool br_dir;
 };
 #endif //CVRP_CUTS_HPP

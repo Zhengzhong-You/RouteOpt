@@ -2,8 +2,10 @@
 #include "cvrp.hpp"
 #include "branching.hpp"
 #include "dynamics.hpp"
+
 #include "machine_learning.hpp"
 #include "train.hpp"
+
 using namespace std;
 using namespace std::chrono;
 using namespace Eigen;
@@ -25,7 +27,7 @@ void BaseBranching::testCG(bool if_exact_CG, bool if_record_product_val,
             Branch_Val(current_branching_info.branch_pair.size());
 
     Brc bf;
-    bf.idx_br_c = cvrp->getNumRow();
+    bf.idx_brc = cvrp->getNumRow();
     node->getBrCs().emplace_back(bf);
     int col_start = cvrp->getNumCol();
 
