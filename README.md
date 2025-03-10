@@ -27,7 +27,7 @@ For powerful and detailed documentation, please visit our [RouteOpt Documentatio
 **Important:** RouteOpt 1.0 has been removed. All features and improvements have been integrated into RouteOpt 2.0.  
 For users previously working with RouteOpt 1.0, please note that the repository has been moved to a new location:
 
-- **RouteOpt1.0 Repository:** [RouteOpt1 Repository](https://github.com/Zhengzhong-You/RouteOpt1)
+- **RouteOpt1.0 Repository:** [RouteOpt1 Repository](https://github.com/Zhengzhong-You/RouteOpt1).
 
 We strongly encourage all users to migrate to RouteOpt 2.0 to take advantage of the latest advancements.
 
