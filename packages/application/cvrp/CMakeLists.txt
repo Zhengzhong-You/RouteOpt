@@ -72,7 +72,6 @@ file(GLOB_RECURSE CVRP_SOURCES
 
 
 add_executable(${PROJECT_NAME} ${CVRP_SOURCES}
-        src/main/src/call_read_node_in.cpp
 )
 
 
