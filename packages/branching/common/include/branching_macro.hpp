@@ -11,7 +11,7 @@
  *
  * This header provides definitions for constants (such as invalid branch scores and tolerances),
  * utility functions (e.g., for verbose logging), and custom data structures (e.g., BranchingHistory,
- * EdgeScoreInfo) used in the RouteOpt branching module.
+ * CandidateScoreInfo) used in the RouteOpt branching module.
  */
 
 #ifndef ROUTE_OPT_BRANCHING_MACRO_HPP

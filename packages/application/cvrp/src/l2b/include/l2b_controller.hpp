@@ -43,7 +43,7 @@ namespace RouteOpt::Application::CVRP {
     };
 
     struct DualRC {
-        std::pair<int, int> edge{};
+        std::pair<int, int> candidate{};
         double dual1{}, rc1{};
         double dual2{}, rc2{};
     };

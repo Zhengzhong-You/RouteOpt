@@ -93,7 +93,7 @@ namespace RouteOpt::Application::CVRP {
         if (if_left) {
             dual_rc.emplace_back();
             auto &dual = dual_rc.back();
-            dual.edge = candidate;
+            dual.candidate = candidate;
             dual.dual1 = duals[2];
             dual.rc1 = rc_edge;
         } else {
@@ -114,7 +114,7 @@ namespace RouteOpt::Application::CVRP {
 
         std::sort(dual_rc.begin(), dual_rc.end(),
                   [&edge_to_index](const auto &a, const auto &b) {
-                      return edge_to_index.at(a.brc) < edge_to_index.at(b.brc);
+                      return edge_to_index.at(a.candidate) < edge_to_index.at(b.candidate);
                   });
 
         for (int i = 0; i < edge_info.size(); ++i) {
@@ -122,10 +122,10 @@ namespace RouteOpt::Application::CVRP {
             auto &d_info = dual_rc[i];
             auto &e = edge_tmp_info[edge_info[i].brc];
             auto &edge = e_info.brc;
-            if (e_info.brc != d_info.edge)
+            if (e_info.brc != d_info.candidate)
                 THROW_RUNTIME_ERROR("edge is not equal, edge_info: " + std::to_string(e_info.brc.first) + " " +
-                std::to_string(e_info.brc.second) + ", dual_rc: " + std::to_string(d_info.edge.first)
-                + " " + std::to_string(d_info.edge.second));
+                std::to_string(e_info.brc.second) + ", dual_rc: " + std::to_string(d_info.candidate.first)
+                + " " + std::to_string(d_info.candidate.second));
             e.extra_features_edge0.emplace_back("rc_edge", d_info.rc1);
             e.extra_features_edge0.emplace_back("dual", d_info.dual1);
             e.extra_features_edge0.emplace_back("dif", e_info.dif1);

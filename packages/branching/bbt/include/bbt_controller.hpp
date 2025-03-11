@@ -227,7 +227,7 @@ namespace RouteOpt::Branching::BBT {
         // Function to extract the enumeration state from a node.
         std::function<bool(Node *)> enuStateExtractor;
 
-        // Function to extract branching candidate information from a node.
+        // Function to extract last branching candidate information from a node. (candidate, direction, local tree size)
         std::function<std::tuple<BrCType, bool, int>(Node *)> lastBrcExtractor;
 
         // Function to obtain a reference to a branching candidate value from a node.
