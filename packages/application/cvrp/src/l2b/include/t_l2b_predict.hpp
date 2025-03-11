@@ -140,8 +140,15 @@ namespace RouteOpt::Application::CVRP {
 
         int pseudo_size = std::min(static_cast<int>(num * local_ratio_pseudo),
                                    static_cast<int>(l2b_controller_ref.get().branch_pair_from_pseudo.size()));
+
         int frac_size = std::min(num - pseudo_size,
                                  static_cast<int>(l2b_controller_ref.get().branch_pair_from_fractional.size()));
+        if (pseudo_size + frac_size < num) {
+            pseudo_size = std::min(static_cast<int>(l2b_controller_ref.get().branch_pair_from_pseudo.size()),
+                                   num - frac_size);
+        }
+
+        num = pseudo_size + frac_size;
 
         auto &branch_pair = branching_data_shared.refBranchPair();
 
