@@ -118,7 +118,6 @@ namespace RouteOpt::Application::CVRP {
         int tree_level,
         const std::vector<double> &lp_solution,
         const std::vector<int> &route_length) {
-        auto num = branching_testing.getNumPhase0();
         if (branching_data_shared.refBranchPair().size() <= 1) {
             CANDIDATE_SELECTOR_VERBOSE_EXEC(
                 PRINT_WARNING("too few candidates in phase1: " + std::to_string(branching_data_shared.refBranchPair().
@@ -126,6 +125,8 @@ namespace RouteOpt::Application::CVRP {
                     " no further selection is necessary"));
             return;
         }
+        auto num = std::min(branching_testing.getNumPhase0(),
+                            static_cast<int>(branching_data_shared.refBranchPair().size()));
 
         l2b_controller_ref.get().getFeatureDataPhase1(branching_data_shared, branching_history, node,
                                                       tree_level,
