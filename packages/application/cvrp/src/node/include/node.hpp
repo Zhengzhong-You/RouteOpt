@@ -306,6 +306,8 @@ namespace RouteOpt::Application::CVRP {
 
         void findNonActiveCuts(std::vector<double> &optional_optimal_dual, std::vector<int> &cstr_index);
 
+        int countActiveCuts(const std::vector<double> &optimal_dual) const;
+
         void deleteNonactiveCuts(std::vector<int> &nonactive_cuts, std::vector<double> &optimal_dual_vector,
                                  std::vector<int> &cstr_index);
 

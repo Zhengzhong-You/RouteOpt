@@ -354,8 +354,12 @@ namespace RouteOpt::Application::CVRP {
             if (del_size == 0) return;
             node->valid_size = size_pool - del_size;
             if (!if_force) {
+                int num_row;
+                SAFE_SOLVER(node->solver.getNumRow(&num_row))
                 auto ratio_1 = static_cast<double>(node->valid_size) / size_pool;
-                if (ratio_1 > LeftThresholdRCFixing4EnumerationPool) {
+                if (ratio_1 > LeftThresholdRCFixing4EnumerationPool && static_cast<double>(node->countActiveCuts(duals))
+                    /
+                    num_row > LeftThresholdConstraint4EnumerationPool) {
                     std::cout << "columns pending deletion= " << del_size << " remain= " << size_pool << std::endl;
                     return;
                 }

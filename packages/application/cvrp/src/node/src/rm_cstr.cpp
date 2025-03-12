@@ -54,6 +54,31 @@ namespace RouteOpt::Application::CVRP {
         }
     }
 
+    int BbNode::countActiveCuts(const std::vector<double> &optimal_dual) const {
+        if (if_terminate)
+            THROW_RUNTIME_ERROR("cannot count active cuts in a terminated node");
+        int num_row;
+        SAFE_SOLVER(solver.getNumRow(&num_row))
+        if (optimal_dual.empty()) return num_row;
+        if (optimal_dual.size() != num_row)
+            THROW_RUNTIME_ERROR("optimal dual std::vector size is not equal to num_row");
+
+        int cnt = 0;
+
+        for (auto &rcc: rccs) {
+            if (rcc.if_keep) continue;
+            if (int idx = rcc.idx_rcc; std::abs(optimal_dual[idx]) < DUAL_TOLERANCE) {
+                ++cnt;
+            }
+        }
+
+        for (auto &r1c: r1cs) {
+            if (int idx = r1c.idx_r1c; std::abs(optimal_dual[idx]) < DUAL_TOLERANCE) {
+                ++cnt;
+            }
+        }
+        return num_row - cnt;
+    }
 
     void BbNode::findNonActiveCuts(std::vector<double> &optional_optimal_dual, std::vector<int> &cstr_index) {
         if (if_terminate) return;
@@ -75,14 +100,14 @@ namespace RouteOpt::Application::CVRP {
         for (auto &rcc: rccs) {
             if (rcc.if_keep) continue;
             int idx = rcc.idx_rcc;
-            if (std::abs(dual_vec[idx]) < TOLERANCE) {
+            if (std::abs(dual_vec[idx]) < DUAL_TOLERANCE) {
                 nonactive_cuts.emplace_back(idx);
             }
         }
 
         for (auto &r1c: r1cs) {
             int idx = r1c.idx_r1c;
-            if (std::abs(dual_vec[idx]) < TOLERANCE) {
+            if (std::abs(dual_vec[idx]) < DUAL_TOLERANCE) {
                 nonactive_cuts.emplace_back(idx);
             }
         }

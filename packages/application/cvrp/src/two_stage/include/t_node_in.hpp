@@ -574,6 +574,19 @@ namespace RouteOpt::Application::CVRP {
         // Read branch info by reading each map in the same order as written.
         inline void readBranchInfo(Branching::BranchingHistory<std::pair<int, int>, PairHasher> &history,
                                    Branching::BKF::BKFDataShared &bkf_data_shared) {
+            // read f;
+            if (!inFile.is_open())
+                THROW_RUNTIME_ERROR("file stream is not open.");
+
+            std::string rawData;
+            readCompressedData(inFile, rawData);
+            std::istringstream iss(rawData, std::ios::binary);
+
+            auto f = bkf_data_shared.getF();
+            iss.read(reinterpret_cast<char *>(&f), sizeof(f));
+            if (!iss)
+                THROW_RUNTIME_ERROR("error reading max_enumeration_success_gap");
+            bkf_data_shared.updateF(f);
             readMap<decltype(bkf_data_shared.refRStarDepth()), false>(bkf_data_shared.refRStarDepth());
             readMap(history.exact_improvement_down);
             readMap(history.exact_improvement_up);

@@ -342,6 +342,16 @@ namespace RouteOpt::Application::CVRP {
 
         inline void writeBranchInfo(const Branching::BranchingHistory<std::pair<int, int>, PairHasher> &history,
                                     const Branching::BKF::BKFDataShared &bkf_data_shared) {
+            // write f;
+            if (!outFile.is_open())
+                THROW_RUNTIME_ERROR("file stream is not open.");
+
+            std::ostringstream oss(std::ios::binary);
+            auto f = bkf_data_shared.getF();
+            oss.write(reinterpret_cast<const char *>(&f), sizeof(f));
+            writeCompressedData(outFile, oss.str());
+            // end write f;
+
             writeMap(bkf_data_shared.getRStarDepth());
             writeMap(history.exact_improvement_down);
             writeMap(history.exact_improvement_up);
