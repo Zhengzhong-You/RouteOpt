@@ -539,6 +539,8 @@ namespace RouteOpt::Application::CVRP {
                     rank1_separation_controller.convert2ArcMemory(node->refR1Cs());
                     CuttingDetail::if_node_memory = false;
                     time_limit = std::numeric_limits<float>::max();
+                    tail_off_counter = 0;
+                    old_val = -std::numeric_limits<float>::max(); //reset
                     goto ENTER;
                 }
                 CuttingDetail::rollbackEasyWay(node, rollback_solver, rollback_cols, rollback_rccs, rollback_r1cs,

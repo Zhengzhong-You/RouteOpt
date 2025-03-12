@@ -58,7 +58,7 @@ namespace RouteOpt::Application::CVRP {
     constexpr int MaxNumLabelInEnumeration = 500000;
     constexpr int MaxNumRouteInEnumeration_half = 10000;
     constexpr int MaxNumRouteInEnumeration = 5000000;
-    constexpr int MaxNumRoute4Mip = 10000;
+    constexpr int MaxNumRoute4Mip{10000}; //often adjustable parameter
     constexpr double PricingWarningThreshold = 0.9;
     constexpr double SOL_NG_X_TOLERANCE = 1e-4;
     constexpr int MaxNumColsInNGAug = 200;
