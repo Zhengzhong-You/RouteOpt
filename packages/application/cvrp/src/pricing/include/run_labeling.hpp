@@ -19,7 +19,7 @@ namespace RouteOpt::Application::CVRP {
     void CVRP_Pricing::runLabeling(double time_limit) {
         if_stop_arc_elimination = pricing_level != PRICING_LEVEL::EXACT;
         if_exact_labeling_cg = pricing_level == PRICING_LEVEL::EXACT;
-        if_exact_cg_finished = pricing_level == PRICING_LEVEL::EXACT;
+        if_exact_labeling_finished = pricing_level == PRICING_LEVEL::EXACT;
         if_short_memory = false;
 
 
@@ -100,7 +100,7 @@ namespace RouteOpt::Application::CVRP {
             min_sorted_b = b;
 
             if (std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - beg).count() > time_limit) {
-                if_exact_cg_finished = false;
+                if_exact_labeling_finished = false;
                 goto QUIT;
             }
         }

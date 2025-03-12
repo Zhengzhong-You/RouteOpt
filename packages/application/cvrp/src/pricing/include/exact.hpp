@@ -23,7 +23,7 @@ namespace RouteOpt::Application::CVRP {
             initializeLabels<if_symmetry>();
             goto RE_TRY;
         }
-        if (!if_exact_cg_finished) {
+        if (!if_exact_labeling_finished) {
             goto QUIT;
         }
 
@@ -36,13 +36,14 @@ namespace RouteOpt::Application::CVRP {
                 initializeLabels<if_symmetry>();
                 goto RE_TRY2;
             }
-            if (!if_exact_cg_finished) {
+            if (!if_exact_labeling_finished) {
                 goto QUIT;
             }
         }
 
         ccnt = concatenateCols_prior_forward<if_symmetry>();
         updateDominanceStatics<if_symmetry>();
+        if_exact_cg_finished = true;
     QUIT:
         return ccnt;
     }

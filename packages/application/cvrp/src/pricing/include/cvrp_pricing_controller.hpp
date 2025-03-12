@@ -331,6 +331,7 @@ namespace RouteOpt::Application::CVRP {
         double num_dominance_checks{};
         bool if_short_memory{};
         bool if_exact_cg_finished{};
+        bool if_exact_labeling_finished{};
         bool if_arc_elimination_succeed{};
         double arc_elimination_time{HardTimeThresholdInArcEliminationLastHalf};
         int num_col_generated_ub{};

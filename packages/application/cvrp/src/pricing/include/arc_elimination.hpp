@@ -59,19 +59,19 @@ namespace RouteOpt::Application::CVRP {
             concatenatePhaseInArcElimination<true, false>();
             if (!if_arc_elimination_succeed) goto QUIT;
             runLabeling<true, true, false, false, PRICING_LEVEL::EXACT>(arc_elimination_time);
-            if (!if_exact_cg_finished) goto QUIT;
+            if (!if_exact_labeling_finished) goto QUIT;
             concatenatePhaseInArcElimination<false, false>();
             if (!if_arc_elimination_succeed) goto QUIT;
             runLabeling<false, true, false, false, PRICING_LEVEL::EXACT>(arc_elimination_time);
-            if (!if_exact_cg_finished) goto QUIT;
+            if (!if_exact_labeling_finished) goto QUIT;
         } else {
             concatenatePhaseInArcElimination<true, true>();
             if (!if_arc_elimination_succeed) goto QUIT;
             runLabeling<true, true, false, true, PRICING_LEVEL::EXACT>(arc_elimination_time);
-            if (!if_exact_cg_finished) goto QUIT;
+            if (!if_exact_labeling_finished) goto QUIT;
         }
     QUIT:
-        if (!if_exact_cg_finished || if_short_memory) if_arc_elimination_succeed = false;
+        if (!if_exact_labeling_finished || if_short_memory) if_arc_elimination_succeed = false;
         if (if_arc_elimination_succeed) {
             gap_improved_4_arc_elimination_n_enumeration += GapBarIncreased4ArcEliminationNEnumeration;
             arc_elimination_time += ArcEliminationTimeIncreased;
@@ -80,7 +80,7 @@ namespace RouteOpt::Application::CVRP {
 
     inline bool CVRP_Pricing::determineIfArcElimination(double ub, double opt_gap, double &last_gap) {
         if_arc_elimination_succeed = false;
-        if (!if_exact_cg_finished || if_stop_arc_elimination) {
+        if (!if_exact_labeling_finished || if_stop_arc_elimination) {
             return false;
         }
 

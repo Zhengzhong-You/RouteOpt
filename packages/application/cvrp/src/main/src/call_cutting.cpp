@@ -251,20 +251,22 @@ namespace RouteOpt::Application::CVRP {
             solver_beg[0] = 0;
             for (int k = 0; k < mat.outerSize(); ++k) {
                 sparseRowMatrixXd::InnerIterator it(mat, k);
-                if (equalFloat(rhs[k], 0)) {
-                    if (it.col() != 0) {
-                        solver_ind[nz] = static_cast<int>(it.col());
-                        solver_val[nz] = it.value();
+                if (it) {
+                    if (equalFloat(rhs[k], 0)) {
+                        if (it.col() != 0) {
+                            solver_ind[nz] = static_cast<int>(it.col());
+                            solver_val[nz] = it.value();
+                            ++nz;
+                        }
+                    } else {
+                        solver_ind[nz] = 0;
+                        solver_val[nz] = rhs[k];
                         ++nz;
-                    }
-                } else {
-                    solver_ind[nz] = 0;
-                    solver_val[nz] = rhs[k];
-                    ++nz;
-                    if (it.col() != 0) {
-                        solver_ind[nz] = static_cast<int>(it.col());
-                        solver_val[nz] = it.value();
-                        ++nz;
+                        if (it.col() != 0) {
+                            solver_ind[nz] = static_cast<int>(it.col());
+                            solver_val[nz] = it.value();
+                            ++nz;
+                        }
                     }
                 }
 
@@ -280,6 +282,7 @@ namespace RouteOpt::Application::CVRP {
 
             solver_ind.resize(nz);
             solver_val.resize(nz);
+
 
             SAFE_SOLVER(solver.XaddConstraints(
                 mat.rows(),
