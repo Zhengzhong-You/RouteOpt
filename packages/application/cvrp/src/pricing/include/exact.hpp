@@ -43,8 +43,9 @@ namespace RouteOpt::Application::CVRP {
 
         ccnt = concatenateCols_prior_forward<if_symmetry>();
         updateDominanceStatics<if_symmetry>();
-        if_exact_cg_finished = true;
+
     QUIT:
+        if_exact_cg_finished = if_exact_labeling_finished;
         return ccnt;
     }
 

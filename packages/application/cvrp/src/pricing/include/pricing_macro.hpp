@@ -7,6 +7,7 @@
 
 #ifndef ROUTE_OPT_PRICING_MACRO_HPP
 #define ROUTE_OPT_PRICING_MACRO_HPP
+
 namespace RouteOpt::Application::CVRP {
 #ifdef VALGRIND_MEM_CHECK
     constexpr double CutGenTimeThresholdInPricingInitial = std::numeric_limits<float>::max();
