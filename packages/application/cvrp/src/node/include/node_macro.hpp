@@ -11,7 +11,6 @@
 namespace RouteOpt::Application::CVRP {
     constexpr double OBJ_ARTIFICIAL = 1e6;
     constexpr double LeftThresholdRCFixing4EnumerationPool = 0.6;
-    constexpr double LeftThresholdConstraint4EnumerationPool = 0.6;
     constexpr double NodeLPDensityEstimation = 0.1;
 }
 #endif // ROUTE_OPT_NODE_MACRO_HPP

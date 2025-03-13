@@ -9,6 +9,7 @@
 #define ROUTE_OPT_T_NODE_OUT_HPP
 #include <fstream>
 #include <iostream>
+#include <t_node_out.hpp>
 #include <zlib.h>
 
 #include "two_stage_macro.hpp"
@@ -282,8 +283,8 @@ namespace RouteOpt::Application::CVRP {
 
 
             int cnt = 0;
-            for (int i = 0; i < deleted_columns_in_enumeration_pool.size(); ++i) {
-                if (deleted_columns_in_enumeration_pool.at(i)) continue;
+            for (auto i: deleted_columns_in_enumeration_pool) {
+                if (i) continue;
                 ++cnt;
             }
 
@@ -326,19 +327,35 @@ namespace RouteOpt::Application::CVRP {
             writeCompressedData(outFile, oss.str());
         }
 
+        template<typename T>
+        struct is_pair : std::false_type {
+        };
+
+        template<typename T1, typename T2>
+        struct is_pair<std::pair<T1, T2> > : std::true_type {
+        };
+
         template<typename Map>
         void writeMap(const Map &mapData) {
             std::ostringstream oss(std::ios::binary);
             const int mapSize = static_cast<int>(mapData.size());
             oss.write(reinterpret_cast<const char *>(&mapSize), sizeof(mapSize));
-            for (const auto &pair: mapData) {
-                oss.write(reinterpret_cast<const char *>(&pair.first.first), sizeof(pair.first.first));
-                oss.write(reinterpret_cast<const char *>(&pair.first.second), sizeof(pair.first.second));
-                oss.write(reinterpret_cast<const char *>(&pair.second.first), sizeof(pair.second.first));
-                oss.write(reinterpret_cast<const char *>(&pair.second.second), sizeof(pair.second.second));
+
+            for (const auto &pr_: mapData) {
+                oss.write(reinterpret_cast<const char *>(&pr_.first.first), sizeof(pr_.first.first));
+                oss.write(reinterpret_cast<const char *>(&pr_.first.second), sizeof(pr_.first.second));
+
+                if constexpr (is_pair<typename std::decay<decltype(pr_.second)>::type>::value) {
+                    oss.write(reinterpret_cast<const char *>(&pr_.second.first), sizeof(pr_.second.first));
+                    oss.write(reinterpret_cast<const char *>(&pr_.second.second), sizeof(pr_.second.second));
+                } else {
+                    oss.write(reinterpret_cast<const char *>(&pr_.second), sizeof(pr_.second));
+                }
             }
+
             writeCompressedData(outFile, oss.str());
         }
+
 
         inline void writeBranchInfo(const Branching::BranchingHistory<std::pair<int, int>, PairHasher> &history,
                                     const Branching::BKF::BKFDataShared &bkf_data_shared) {
@@ -360,6 +377,7 @@ namespace RouteOpt::Application::CVRP {
             writeMap(history.lp_testing_improvement_down);
             writeMap(history.lp_testing_improvement_up);
             writeMap(history.increase_depth);
+            writeMap(history.branch_choice);
         }
     }
 

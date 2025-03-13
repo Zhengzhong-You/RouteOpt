@@ -357,10 +357,10 @@ namespace RouteOpt::Application::CVRP {
                 int num_row;
                 SAFE_SOLVER(node->solver.getNumRow(&num_row))
                 auto ratio_1 = static_cast<double>(node->valid_size) / size_pool;
-                if (ratio_1 > LeftThresholdRCFixing4EnumerationPool && static_cast<double>(node->countActiveCuts(duals))
-                    /
-                    num_row > LeftThresholdConstraint4EnumerationPool) {
-                    std::cout << "columns pending deletion= " << del_size << " remain= " << size_pool << std::endl;
+                auto ratio_2 = static_cast<double>(node->countActiveCuts(duals)) / num_row;
+                if (ratio_1 * ratio_2 > LeftThresholdRCFixing4EnumerationPool) {
+                    std::cout << "columns pending deletion= " << del_size << " remain= " << size_pool << " col ratio= "
+                            << ratio_1 << " row ratio= " << ratio_2 << std::endl;
                     return;
                 }
                 std::cout << "delete columns= " << del_size << " remain= " << node->valid_size << std::endl;

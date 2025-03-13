@@ -34,7 +34,7 @@ namespace RouteOpt::Application::CVRP {
     constexpr VRPTW_TYPE vrptw_type{VRPTW_TYPE::SINGLE_RESOURCE};
     constexpr ML_TYPE ml_type{ML_TYPE::ML_USE_MODEL};
 
-    constexpr bool IF_WRITE_NODE_OUT{false};
+    constexpr bool IF_WRITE_NODE_OUT{true};
 
     enum class BKF_TYPE {
         M_LP = ml_type == ML_TYPE::ML_NO_USE ? 60 : 37,

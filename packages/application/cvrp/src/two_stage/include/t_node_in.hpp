@@ -534,7 +534,7 @@ namespace RouteOpt::Application::CVRP {
                 THROW_RUNTIME_ERROR("error reading second element of pair");
         }
 
-        template<typename Map, bool if_map = true>
+        template<typename Map, bool if_map = true, bool single_element = false>
         void readMap(Map &mapData) {
             if (!inFile.is_open())
                 THROW_RUNTIME_ERROR("file stream is not open.");
@@ -549,20 +549,38 @@ namespace RouteOpt::Application::CVRP {
                 THROW_RUNTIME_ERROR("error reading map size");
 
             if constexpr (!if_map) {
+                // For containers that support resize (e.g. vector of pair)
                 mapData.resize(mapSize);
                 for (int i = 0; i < mapSize; ++i) {
                     auto &key = mapData[i].first;
                     auto &value = mapData[i].second;
-                    readPairFromStream(iss, key);
-                    readPairFromStream(iss, value);
+                    if constexpr (single_element) {
+                        // Read key using readPairFromStream and value directly
+                        readPairFromStream(iss, key);
+                        iss.read(reinterpret_cast<char *>(&value), sizeof(value));
+                        if (!iss)
+                            THROW_RUNTIME_ERROR("error reading value for key in container read");
+                    } else {
+                        // Read both key and value using readPairFromStream
+                        readPairFromStream(iss, key);
+                        readPairFromStream(iss, value);
+                    }
                 }
             } else {
+                // For associative containers (e.g. std::map)
                 mapData.clear();
                 for (int i = 0; i < mapSize; ++i) {
                     typename Map::key_type key;
                     typename Map::mapped_type value;
-                    readPairFromStream(iss, key);
-                    readPairFromStream(iss, value);
+                    if constexpr (single_element) {
+                        readPairFromStream(iss, key);
+                        iss.read(reinterpret_cast<char *>(&value), sizeof(value));
+                        if (!iss)
+                            THROW_RUNTIME_ERROR("error reading value for key in map read");
+                    } else {
+                        readPairFromStream(iss, key);
+                        readPairFromStream(iss, value);
+                    }
                     auto ret = mapData.insert(std::make_pair(key, value));
                     if (!ret.second)
                         THROW_RUNTIME_ERROR("duplicate key encountered during map read");
@@ -585,16 +603,17 @@ namespace RouteOpt::Application::CVRP {
             auto f = bkf_data_shared.getF();
             iss.read(reinterpret_cast<char *>(&f), sizeof(f));
             if (!iss)
-                THROW_RUNTIME_ERROR("error reading max_enumeration_success_gap");
+                THROW_RUNTIME_ERROR("error reading f");
             bkf_data_shared.updateF(f);
-            readMap<decltype(bkf_data_shared.refRStarDepth()), false>(bkf_data_shared.refRStarDepth());
+            readMap<decltype(bkf_data_shared.refRStarDepth()), false, false>(bkf_data_shared.refRStarDepth());
             readMap(history.exact_improvement_down);
             readMap(history.exact_improvement_up);
             readMap(history.heuristic_improvement_down);
             readMap(history.heuristic_improvement_up);
             readMap(history.lp_testing_improvement_down);
             readMap(history.lp_testing_improvement_up);
-            readMap<decltype(history.increase_depth), false>(history.increase_depth);
+            readMap<decltype(history.increase_depth), false, false>(history.increase_depth);
+            readMap<decltype(history.branch_choice), true, true>(history.branch_choice);
         }
     }
 

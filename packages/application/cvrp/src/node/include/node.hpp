@@ -299,7 +299,7 @@ namespace RouteOpt::Application::CVRP {
             if (!if_in_enu_state || if_terminate) return false;
             int num_col;
             solver.getNumCol(&num_col);
-            return index_columns_in_enumeration_column_pool.size() + num_col <= MaxNumRoute4Mip;
+            return valid_size + num_col <= MaxNumRoute4Mip;
         }
 
         void solveMIP(double ub);
