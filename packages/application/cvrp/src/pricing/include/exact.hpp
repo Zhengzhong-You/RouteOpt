@@ -79,6 +79,7 @@ namespace RouteOpt::Application::CVRP {
 
     template<bool if_symmetry>
     void CVRP_Pricing::adjustResourceMeetPointInPricing() {
+        if (!if_exact_labeling_cg || !if_exact_labeling_finished) return;
         if constexpr (!if_symmetry) {
             double dif = std::abs(NumExistedLabels - NumExistedLabel_back);
             double over = dif / std::min(NumExistedLabels, NumExistedLabel_back);

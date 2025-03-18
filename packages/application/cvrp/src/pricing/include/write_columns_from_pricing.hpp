@@ -147,7 +147,7 @@ namespace RouteOpt::Application::CVRP {
 
     inline void CVRP_Pricing::setTerminateMarker(double val, double ub, bool &if_terminate) {
         double smallest_rc = negative_rc_label_tuple.empty() ? 0 : std::get<2>(negative_rc_label_tuple[0]);
-        if (if_exact_labeling_cg) {
+        if (if_exact_labeling_cg && if_exact_labeling_finished) {
             if (ceilTransformedNumberRelated(smallest_rc * max_num_vehicle_ref + val + RC_TOLERANCE) + TOLERANCE
                 >= ub) {
                 if_terminate = true;
