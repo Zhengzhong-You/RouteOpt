@@ -11,6 +11,8 @@
 #include "route_opt_macro.hpp"
 
 namespace RouteOpt::Application::CVRP {
+    constexpr double TIME_LIMIT{std::numeric_limits<float>::max()};
+
     enum class APPLICATION_TYPE {
         CVRP,
         VRPTW,

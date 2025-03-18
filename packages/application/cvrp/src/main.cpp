@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
     };
 
     // Solve the branch-and-bound tree starting from the root node.
-    bbt_controller.solve(node);
+    bbt_controller.solve(node, TIME_LIMIT);
 
     // After solving, print the optimal solution along with statistics:
     // number of nodes explored and the lower bound of the solution.
