@@ -31,9 +31,11 @@ namespace RouteOpt::Branching::BBT {
      * @tparam BrCType    Type representing the branching candidate.
      * @tparam Hasher     Type for hashing branching candidates.
      * @param root_node   Pointer to the root node of the branch-and-bound tree.
+     * @param time_limit  Maximum time limit for the solving process (default is numeric limits of float).
      */
     template<typename Node, typename BrCType, typename Hasher>
-    void BBTController<Node, BrCType, Hasher>::solve(Node *root_node) {
+    void BBTController<Node, BrCType, Hasher>::solve(Node *root_node,
+                                                     double time_limit) {
         // Optionally, read additional information for the root node if the callback is defined.
         if (tryReadNodeIn != nullptr)
             tryReadNodeIn(root_node, branching_history, bkf_data_shared);
@@ -59,6 +61,10 @@ namespace RouteOpt::Branching::BBT {
                 pricing(node);
             });
 
+
+            if (checkIfTimeLimit(node, time_limit)) break;
+
+
             // If the node is not terminated and is not the root (tree_level != 0), record branching information.
             if (!isTerminate(node) && tree_level != 0) {
                 branching_history.recordExactPerScore(edge, val, valueExtractor(node), dir, tree_level);
@@ -69,6 +75,8 @@ namespace RouteOpt::Branching::BBT {
             eps += TimeSetter::measure([&]() {
                 cutting(node);
             });
+
+            if (checkIfTimeLimit(node, time_limit)) break;
 
             // If the node remains active (not terminated), proceed with branching.
             if (!isTerminate(node)) {

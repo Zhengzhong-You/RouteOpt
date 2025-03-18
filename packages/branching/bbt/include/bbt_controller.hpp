@@ -134,8 +134,9 @@ namespace RouteOpt::Branching::BBT {
          * applying branching decisions until termination criteria are met.
          *
          * @param root_node Pointer to the root node of the branch-and-bound tree.
+         * @param time_limit Maximum time limit for the solving process (default is numeric limits of float).
          */
-        void solve(Node *root_node);
+        void solve(Node *root_node, double time_limit = std::numeric_limits<float>::max());
 
         /**
          * @brief Get the total number of nodes explored during the solving process.
@@ -279,6 +280,37 @@ namespace RouteOpt::Branching::BBT {
             std::cout << "tree size= " << tree.size() << " lb= " << lb << " ub= " << ub_ref.get()
                     << std::endl;
             std::cout << BIG_PHASE_SEPARATION;
+        }
+
+        /**
+         * @brief Delete all nodes in the branch-and-bound tree.
+         *
+         * This function iterates through the tree and deletes each node to free up memory.
+         */
+        void deleteTree() {
+            while (!tree.empty()) {
+                delete *tree.begin();
+                tree.erase(tree.begin());
+            }
+        }
+
+        /**
+         * @brief Check if the time limit has been exceeded.
+         *
+         * This function checks if the current time exceeds the specified time limit and manages
+         * the termination of the node and tree if the limit is reached.
+         */
+        bool checkIfTimeLimit(Node *node, double time_limit) {
+            if (glob_timer.getTime() > time_limit) {
+                PRINT_REMIND("Time limit= " + std::to_string(time_limit) + " exceeded");
+                updateBounds();
+                lb = std::min(valueExtractor(node), lb);
+                ++num_nodes_explored;
+                delete node;
+                deleteTree();
+                return true;
+            }
+            return false;
         }
     };
 } // namespace RouteOpt::Branching::BBT
