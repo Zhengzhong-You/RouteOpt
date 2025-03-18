@@ -12,4 +12,4 @@ make -j$(nproc)
 
 cd ..
 
-./bin/cvrp instance/A-n60-k9.vrp -u 1355
+./bin/cvrp instance/P-n20-k2.vrp -u 217
