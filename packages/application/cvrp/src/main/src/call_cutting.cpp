@@ -108,10 +108,13 @@ namespace RouteOpt::Application::CVRP {
                                  bool &if_tail_off,
                                  int &tail_off_counter) {
             double gap_improved = now_val - past_val;
-            if (gap_improved < TOLERANCE * now_val) {
+            if (gap_improved < -TOLERANCE * now_val) {
+                THROW_RUNTIME_ERROR("lp value decreased!");
+            } else if (gap_improved < TOLERANCE * now_val) {
                 if_tail_off = true;
                 goto QUIT;
             }
+
 
             if (!if_only_check_counter && !equalFloat(br_value_improved, 0.)) {
                 if (equalFloat(eps_max, 0.)) eps_max = std::numeric_limits<float>::max();
@@ -186,7 +189,6 @@ namespace RouteOpt::Application::CVRP {
         inline void configureCutsOptions(bool if_in_enu_state,
                                          bool if_root_node,
                                          bool &if_keep_rcc,
-                                         bool &if_force_first_form,
                                          bool &if_elementary,
                                          Rank1Cuts::Separation::MemoryType &limited_memory_type,
                                          Rank1Cuts::PRICING_HARD_LEVEL &pricing_hard_level,
@@ -195,7 +197,6 @@ namespace RouteOpt::Application::CVRP {
                                          bool &if_collect_sol) {
             if_keep_rcc = false;
             if (if_in_enu_state) {
-                if_force_first_form = true;
                 if_elementary = true;
                 limited_memory_type = Rank1Cuts::Separation::MemoryType::NO_MEMORY;
                 if_search_mem = false;
@@ -203,7 +204,6 @@ namespace RouteOpt::Application::CVRP {
                 if_collect_sol = false;
                 pricing_hard_level = Rank1Cuts::PRICING_HARD_LEVEL::EASY;
             } else {
-                if_force_first_form = false;
                 if_elementary = false;
                 limited_memory_type = if_node_memory
                                           ? Rank1Cuts::Separation::MemoryType::NODE_MEMORY
@@ -302,7 +302,6 @@ namespace RouteOpt::Application::CVRP {
             double cap,
             const std::vector<double> &demand,
             bool if_keep_rcc,
-            bool if_force_first_form,
             bool if_elementary,
             int &num_row,
             const std::vector<double> &sol_x,
@@ -314,7 +313,6 @@ namespace RouteOpt::Application::CVRP {
             std::vector<Rcc> new_rccs;
             RCCs::Separation::RCCSeparationController::generateRCCs(dim, cap, demand,
                                                                     if_keep_rcc,
-                                                                    if_force_first_form,
                                                                     if_elementary,
                                                                     sol_x, sols,
                                                                     existing_rccs,
@@ -412,14 +410,14 @@ namespace RouteOpt::Application::CVRP {
         std::vector<SequenceInfo> sols;
         int num_row;
         int old_row;
-        bool if_keep_rcc, if_force_first_form, if_elementary, if_search_mem, if_select_cuts, if_collect_sol,
+        bool if_keep_rcc, if_elementary, if_search_mem, if_select_cuts, if_collect_sol,
                 if_tail_off = false;
         bool old_enu_state;
         double time_limit;
         Rank1Cuts::Separation::MemoryType limited_memory_type;
         Rank1Cuts::PRICING_HARD_LEVEL pricing_hard_level;
         auto &cols = node->getCols();
-        double old_val = -std::numeric_limits<float>::max();
+        double old_val;
         double eps_max = 0., eps = 0.;
         int tail_off_counter = 0;
         std::vector<double> gap_improved_vec;
@@ -433,8 +431,6 @@ namespace RouteOpt::Application::CVRP {
     CUTTING:
 
         if (node->getIfTerminate()) goto QUIT;
-        if (node->getValue() < old_val - TOLERANCE)
-            THROW_RUNTIME_ERROR("lp value decreased!");
 
         old_val = node->getValue();
 
@@ -450,7 +446,6 @@ namespace RouteOpt::Application::CVRP {
             node->getIfInEnumState(),
             node->getIfRootNode(),
             if_keep_rcc,
-            if_force_first_form,
             if_elementary,
             limited_memory_type,
             pricing_hard_level,
@@ -473,7 +468,6 @@ namespace RouteOpt::Application::CVRP {
             cap,
             demand,
             if_keep_rcc,
-            if_force_first_form,
             if_elementary,
             num_row,
             sol_x,
@@ -582,7 +576,7 @@ namespace RouteOpt::Application::CVRP {
                 sols.emplace_back(cols[i]);
             }
         }
-        CuttingDetail::callRCC(getDim(), getCap(), getDemand(), true, false, false,
+        CuttingDetail::callRCC(getDim(), getCap(), getDemand(), true, false,
                                num_row, sol_x, sols, cols, existing_rccs, solver);
     }
 }

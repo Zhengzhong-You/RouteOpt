@@ -97,6 +97,11 @@ namespace RouteOpt {
         return error;
     }
 
+    int Solver::getThreads(int *const valueP) const {
+        auto error = GRBgetintparam(GRBgetenv(model), "Threads", valueP);
+        return error;
+    }
+
     int Solver::setEnvOutputFlag(int value, bool if_model_free) {
         int error;
         if (if_model_free)

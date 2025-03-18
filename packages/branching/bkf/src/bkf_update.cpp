@@ -19,6 +19,8 @@ namespace RouteOpt::Branching::BKF {
                                        BKFController &controller) {
         if (lift < TOLERANCE) {
             PRINT_WARNING("lift is too small: "+std::to_string(lift));
+        } else if (lift < -TOLERANCE) {
+            THROW_RUNTIME_ERROR("lift is even negative: "+std::to_string(lift));
         }
         lift = std::max(lift, TOLERANCE);
         if (tree_level >= r_star_depth.size()) r_star_depth.resize(tree_level + 1);

@@ -23,6 +23,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../common common_build)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../branching branching_build)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../rounded_cap_cuts rcc_build)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../rank1_cuts rank1_cuts_build)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../deluxing deluxing_build)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/lib/cmake_modules")
 find_package(HGS REQUIRED)
@@ -81,6 +82,7 @@ target_link_libraries(${PROJECT_NAME}
         BRANCHING_INCLUDES
         ROUNDED_CAP_CUTS_INCLUDES
         RANK1_CUTS_INCLUDES
+        DELUXING_INCLUDES
         ${GUROBI_LIBRARIES}
         ${CVRPSEP_LIBRARIES}
         ${XGB_LIBRARIES}

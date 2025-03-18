@@ -46,9 +46,9 @@ namespace RouteOpt::Rank1Cuts::Separation {
         auto &cut_record = sharedData.refCutRecord();
 
         for (auto &r1c: old_cuts) {
-            memset(&vis_times[0], 0, sizeof(double) * sol.size());
+            std::fill(vis_times.begin(), vis_times.end(), 0);
             const auto &coeff = rank1CutsDataShared.getMultiplier(static_cast<int>(r1c.info_r1c.first.size()),
-                                                              r1c.info_r1c.second);
+                                                                  r1c.info_r1c.second);
             auto deno = rank1CutsDataShared.getDenominator(static_cast<int>(r1c.info_r1c.first.size()),
                                                            r1c.info_r1c.second);
             auto rhs = rank1CutsDataShared.getRhs(static_cast<int>(r1c.info_r1c.first.size()),

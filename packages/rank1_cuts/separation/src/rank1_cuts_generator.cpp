@@ -188,20 +188,27 @@ namespace RouteOpt::Rank1Cuts::Separation {
         auto &sharedData = sharedData_ref.get();
         const auto &sol = sharedData.getSol();
         std::vector<std::pair<double, R1c> > tmp_cuts;
-        std::unordered_map<int, int> vis_map;
+        int dim = rank1CutsDataShared.getDim();
+        std::vector<std::unordered_map<int, int> > vis_map(dim);
+        int r_idx = 0;
         for (const auto &r: sol) {
-            vis_map.clear();
             for (const auto i: r.col_seq) {
-                ++vis_map[i];
+                ++vis_map[i][r_idx];
             }
-            for (auto &[v, times]: vis_map) {
-                if (times > 1) {
-                    tmp_cuts.emplace_back();
-                    tmp_cuts.back().first = std::floor(times / 2. + RANK1_TOLERANCE) * r.frac_x;
-                    tmp_cuts.back().second.info_r1c = std::make_pair(std::vector{v}, 0);
-                }
+            ++r_idx;
+        }
+
+        for (int i = 0; i < dim; ++i) {
+            if (vis_map[i].empty()) continue;
+            double vio = 0;
+            for (auto &[fst, snd]: vis_map[i]) {
+                vio += static_cast<int>(snd / 2. + RANK1_TOLERANCE) * sol[fst].frac_x;
+            }
+            if (vio > RANK1_TOLERANCE) {
+                tmp_cuts.emplace_back(vio, R1c{std::make_pair(std::vector{i}, 0)});
             }
         }
+
         if (tmp_cuts.empty()) return;
 
         std::sort(tmp_cuts.begin(), tmp_cuts.end(),

@@ -43,7 +43,8 @@ namespace RouteOpt::Application::CVRP {
             all_label = new Label[label_assign];
             rank1_rc_controller_ref.get().assignLabelMem(all_label, label_assign, &Label::r1c);
         } catch (const std::bad_alloc &) {
-            THROW_RUNTIME_ERROR("Memory allocation failed during reallocateLabel. Not enough memory.");
+            THROW_RUNTIME_ERROR("Label assigned=" + std::to_string(label_assign) +
+                " failed in reallocateLabel. Not enough memory.");
         }
     }
 

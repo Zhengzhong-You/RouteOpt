@@ -106,6 +106,10 @@ namespace RouteOpt {
         return CPXsetintparam(env, CPXPARAM_Threads, value);
     }
 
+    int Solver::getThreads(int *const valueP) const {
+        return CPXgetintparam(env, CPXPARAM_Threads, valueP);
+    }
+
     int Solver::setEnvOutputFlag(int value, bool if_model_free) {
         return CPXsetintparam(env, CPXPARAM_ScreenOutput, value);
     }

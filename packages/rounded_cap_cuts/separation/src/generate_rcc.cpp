@@ -57,7 +57,6 @@ namespace RouteOpt::RCCs::Separation {
                                                double cap,
                                                const std::vector<double> &demand,
                                                bool if_keep_rcc,
-                                               bool if_force_first_form,
                                                bool if_strengthen_rcc,
                                                const std::vector<double> &sol_x,
                                                const std::vector<SequenceInfo> &sols,
@@ -97,7 +96,7 @@ namespace RouteOpt::RCCs::Separation {
                 tmp_customerInfo.emplace_back(MyCutsCMP->CPL[i]->IntList[j]);
             }
 
-            if (if_force_first_form || tmp_customerInfo.size() <= dim / 2 || if_strengthen_rcc) {
+            if (tmp_customerInfo.size() <= dim / 2 || if_strengthen_rcc) {
                 rcc.form_rcc = if_strengthen_rcc
                                    ? static_cast<int>(RCCForm::RCC_FORM_3)
                                    : static_cast<int>(RCCForm::RCC_FORM_1);

@@ -5,6 +5,7 @@
  * License: GPL-3.0
  */
 
+#include <set>
 #include "rank1_separation_controller.hpp"
 #include "rank1_data_shared.hpp"
 #include "solver.hpp"

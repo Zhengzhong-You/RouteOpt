@@ -34,11 +34,12 @@ namespace RouteOpt::Branching::BBT {
      */
     template<typename Node, typename BrCType, typename Hasher>
     void BBTController<Node, BrCType, Hasher>::solve(Node *root_node) {
-        // Add the root node to the tree.
-        addNode(root_node);
         // Optionally, read additional information for the root node if the callback is defined.
         if (tryReadNodeIn != nullptr)
             tryReadNodeIn(root_node, branching_history, bkf_data_shared);
+
+        // Add the root node to the tree.
+        addNode(root_node);
 
         // Continue processing nodes until the tree is empty.
         while (!tree.empty()) {

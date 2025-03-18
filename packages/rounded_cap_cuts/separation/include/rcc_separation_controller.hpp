@@ -35,7 +35,6 @@ namespace RouteOpt::RCCs::Separation {
          * - A capacity parameter (cap) used in the cut generation logic.
          * - A demand vector (demand) representing the demand at each customer.
          * - A flag (if_keep_rcc) setting this flag to newly generated RCCs.
-         * - A flag (if_force_first_form) specifying whether to force the use of the first form of RCC.
          * - A flag (if_strengthen_rcc) that indicates whether to apply strengthening form of RCC.
          * - A solution vector (sol_x) containing fractional values from the LP relaxation.
          * - A vector of SequenceInfo objects (sols) representing solution routes or sequences.
@@ -46,7 +45,6 @@ namespace RouteOpt::RCCs::Separation {
          * @param cap Capacity constraint used in generating cuts.
          * @param demand Vector of demands for each customer.
          * @param if_keep_rcc Setter of flag of newly generated RCCs.
-         * @param if_force_first_form Flag to force the use of the first RCC form.
          * @param if_strengthen_rcc Flag to determine if RCCs should be strengthened form, i.e., form 3.
          * @param sol_x Vector containing fractional solution values.
          * @param sols Vector of SequenceInfo objects representing solution sequences.
@@ -57,7 +55,6 @@ namespace RouteOpt::RCCs::Separation {
                                  double cap,
                                  const std::vector<double> &demand,
                                  bool if_keep_rcc,
-                                 bool if_force_first_form,
                                  bool if_strengthen_rcc,
                                  const std::vector<double> &sol_x,
                                  const std::vector<SequenceInfo> &sols,

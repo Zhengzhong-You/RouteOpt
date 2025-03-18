@@ -564,6 +564,13 @@ namespace RouteOpt {
         int setEnvThreads(int value, bool if_model_free);
 
         /**
+         * @brief Retrieve the number of threads used by the solver environment.
+         * @param value Pointer to store the thread count.
+         * @return Status code.
+         */
+        int getThreads(int *value) const;
+
+        /**
          * @brief Set the output flag for the solver environment.
          * @param value Output flag value.
          * @param if_model_free Flag indicating if the model has not bound to the environment.
