@@ -31,7 +31,7 @@ if (Xerr != 0) { \
 throw  std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__) +": error in " + #call + ":" + XGBGetLastError()); \
 }\
 }
-// #define DEBUG_ML_INPUT_DATA
+    // #define DEBUG_ML_INPUT_DATA
 #ifdef DEBUG_ML_INPUT_DATA
 #define DEBUG_INPUT_DATA_CALL(...) __VA_ARGS__;
 #else

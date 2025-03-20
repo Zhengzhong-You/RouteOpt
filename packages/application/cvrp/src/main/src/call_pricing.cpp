@@ -29,16 +29,15 @@ namespace RouteOpt::Application::CVRP {
             BbNode::regenerateEnumMat(node, nullptr, false, optimal_dual_vector);
         } else {
             callLabeling(node, labeling_time_limit);
-            if (!node->getIfInEnumState()
-                && ml_type != ML_TYPE::ML_GET_DATA_1 && ml_type != ML_TYPE::ML_GET_DATA_2
-            ) {
+            if (node->getIfInEnumState()) {
+                goto ENU;
+            }
+            if constexpr (ml_type != ML_TYPE::ML_GET_DATA_1 || ml_type != ML_TYPE::ML_GET_DATA_2) {
                 if (pricing_controller.getIfCompleteCG()) {
                     std::vector<int> cstr_index;
                     node->findNonActiveCuts(optimal_dual_vector, cstr_index);
                     SAFE_SOLVER(node->refSolver().reoptimize(SOLVER_DUAL_SIMPLEX));
                 }
-            } else {
-                goto ENU;
             }
         }
 

@@ -90,6 +90,7 @@ namespace RouteOpt::Application::CVRP {
                                             l2b_train_controller(l2b_controller, ins_name,
                                                                  ml_type == ML_TYPE::ML_GET_DATA_1 || ml_type ==
                                                                  ML_TYPE::ML_GET_DATA_2) {
+            std::cout << "instance name= " << ins_name << std::endl;
         }
 
         void callCutting(BbNode *node);
