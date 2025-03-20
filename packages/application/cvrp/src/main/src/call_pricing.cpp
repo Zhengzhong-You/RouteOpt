@@ -42,6 +42,11 @@ namespace RouteOpt::Application::CVRP {
             }
         }
 
+        if (glob_timer.getTime() > TIME_LIMIT) {
+            PRINT_REMIND("time limit reached!");
+            node->refIfTerminate() = true;
+        }
+
         if constexpr (ml_type != ML_TYPE::ML_NO_USE) {
             if (!node->getIfTerminate()) l2b_controller.recordEdgeLongInfo(BbNode::obtainSolEdgeMap(node));
         }

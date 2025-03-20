@@ -87,8 +87,17 @@ namespace RouteOpt::Application::CVRP {
         if (candidate.first) SAFE_SOLVER(solver.getDual(candidate.first - 1, 1, duals.data()))
         SAFE_SOLVER(solver.getDual(candidate.second - 1, 1, duals.data() + 1))
         SAFE_SOLVER(solver.getDual(BeforeNumRow, 1, duals.data() + 2))
-        double rc_edge = 1 - (0.5 * (duals[0] + duals[1]) + duals[2]) / cost_mat4_vertex_ref.get()[candidate.first][
-                             candidate.second];
+        double rc_edge;
+
+        auto dis = cost_mat4_vertex_ref.get()[candidate.first][candidate.second];
+        if (equalFloat(dis, 0.)) {
+            PRINT_REMIND("edge cost is 0, edge: " + std::to_string(candidate.first) + " " +
+                std::to_string(candidate.second));
+            rc_edge = -std::numeric_limits<float>::max();
+        } else {
+            rc_edge = 1 - (0.5 * (duals[0] + duals[1]) + duals[2]) / cost_mat4_vertex_ref.get()[candidate.first][
+                          candidate.second];
+        }
 
         if (if_left) {
             dual_rc.emplace_back();

@@ -62,7 +62,7 @@ namespace RouteOpt::Rank1Cuts::Separation {
         const auto &sol = sharedData.getSol();
         std::unordered_map<int, int> map_vertex_state;
         auto &multiplier = rank1CutsDataShared.getMultiplier(static_cast<int>(cut.info_r1c.first.size()),
-                                                         cut.info_r1c.second);
+                                                             cut.info_r1c.second);
         for (int i = 0; i < multiplier.size(); ++i) {
             map_vertex_state[cut.info_r1c.first[i]] = multiplier[i];
         }
@@ -88,7 +88,7 @@ namespace RouteOpt::Rank1Cuts::Separation {
                             arcs);
             findLeastPlans2MakeCoeffRight(vertex_states, denominator, ps, if_suc);
             if (!if_suc) {
-                PRINT_WARNING("std::find least plans failed");
+                PRINT_WARNING("search least plans failed");
             } else {
                 auto &arc = all_arcs.emplace_back();
                 for (auto &p: ps) {

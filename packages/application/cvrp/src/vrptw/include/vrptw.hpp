@@ -13,6 +13,11 @@ namespace RouteOpt::Application::CVRP {
     class VRPTW : public CVRPSolver {
     public:
         VRPTW(int argc, char *argv[]): CVRPSolver(argc, argv) {
+            std::cout << "VRPTW MODE= " << (vrptw_type == VRPTW_TYPE::SINGLE_RESOURCE
+                                                ? "SINGLE_RESOURCE"
+                                                : vrptw_type == VRPTW_TYPE::CAP_MAIN_RESOURCE
+                                                      ? "CAP_MAIN_RESOURCE"
+                                                      : "TW_MAIN_RESOURCE") << std::endl;
         }
 
         ~VRPTW() override = default;

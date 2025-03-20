@@ -164,8 +164,6 @@ namespace RouteOpt::Application::CVRP {
             temp_ss >> info_vertex[tmp_j][6]; // service time
             ++tmp_j;
         }
-        PRINT_DEBUG("");
-        cap_ref.get() = 300;
         dim_ref.get() = tmp_j;
         info_vertex.resize(dim_ref.get());
     }

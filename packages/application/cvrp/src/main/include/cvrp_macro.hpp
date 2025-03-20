@@ -20,8 +20,8 @@ namespace RouteOpt::Application::CVRP {
 
     enum class VRPTW_TYPE {
         SINGLE_RESOURCE,
-        CapMainResource,
-        TwMainResource,
+        CAP_MAIN_RESOURCE,
+        TW_MAIN_RESOURCE,
     };
 
     //learning section
@@ -76,7 +76,7 @@ namespace RouteOpt::Application::CVRP {
     }
 
     constexpr int CapResourceIdx = (app_type == APPLICATION_TYPE::CVRP || get_if_tw_type_match(
-                                        VRPTW_TYPE::CapMainResource))
+                                        VRPTW_TYPE::CAP_MAIN_RESOURCE))
                                        ? 0
                                        : 1;
 
