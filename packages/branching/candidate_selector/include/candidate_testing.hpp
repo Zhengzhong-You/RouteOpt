@@ -12,6 +12,8 @@
 #include <chrono>
 #include <algorithm>
 #include <cmath>
+#include <boost/math/tools/roots.hpp>
+
 #include "route_opt_macro.hpp"
 #include "branching_macro.hpp"
 #include "candidate_selector_macro.hpp"

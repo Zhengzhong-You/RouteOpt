@@ -194,7 +194,6 @@ namespace RouteOpt::Application::CVRP {
                         ccnt = pricing_controller.generateColumnsByExact<if_symmetry>(time_limit);
                         if (!if_fix_meet_point) pricing_controller.adjustResourceMeetPointInPricing<if_symmetry>();
                         pricing_controller.setTerminateMarker(prior_value, ub, node->refIfTerminate());
-                        if (node->getIfTerminate()) node->refValue() = ub;
                         break;
                 }
             });
@@ -240,10 +239,12 @@ namespace RouteOpt::Application::CVRP {
             if (num_col > LP_COL_FINAL_LIMIT && if_allow_delete_col) node->cleanIndexColForNode();
         }
 
-        if (node->getIfTerminate()) goto QUIT;
-
-        if (if_update_node_val && pricing_controller.getIfCompleteCG()) {
-            SAFE_SOLVER(node->refSolver().getObjVal(& node->refValue()))
+        if (if_update_node_val) {
+            if (node->getIfTerminate()) {
+                node->refValue() = ub;
+            } else {
+                if (pricing_controller.getIfCompleteCG()) SAFE_SOLVER(node->refSolver().getObjVal(& node->refValue()))
+            }
         }
 
     QUIT:
