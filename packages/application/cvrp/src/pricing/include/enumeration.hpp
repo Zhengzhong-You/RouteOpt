@@ -328,6 +328,7 @@ namespace RouteOpt::Application::CVRP {
         cost_m.resize(num_routes_now);
         ptr.resize(num_routes_now);
 
+
         auto num = size_t(num_routes_now * getAverageRouteLength());
         reallocatePricingPool(num);
         auto PricingWarning = static_cast<size_t>(PricingWarningThreshold * static_cast<double>(mem4_pricing));
@@ -391,28 +392,32 @@ namespace RouteOpt::Application::CVRP {
         ENUMERATION_STATE status = ENUMERATION_STATE::NORMAL;
         (dir ? num_forward_labels_in_enu : num_backward_labels_in_enu) = 0;
 
-        // if constexpr (dir) {
-        //     initializeLabels<dir, if_symmetry, false, true, true>();
-        // } else {
-        //     initializeLabels<dir, if_symmetry, false, true, true>();
-        // }
-
         initializeLabels<dir, if_symmetry, false, true, true>();
 
         auto initial_time = std::chrono::high_resolution_clock::now();
         std::chrono::time_point<std::chrono::high_resolution_clock> beg, end;
+        double old_labels = 0;
 
 
         auto stop_b = static_cast<int>(meet_point_resource_in_bi_dir_enu / step_size);
 
         for (int b = dir ? 0 : num_buckets_per_vertex - 1; dir ? b < num_buckets_per_vertex : b >= 0; dir ? ++b : --b) {
             double time_4_b;
+            double label_4_b;
             if (dir ? b < stop_b : b > stop_b) {
                 beg = std::chrono::high_resolution_clock::now();
+                old_labels = dir ? num_forward_labels_in_enu : num_backward_labels_in_enu;
                 double left_time = max_enumeration_time - (std::chrono::duration<double>(
                                        beg - initial_time).count());
+                double left_label = max_label_in_enumeration - (dir
+                                                                    ? num_forward_labels_in_enu
+                                                                    : num_backward_labels_in_enu);
+                label_4_b = left_label / std::abs(stop_b - b);
                 time_4_b = left_time / std::abs(stop_b - b);
-            } else time_4_b = std::numeric_limits<double>::max();
+            } else {
+                time_4_b = std::numeric_limits<float>::max();
+                label_4_b = std::numeric_limits<float>::max();
+            }
 
             for (auto &comp: dir ? topological_order_forward_ptr->at(b) : topological_order_backward_ptr->at(b)) {
                 int index = 0;
@@ -437,7 +442,9 @@ namespace RouteOpt::Application::CVRP {
                     }
                     valid_num = 0;
                     end = std::chrono::high_resolution_clock::now();
-                    if (std::chrono::duration<double>(end - beg).count() > time_4_b) {
+                    if (std::chrono::duration<double>(end - beg).count() > time_4_b || (dir
+                                ? num_forward_labels_in_enu
+                                : num_backward_labels_in_enu) - old_labels > label_4_b) {
                         status = ENUMERATION_STATE::TIME_LIMIT;
                         goto outside;
                     }
@@ -466,7 +473,8 @@ namespace RouteOpt::Application::CVRP {
     template<bool dir, bool if_symmetry>
     void CVRP_Pricing::extendKernel4Enumeration(int i, int b, Label *ki,
                                                 std::vector<Label *> **copy_bucket,
-                                                std::unordered_map<routeOptLong, std::tuple<Label *, Label *, double> > &
+                                                std::unordered_map<routeOptLong, std::tuple<Label *, Label *, double> >
+                                                &
                                                 Tags,
                                                 int &num_routes_now, ENUMERATION_STATE &status) {
         status = ENUMERATION_STATE::NORMAL;

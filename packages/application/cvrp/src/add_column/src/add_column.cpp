@@ -255,13 +255,14 @@ namespace RouteOpt::Application::CVRP {
         auto &cols = *existing_cols_ptr;
         auto size_enumeration_col_pool = static_cast<int>(ptr.size());
 
+
         // int idx = num_col;
         auto idx = cols.size();
         cols.resize(cols.size() + Col_added.size());
         for (auto &col: Col_added) {
             auto &seq = cols[idx++].col_seq; //no other information is needed!
             for (auto j = ptr[col] + 1;; ++j) {
-                int curr_node = col_pool4_pricing[j];
+                int curr_node = col_pool4_pricing_ref.get()[j];
                 if (!curr_node)break;
                 seq.emplace_back(curr_node);
             }

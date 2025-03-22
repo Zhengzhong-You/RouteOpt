@@ -21,6 +21,7 @@ namespace RouteOpt::Application::CVRP {
     constexpr int BEST_PRE = (-1);
     constexpr int TRUST_PRE_BAR = (MAX_R_SECOND_STAGE - 1);
     constexpr double THRESHOLD_DELTA = 1.;
+    constexpr double TRUST_SCORE = 1e3; //if the score is way larger, then we trust it
 
     constexpr std::string_view TRAIN_FOLDER_LP = "train_lp";
     constexpr std::string_view TRAIN_FOLDER_EXACT = "train_exact";

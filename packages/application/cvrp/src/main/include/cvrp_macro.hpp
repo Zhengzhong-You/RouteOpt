@@ -137,10 +137,10 @@ namespace RouteOpt::Application::CVRP {
     constexpr double GAP_TOO_CLOSE_TO_ONE = 0.1;
 
     constexpr std::string_view model_1 = app_type == APPLICATION_TYPE::CVRP
-                                             ? "model/cvrp_model_1.1.bin"
+                                             ? "model/cvrp_model_1.2.bin"
                                              : "model/vrptw_model_1.1.bin";
     constexpr std::string_view model_2 = app_type == APPLICATION_TYPE::CVRP
-                                             ? "model/cvrp_model_2.1.bin"
+                                             ? "model/cvrp_model_2.2.bin"
                                              : "model/vrptw_model_2.1.bin";
 
     constexpr const char *MODEL_NAME = "CVRP";

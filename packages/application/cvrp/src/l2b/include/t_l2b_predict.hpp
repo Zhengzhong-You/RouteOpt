@@ -28,8 +28,10 @@ namespace RouteOpt::Application::CVRP {
             return;
         }
         for (auto &edge: branch_pair) {
-            edge_lp_pre[edge].first.lp = l2b_controller_ref.get().getEdgeLPChange().at(edge).first;
-            edge_lp_pre[edge].second.lp = l2b_controller_ref.get().getEdgeLPChange().at(edge).second;
+            edge_lp_pre[edge].first.lp = std::min(l2b_controller_ref.get().getEdgeLPChange().at(edge).first,
+                                                  TRUST_SCORE);
+            edge_lp_pre[edge].second.lp = std::min(l2b_controller_ref.get().getEdgeLPChange().at(edge).second,
+                                                   TRUST_SCORE);
         }
 
         DMatrixHandle test;
@@ -90,6 +92,11 @@ namespace RouteOpt::Application::CVRP {
                 static_cast<int>((output_result[i] - min_val) / (max_val - min_val) * (MAX_R_SECOND_STAGE + 1) -
                                  TOLERANCE),
                 0);
+            auto &lp = i % 2 == 0 ? e.first.lp : e.second.lp;
+            if (lp >= TRUST_SCORE && val == 0) {
+                val = BEST_PRE;
+                lp = TRUST_SCORE + 1; // tie breaker
+            }
             i % 2 == 0 ? e.first.pre = val : e.second.pre = val;
         }
 

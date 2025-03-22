@@ -179,7 +179,7 @@ namespace RouteOpt::Application::CVRP {
                 double tmp = std::abs(node->getValue() - old_val) / node->getValue();
                 if (tmp > improved) improved = tmp;
                 else if (tmp < improved * NGAugTailOff) break;
-                else old_val = node->getValue();
+                old_val = node->getValue();
             }
         }
     }

@@ -24,13 +24,15 @@ namespace RouteOpt::Application::CVRP {
             const std::vector<std::vector<double> > &cost_mat4_vertex,
             const std::vector<std::tuple<Label *, Label *, double> > &negative_rc_label_tuple,
             Rank1Cuts::CoefficientGetter::Rank1CoefficientGetter &rank1_coefficient_getter,
-            std::map<std::vector<int>, double> &seq_rc_map)
+            std::map<std::vector<int>, double> &seq_rc_map,
+            int *&col_pool4_pricing)
             : dim(dim),
               cost_mat4_vertex_ref(cost_mat4_vertex),
               negative_rc_label_tuple_ref(negative_rc_label_tuple),
               new_cols_ref(new_cols),
               rank1_coefficient_getter_ref(rank1_coefficient_getter),
-              seq_rc_map_ref(seq_rc_map) {
+              seq_rc_map_ref(seq_rc_map),
+              col_pool4_pricing_ref(col_pool4_pricing) {
         }
 
 
@@ -52,7 +54,6 @@ namespace RouteOpt::Application::CVRP {
             this->idx_col_pool_ptr = &idx_col_pool;
             this->cost_col_pool_ptr = &cost_col_pool;
             this->matrix_col_pool_ptr = &matrix_col_pool;
-            this->col_pool4_pricing = col_pool4_pricing;
         }
 
         void addColumns(int &ccnt, const std::vector<double> &pi4_labeling, bool if_check_rc, bool if_enu = false);
@@ -70,6 +71,7 @@ namespace RouteOpt::Application::CVRP {
         //cannot be const
         std::reference_wrapper<Rank1Cuts::CoefficientGetter::Rank1CoefficientGetter> rank1_coefficient_getter_ref;
         std::reference_wrapper<std::map<std::vector<int>, double> > seq_rc_map_ref;
+        std::reference_wrapper<int *> col_pool4_pricing_ref;
 
 
         //ptr
@@ -79,8 +81,6 @@ namespace RouteOpt::Application::CVRP {
         const RowVectorXT *idx_col_pool_ptr{};
         const RowVectorXd *cost_col_pool_ptr{};
         const std::deque<sparseRowMatrixXd> *matrix_col_pool_ptr{};
-        const int *col_pool4_pricing{};
-
         //cannot be const
         Solver *solver_ptr{};
         std::vector<SequenceInfo> *existing_cols_ptr{};
