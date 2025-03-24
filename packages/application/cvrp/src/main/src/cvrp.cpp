@@ -36,7 +36,7 @@ namespace RouteOpt::Application::CVRP {
             os << route.back() << "\n";
         }
 
-        lower_bound = ceilTransformedNumberRelated(lower_bound);
+        lower_bound = std::min(ceilTransformedNumberRelated(lower_bound), ub);
 
         double global_gap = 100.0 * (1.0 - lower_bound / ub);
 

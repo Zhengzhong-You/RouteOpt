@@ -130,8 +130,6 @@ namespace RouteOpt::Application::CVRP {
             while (true) {
                 std::cout << SMALL_PHASE_SEPARATION;
                 std::cout << "DSSR: " << rd++ << std::endl;
-                findNGMemorySets(node, cvrp->getDim(), ng_mem4_vertex, if_empty);
-                if (if_empty) break;
                 auto eps = TimeSetter::measure([&]() {
                     cvrp->solveLPInLabeling(node, true, true, true,
                                             false, false,
@@ -140,6 +138,8 @@ namespace RouteOpt::Application::CVRP {
                 });
                 max_time = std::max(max_time, eps);
                 if (node->getValue() + TOLERANCE > old_val) break;
+                findNGMemorySets(node, cvrp->getDim(), ng_mem4_vertex, if_empty);
+                if (if_empty) break;
             }
         }
 
