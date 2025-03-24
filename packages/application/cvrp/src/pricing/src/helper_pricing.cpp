@@ -18,7 +18,7 @@ namespace RouteOpt::Application::CVRP {
     void CVRP_Pricing::resizePoolWarning(size_t &pricing_warning) {
         if (pool_beg4_pricing >= pricing_warning) {
             std::cout << SMALL_PHASE_SEPARATION;
-            PRINT_WARNING("pricing pool is almost full!");
+            PRINT_REMIND("pricing pool is almost full!");
             std::cout << "pool_beg4_pricing=" << pool_beg4_pricing << std::endl;
             std::cout << "mem4_pricing=" << mem4_pricing << std::endl;
             std::cout << "we reallocate the pricing pool!" << std::endl;

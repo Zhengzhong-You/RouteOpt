@@ -62,7 +62,7 @@ namespace RouteOpt::Application::CVRP {
         constexpr bool if_open_exact = true;
         constexpr bool if_update_node_val = true;
         constexpr bool if_possible_terminate_early = false;
-        constexpr bool if_fix_row = true;
+        constexpr bool if_fix_row = false;
         constexpr bool if_allow_delete_col = true;
 
         bool if_consider_regenerate_bucket_graph = node->getIfRootNode();

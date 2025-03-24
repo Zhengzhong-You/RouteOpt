@@ -18,7 +18,7 @@ namespace RouteOpt::Branching::BKF {
     void BKFDataShared::calculateRStar(double lift, int tree_level, bool dir, int node_idx,
                                        BKFController &controller) {
         if (lift < TOLERANCE) {
-            PRINT_WARNING("lift is too small: "+std::to_string(lift));
+            PRINT_REMIND("lift is too small: "+std::to_string(lift));
         } else if (lift < -TOLERANCE) {
             THROW_RUNTIME_ERROR("lift is even negative: "+std::to_string(lift));
         }

@@ -23,10 +23,10 @@ namespace RouteOpt::Application::CVRP {
                 local_cap += getDemand()[i];
             }
             if (local_cap > getCap() + TOLERANCE) {
-                std::cout << "cap for route ";
-                for (auto &i: route.col_seq) {
-                    std::cout << i << " ";
-                }
+                std::cout << "demand for route ";
+                // for (auto &i: route.col_seq) {
+                //     std::cout << i << " ";
+                // }
                 std::cout << " is " << local_cap << ", while cap= " << getCap() << std::endl;
                 feasible = false;
                 break;

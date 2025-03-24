@@ -134,7 +134,6 @@ namespace RouteOpt::Application::CVRP {
                 node->optimizeLPForOneIteration(prior_value, if_allow_delete_col, lp_method);
             });
 
-
             lp_method = SOLVER_PRIMAL_SIMPLEX;
 
             SAFE_SOLVER(node->refSolver().getNumCol(&num_col))
@@ -143,7 +142,6 @@ namespace RouteOpt::Application::CVRP {
 
 
             updateIntegerSolution(prior_value, X, node->getCols(), if_integer, if_feasible);
-
 
             if (if_integer && !if_feasible && !if_fix_row) {
                 addFeasibilityCuts(num_row, X, node->getCols(), node->refRCCs(),
