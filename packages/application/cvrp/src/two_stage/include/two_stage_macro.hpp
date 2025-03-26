@@ -17,10 +17,10 @@ namespace RouteOpt::Application::CVRP {
     constexpr double READ_MEMORY_RATIO = 2.;
 
     enum class COL_POOL_TYPE {
-        TINY = 100000,
-        SMALL = 200000,
-        MID = 500000,
-        LARGE = 1000000
+        TINY = 200000, // keep solving
+        SMALL = 400000, // write small memory out
+        MID = 800000, // write middle memory out
+        LARGE = 1000000 // write large memory out
     };
 
     enum class OUT_NODE_MEMORY_USE {
