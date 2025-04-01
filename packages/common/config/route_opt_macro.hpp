@@ -75,8 +75,8 @@ namespace RouteOpt {
         int forward_concatenate_pos{};
         // Equality operator comparing both the sequence and the concatenation position.
         bool operator==(const SequenceInfo &other) const {
-            return col_seq == other.col_seq &
-                   forward_concatenate_pos == other.forward_concatenate_pos;
+            return (col_seq == other.col_seq) &&
+                   (forward_concatenate_pos == other.forward_concatenate_pos);
         }
     };
 

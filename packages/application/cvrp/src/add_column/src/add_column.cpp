@@ -5,7 +5,7 @@
  * License: GPL-3.0
  */
 
-#include "add_columns_macro.hpp"
+#include "add_column_macro.hpp"
 #include "add_column_controller.hpp"
 #include "rcc_coefficient_controller.hpp"
 #include "node_macro.hpp"
