@@ -23,7 +23,7 @@ namespace RouteOpt::Application::CVRP {
         std::vector<double> x(num_col);
         SAFE_SOLVER(node->refSolver().getX(0, num_col, x.data()))
         std::vector<int> route_length(num_col);
-        for (int i = 0; i < num_col; ++i) {
+        for (int i = 0; i < num_col; ++i) { 
             route_length[i] = static_cast<int>(node->getCols()[i].col_seq.size());
         }
 

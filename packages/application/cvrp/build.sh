@@ -2,6 +2,8 @@
 
 rm -rf build bin
 
+# rm -rf build
+
 mkdir build
 
 cd build

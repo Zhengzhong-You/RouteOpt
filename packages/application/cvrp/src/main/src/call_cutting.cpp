@@ -404,6 +404,12 @@ namespace RouteOpt::Application::CVRP {
             return;
         }
 
+        // Only cutting in the root node
+        // PRINT_REMIND("")
+        // if (!node->getIfRootNode() ) {
+        //     return;
+        // }
+
         CuttingDetail::trySetInitialIfNodeMemory(node->getR1Cs(), dim);
         std::vector<double> x;
         std::vector<double> sol_x;
@@ -480,6 +486,10 @@ namespace RouteOpt::Application::CVRP {
 
         if (!CuttingDetail::if_pure_rcc_tail) goto PRICING;
 
+    // Only use RCC in the child node
+    // PRINT_REMIND("")
+    // 
+    // if (!node->getIfRootNode() ) goto PRICING;
 
     RANK1: {
             CuttingDetail::callRank1(
@@ -499,6 +509,7 @@ namespace RouteOpt::Application::CVRP {
                 node->refR1Cs()
             );
         }
+
     PRICING:
         if (old_row == num_row) {
             goto SET_TAIL_OFF;

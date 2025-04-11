@@ -75,6 +75,8 @@ file(GLOB_RECURSE CVRP_SOURCES
 add_executable(${PROJECT_NAME} ${CVRP_SOURCES}
 )
 
+# set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "cvrp_rootcutonly")
+
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
