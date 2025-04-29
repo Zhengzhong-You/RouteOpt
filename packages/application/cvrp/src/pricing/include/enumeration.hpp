@@ -118,9 +118,12 @@ namespace RouteOpt::Application::CVRP {
                                                          min_enumeration_fail_gap)) << std::endl;
         }
 
-        inline void adjustMeetPoint(int num_forward_labels_in_enu,
-                                    int num_backward_labels_in_enu,
-                                    double &meet_point_resource_in_bi_dir_enu) {
+         template<bool if_symmetry>
+         void adjustMeetPoint(int num_forward_labels_in_enu,
+                              int num_backward_labels_in_enu,
+                              double &meet_point_resource_in_bi_dir_enu) {
+            if constexpr (if_symmetry) return;
+            if (num_backward_labels_in_enu == 0) return;
             double dif = std::abs(num_forward_labels_in_enu - num_backward_labels_in_enu);
             double over = dif / std::min(num_forward_labels_in_enu, num_backward_labels_in_enu);
             if (over > NumberOfOverLabelsInMeetPoint) {
@@ -227,9 +230,9 @@ namespace RouteOpt::Application::CVRP {
                                                    min_enumeration_fail_gap);
 
         if (if_succeed && !if_fix_meet_point)
-            EnumerationDetail::adjustMeetPoint(static_cast<int>(num_forward_labels_in_enu),
-                                               static_cast<int>(num_backward_labels_in_enu),
-                                               meet_point_resource_in_bi_dir_enu);
+                EnumerationDetail::adjustMeetPoint<if_symmetry>(static_cast<int>(num_forward_labels_in_enu),
+                                                                static_cast<int>(num_backward_labels_in_enu),
+                                                                meet_point_resource_in_bi_dir_enu);
 
         glob_timer.report();
 
