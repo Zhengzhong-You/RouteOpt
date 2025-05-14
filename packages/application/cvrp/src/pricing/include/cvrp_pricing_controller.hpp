@@ -21,6 +21,20 @@ namespace RouteOpt::Application::CVRP {
     using VecLabel = std::pair<std::vector<Label *>, int>;
     using ListLabel = std::list<Label *>;
 
+    struct StatCount {
+        std::pair<double, double> average{};
+
+        double getAverage() const {
+            if (average.second == 0) return 0;
+            return average.first / average.second;
+        }
+
+        void updateAverage(double val) {
+            average.first += val;
+            ++average.second;
+        }
+    };
+
     class CVRP_Pricing {
     public:
         CVRP_Pricing(const int &dim,
@@ -138,6 +152,25 @@ namespace RouteOpt::Application::CVRP {
             return max_gap2_try_enumeration_enumeration;
         }
 
+        const auto &getStabGamma() const {
+            return stab_gamma;
+        }
+
+        const auto &getStabDelta() const {
+            return stab_delta;
+        }
+
+        const auto &getIncumbentDualSolution() const {
+            return incumbent_dual_solution;
+        }
+
+        const auto &getTimeLP() const {
+            return time_lp;
+        }
+
+        const auto &getTimePricing() const {
+            return time_pricing;
+        }
 
         //refers
 
@@ -197,6 +230,34 @@ namespace RouteOpt::Application::CVRP {
             return new_cols;
         }
 
+        auto &refStabGamma() {
+            return stab_gamma;
+        }
+
+        auto &refStabDelta() {
+            return stab_delta;
+        }
+
+        auto &refIncumbentDualSolution() {
+            return incumbent_dual_solution;
+        }
+
+        auto &refTimeLP() {
+            return time_lp;
+        }
+
+        auto &refTimePricing() {
+            return time_pricing;
+        }
+
+        auto &refNumColGeneratedUB() {
+            return num_col_generated_ub;
+        }
+
+        auto &refAverageRouteLength() {
+            return aver_route_length;
+        }
+
         //
 
         void priceConstraints(const std::vector<Rcc> &rccs,
@@ -252,6 +313,8 @@ namespace RouteOpt::Application::CVRP {
 
         double getAverageRouteLength();
 
+        double getSmallestRC();
+
         CVRP_Pricing() = delete;
 
         ~CVRP_Pricing() {
@@ -297,8 +360,7 @@ namespace RouteOpt::Application::CVRP {
 
         size_t mem4_pricing{};
 
-
-        std::tuple<double, size_t, bool> aver_route_length{}; //sum, cnt, if_write
+        StatCount aver_route_length{};
         std::unordered_map<size_t, int> tell_which_bin4_arc_elimination_in_forward_sense{},
                 tell_which_bin4_arc_elimination_in_backward_sense{};
         size_t max_num_forward_graph_arc{}, max_num_backward_graph_arc{};
@@ -354,8 +416,15 @@ namespace RouteOpt::Application::CVRP {
         bool if_force_enumeration_suc{};
         int max_label_in_enumeration{};
         int max_route_in_enumeration{};
-        int max_route_half_in_enumeration{};
-        double max_enumeration_time{};
+        std::vector<int> label_per_bin_in_enumeration{};
+        res_int step_size_label_check_in_enumeration{};
+
+        double stab_gamma{};
+        double stab_delta{};
+        StatCount time_lp{};
+        StatCount time_pricing{};
+        std::pair<std::vector<double>, double> incumbent_dual_solution{}; // dual sol & lb
+
         std::pair<double, int> success_enumeration_gap{};
         std::pair<double, double> max_bucket_arc_suc_enumeration{}; //forward and backward
         std::pair<double, double> min_bucket_arc_fail_enumeration{
@@ -411,6 +480,7 @@ namespace RouteOpt::Application::CVRP {
         template<bool if_symmetry>
         bool enumerateRoutes(
             bool &if_in_enu_state,
+            ENUMERATION_STATE &status,
             RowVectorXT &index_columns_in_enumeration_column_pool,
             RowVectorXd &cost_for_columns_in_enumeration_column_pool,
             int &valid_size,
