@@ -15,7 +15,7 @@ namespace RouteOpt::Application::CVRP {
     int BbNode::node_idx_counter{};
     sparseRowMatrixXd BbNode::row_basic_matrix{};
 
-    void BbNode::buildModel(int num_vehicle, int dim, Solver *cvrp_solver, BbNode *node) {
+    void BbNode::buildModel(int num_vehicle, int dim, Solver *solver, BbNode *node) {
         BbNode::dim = dim;
         node->if_root_node = true;
         std::vector<int> solver_beg, solver_ind;
@@ -41,7 +41,7 @@ namespace RouteOpt::Application::CVRP {
         rhs[dim - 1] = num_vehicle;
         sense[dim - 1] = SOLVER_GREATER_EQUAL;
 
-        node->solver.getEnv(cvrp_solver);
+        node->solver.getEnv(solver);
 
         SAFE_SOLVER(node->solver.newModel(MODEL_NAME, 0, nullptr, nullptr, nullptr, nullptr, nullptr))
         SAFE_SOLVER(node->solver.addConstraints(
