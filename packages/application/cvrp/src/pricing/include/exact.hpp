@@ -13,7 +13,6 @@
 namespace RouteOpt::Application::CVRP {
     template<bool if_symmetry>
     int CVRP_Pricing::generateColumnsByExact(double time_limit) {
-        num_col_generated_ub = MAX_NUM_ROUTES_Exact;
         int ccnt = 0;
     RE_TRY:
         runLabeling<true, false, false, if_symmetry, PRICING_LEVEL::EXACT>(time_limit);
