@@ -7,6 +7,7 @@
 
 #ifndef ROUTE_OPT_HEURISTIC_LABELING_HPP
 #define ROUTE_OPT_HEURISTIC_LABELING_HPP
+
 namespace RouteOpt::Application::CVRP {
     template<bool if_symmetry, PRICING_LEVEL pricing_level>
     int CVRP_Pricing::generateColumnsByHeuristic() {
@@ -18,12 +19,14 @@ namespace RouteOpt::Application::CVRP {
             THROW_RUNTIME_ERROR("Pricing level does not match");
         }
 
+        if_exact_cg_finished = false;
         runLabeling<true, false, false, if_symmetry, pricing_level>(std::numeric_limits<float>::max());
         if (if_short_memory) {
             THROW_RUNTIME_ERROR("Lack of memory even for heuristic labeling");
         }
 
         if (!if_symmetry) {
+            if_exact_cg_finished = false;
             runLabeling<false, false, false, if_symmetry, pricing_level>(std::numeric_limits<float>::max());
             if (if_short_memory) {
                 THROW_RUNTIME_ERROR("Lack of memory even for heuristic labeling");
