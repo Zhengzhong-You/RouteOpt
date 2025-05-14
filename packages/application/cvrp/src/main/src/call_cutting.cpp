@@ -110,11 +110,11 @@ namespace RouteOpt::Application::CVRP {
             double gap_improved = now_val - past_val;
             if (gap_improved < -TOLERANCE * now_val) {
                 THROW_RUNTIME_ERROR("lp value decreased!");
-            } else if (gap_improved < TOLERANCE * now_val) {
+            }
+            if (gap_improved < TOLERANCE * now_val) {
                 if_tail_off = true;
                 goto QUIT;
             }
-
 
             if (!if_only_check_counter && !equalFloat(br_value_improved, 0.)) {
                 if (equalFloat(eps_max, 0.)) eps_max = std::numeric_limits<float>::max();
@@ -404,6 +404,14 @@ namespace RouteOpt::Application::CVRP {
             return;
         }
 
+
+        if (pricing_controller.getAverageRouteLength() >
+            NODE_MEMORY_ROUTE_LENGTH && CuttingDetail::if_node_memory == true && node->getIfRootNode()) {
+            std::cout << "use arc memory due to long routes..." << std::endl;
+            CuttingDetail::if_node_memory = false;
+        }
+
+
         CuttingDetail::trySetInitialIfNodeMemory(node->getR1Cs(), dim);
         std::vector<double> x;
         std::vector<double> sol_x;
@@ -454,7 +462,14 @@ namespace RouteOpt::Application::CVRP {
             if_collect_sol
         );
 
-        if (limited_memory_type == Rank1Cuts::Separation::MemoryType::ARC_MEMORY) {
+        PRINT_REMIND("")
+
+        if (app_type == APPLICATION_TYPE::VRPTW && limited_memory_type ==
+            Rank1Cuts::Separation::MemoryType::ARC_MEMORY) {
+            limited_memory_type = Rank1Cuts::Separation::MemoryType::EDGE_MEMORY;
+        }
+
+        if (limited_memory_type != Rank1Cuts::Separation::MemoryType::NODE_MEMORY) {
             if (rollback_solver.model) rollback_solver.freeModel();
             rollback_solver.model = node->refSolver().copyModel();
             rollback_cols = cols;
