@@ -131,24 +131,20 @@ namespace RouteOpt::Application::CVRP {
             if constexpr (CHECK_PRICING_LABELS)seq_rc[col] = std::get<2>(i);
 
             ++col_idx;
-            if (std::get<2>(aver_route_length)) {
-                std::get<0>(aver_route_length) += col.size();
-                ++std::get<1>(aver_route_length);
-            }
         }
-        if (std::get<0>(aver_route_length) >= std::numeric_limits<float>::max() ||
-            std::get<1>(aver_route_length) >= std::numeric_limits<int>::max())
-            std::get<2>(aver_route_length) = false;
         if constexpr (INSPECT_COLUMN_FEASIBILITY) {
             PRINT_DEBUG("inspect columns");
             inspectColumns();
         }
     }
 
+    inline double CVRP_Pricing::getSmallestRC() {
+        return negative_rc_label_tuple.empty() ? 0 : std::get<2>(negative_rc_label_tuple[0]);
+    }
+
     inline void CVRP_Pricing::setTerminateMarker(double val, double ub, bool &if_terminate) {
-        double smallest_rc = negative_rc_label_tuple.empty() ? 0 : std::get<2>(negative_rc_label_tuple[0]);
         if (if_exact_labeling_cg && if_exact_labeling_finished) {
-            if (ceilTransformedNumberRelated(smallest_rc * max_num_vehicle_ref + val + RC_TOLERANCE) + TOLERANCE
+            if (ceilTransformedNumberRelated(getSmallestRC() * max_num_vehicle_ref + val + RC_TOLERANCE) + TOLERANCE
                 >= ub) {
                 if_terminate = true;
             }
