@@ -46,8 +46,6 @@ namespace RouteOpt::Application::CVRP {
     }
 
     void CVRP_Pricing::assignMemory() {
-        std::get<0>(aver_route_length) = EXPECTED_AVER_ROUTE_LENGTH;
-        ++std::get<1>(aver_route_length);
         double aver = getAverageRouteLength();
         mem4_pricing = aver * (MAX_ROUTE_PRICING);
         col_pool4_pricing = new int[mem4_pricing];
