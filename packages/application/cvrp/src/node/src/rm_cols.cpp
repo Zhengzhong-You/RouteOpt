@@ -34,7 +34,7 @@ namespace RouteOpt::Application::CVRP {
     }
 
 
-    void BbNode::cleanIndexColForNode() {
+    void BbNode::cleanIndexColForNode(double ratio) {
         std::vector<int> col_idx;
         int beg = 1;
         SAFE_SOLVER(solver.reoptimize(SOLVER_PRIMAL_SIMPLEX))
@@ -43,10 +43,14 @@ namespace RouteOpt::Application::CVRP {
         std::vector<double> rc(num_col);
         SAFE_SOLVER(solver.getRC(0, num_col, rc.data()))
         std::vector<double> rc_copy(rc.data() + beg, rc.data() + num_col);
-        auto n = static_cast<int>((num_col - beg) * COL_KEEP_FRAC);
+        auto n = static_cast<int>((num_col - beg) * ratio);
         nth_element(rc_copy.begin(), rc_copy.begin() + n, rc_copy.end());
         double threshold = std::max(rc_copy[n], TOLERANCE);
-        for (int i = beg; i < num_col; ++i) if (rc[i] > threshold) col_idx.emplace_back(i);
+        for (int i = beg; i < num_col; ++i)
+            if (rc[i] > threshold && cols[i].forward_concatenate_pos >= -1) {
+                //only route-defined col can be deleted by this func
+                col_idx.emplace_back(i);
+            }
         rmLPCols(col_idx);
         SAFE_SOLVER(solver.reoptimize(SOLVER_PRIMAL_SIMPLEX))
     }
