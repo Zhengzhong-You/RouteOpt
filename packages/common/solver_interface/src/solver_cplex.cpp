@@ -485,6 +485,14 @@ namespace RouteOpt {
         return CPXchgbds(env, model, 1, &col, "U", &value);
     }
 
+    int Solver::getColLower(int col, double* value) {
+        return CPXgetlb(env, model, value, col, col);
+    }
+
+    int Solver::getColUpper(int col, double* value) {
+        return CPXgetub(env, model, value, col, col);
+    }
+
     int Solver::removeColLower(int col) {
         double value = -CPX_INFBOUND;
         return CPXchgbds(env, model, 1, &col, "L", &value);
