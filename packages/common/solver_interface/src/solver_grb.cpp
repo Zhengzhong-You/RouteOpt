@@ -377,6 +377,14 @@ namespace RouteOpt {
         return GRBsetdblattrelement(model, GRB_DBL_ATTR_UB, col, value);
     }
 
+    int Solver::getColLower(int col, double *value) const {
+        return GRBgetdblattrelement(model, GRB_DBL_ATTR_LB, col, value);
+    }
+
+    int Solver::getColUpper(int col, double *value) const {
+        return GRBgetdblattrelement(model, GRB_DBL_ATTR_UB, col, value);
+    }
+
     int Solver::removeColLower(int col) {
         return GRBsetdblattrelement(model, GRB_DBL_ATTR_LB, col, -GRB_INFINITY);
     }
