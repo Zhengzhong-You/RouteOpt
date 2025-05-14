@@ -9,10 +9,8 @@
 
 namespace RouteOpt::Application::CVRP {
     double CVRP_Pricing::getAverageRouteLength() {
-        return std::get<1>(aver_route_length) == 0
-                   ? EXPECTED_AVER_ROUTE_LENGTH
-                   : std::get<0>(aver_route_length) /
-                     std::get<1>(aver_route_length);
+        if (aver_route_length.getAverage() == 0) return EXPECTED_AVER_ROUTE_LENGTH;
+        return aver_route_length.getAverage();
     }
 
     void CVRP_Pricing::resizePoolWarning(size_t &pricing_warning) {
