@@ -66,7 +66,7 @@ namespace RouteOpt::Application::CVRP {
 
         //user defined functions end
 
-        static void buildModel(int num_vehicle, int dim, Solver *cvrp_solver, BbNode *node);
+        static void buildModel(int num_vehicle, int dim, Solver *solver, BbNode *node);
 
         static void regenerateEnumMat(BbNode *node, BbNode *node2, bool if_force, std::vector<double> &duals);
 
@@ -283,7 +283,7 @@ namespace RouteOpt::Application::CVRP {
             const std::vector<routeOptLong> &ng_mem4_vertex, const std::vector<double> &optional_demand,
             double optional_cap);
 
-        void cleanIndexColForNode();
+        void cleanIndexColForNode(double ratio= COL_KEEP_FRAC);
 
         bool validateCuts(int old_num, bool if_care_lb_improvement);
 
