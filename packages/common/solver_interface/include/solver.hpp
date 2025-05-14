@@ -364,6 +364,23 @@ namespace RouteOpt {
         int setColUpper(int col, double value);
 
         /**
+          * @brief Retrieve the lower bound of a specific variable (column).
+          * @param col Index of the column whose lower bound is queried.
+          * @param value Pointer to a double where the retrieved lower bound will be stored.
+          * @return Integer status code (0 if successful, otherwise an error code).
+          */
+        int getColLower(int col, double *value) const;
+
+        /**
+         * @brief Retrieve the upper bound of a specific variable (column).
+         * @param col Index of the column whose upper bound is queried.
+         * @param value Pointer to a double where the retrieved upper bound will be stored.
+         * @return Integer status code (0 if successful, otherwise an error code).
+         */
+        int getColUpper(int col, double *value) const;
+
+
+        /**
          * @brief Remove the lower bound restriction from a variable.
          * @param col Variable (column) index.
          * @return Status code.
