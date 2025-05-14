@@ -130,6 +130,7 @@ namespace RouteOpt::Application::CVRP {
             while (true) {
                 std::cout << SMALL_PHASE_SEPARATION;
                 std::cout << "DSSR: " << rd++ << std::endl;
+                ConstructInitialColumnsDetail::constructInitialColumns(*cvrp, node);
                 auto eps = TimeSetter::measure([&]() {
                     cvrp->solveLPInLabeling(node, true, true, true,
                                             false, false,
@@ -153,7 +154,7 @@ namespace RouteOpt::Application::CVRP {
                 auto old_mem = ng_mem4_vertex;
                 findNGMemorySets(node, cvrp->getDim(), ng_mem4_vertex, if_empty);
                 if (if_empty) break;
-
+                ConstructInitialColumnsDetail::constructInitialColumns(*cvrp, node);
                 auto eps = TimeSetter::measure([&]() {
                     cvrp->solveLPInLabeling(node, true, true, true,
                                             false, false,
