@@ -32,7 +32,7 @@ namespace RouteOpt::Application::CVRP {
         ML_USE_MODEL
     };
 
-    constexpr APPLICATION_TYPE app_type{APPLICATION_TYPE::CVRP};
+    constexpr APPLICATION_TYPE app_type{APPLICATION_TYPE::VRPTW};
     constexpr VRPTW_TYPE vrptw_type{VRPTW_TYPE::SINGLE_RESOURCE};
     constexpr ML_TYPE ml_type{ML_TYPE::ML_USE_MODEL};
 
@@ -88,6 +88,8 @@ namespace RouteOpt::Application::CVRP {
                                                       ? 1
                                                       : 2;
 
+    constexpr int NODE_MEMORY_ROUTE_LENGTH{10};
+
     enum class NUM_TESTING {
         PHASE0 = 30,
         PHASE1 = 3,
@@ -109,9 +111,11 @@ namespace RouteOpt::Application::CVRP {
     }
 
     constexpr bool IF_SYMMETRY_PROHIBIT = if_symmetry_prohibit(app_type);
-    constexpr int MAX_NUM_ROUTES_Exact = 1000;
-    constexpr int MaxNumRoutesInLighterHeur = 50;
+    constexpr int MaxNumRoutesInExactInspection = 50;
+    constexpr int MaxNumRoutesInExactPricingLow = 100;
+    constexpr int MaxNumRoutesInExactPricingHigh = 1000;
     constexpr int MaxNumRoutesInHeavierHeur = 30;
+    constexpr int MaxNumRoutesInLighterHeur = 30;
     constexpr double CUTTING_BRANCHING_RATIO = 1.0;
     constexpr double FracMemTolerance = 0.8;
     constexpr int NUM_THREADS_LP = 1;
@@ -127,7 +131,7 @@ namespace RouteOpt::Application::CVRP {
 
 
     //cuts
-    constexpr int MAX_ROW_RANK1 = 5;
+    constexpr int MAX_ROW_RANK1{5};
     constexpr int MAX_NUM_R1C3_PER_ROUND = 150;
     constexpr int MAX_NUM_R1C_PER_ROUND = 100;
     constexpr int CutsTolerance = 3;
