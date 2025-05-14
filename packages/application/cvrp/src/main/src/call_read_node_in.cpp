@@ -106,12 +106,58 @@ namespace RouteOpt::Application::CVRP {
         }
     }
 
+    namespace ConstructInitialColumnsDetail {
+        void constructInitialColumns(const CVRPSolver &cvrp_solver, BbNode *node) {
+            auto dim = cvrp_solver.getDim();
+            auto &dis_mat = cvrp_solver.getDisMat();
+            auto &cols = node->refCols();
+            std::vector<int> solver_beg, solver_ind;
+            std::vector<double> solver_val, solver_obj;
+
+            std::unordered_set<int> vis_single;
+            for (auto &col: cols) {
+                auto &seq = col.col_seq;
+                if (seq.size() == 1) {
+                    vis_single.insert(seq[0]);
+                }
+            }
+
+            int row_vehicle = dim - 1;
+            for (int i = 1; i < dim; ++i) {
+                if (vis_single.find(i) != vis_single.end()) continue;
+                cols.emplace_back();
+                solver_beg.emplace_back(static_cast<int>(solver_ind.size()));
+                auto &col = cols.back();
+                col.col_seq.emplace_back(i);
+                col.forward_concatenate_pos = 0;
+                solver_ind.emplace_back(i - 1);
+                solver_val.emplace_back(1);
+                solver_ind.emplace_back(row_vehicle);
+                solver_val.emplace_back(1);
+                solver_obj.emplace_back(dis_mat[0][i] + dis_mat[i][0]);
+            }
+            solver_beg.emplace_back(static_cast<int>(solver_ind.size()));
+            SAFE_SOLVER(node->refSolver().addVars(static_cast<int>(solver_beg.size())-1,
+                static_cast<int>(solver_ind.size()),
+                solver_beg.data(),
+                solver_ind.data(),
+                solver_val.data(),
+                solver_obj.data(),
+                nullptr,
+                nullptr,
+                nullptr,
+                nullptr))
+            SAFE_SOLVER(node->refSolver().updateModel())
+        }
+    }
+
     void CVRPSolver::callReadNodeIn(BbNode *node,
                                     Branching::BranchingHistory<std::pair<int, int>, PairHasher> &history,
                                     Branching::BKF::BKFDataShared &bkf_data_shared) {
         if (tree_path.empty()) {
             pricing_controller.initLabelingMemory();
             BbNode::buildModel(num_vehicle, dim, &solver, node);
+            ConstructInitialColumnsDetail::constructInitialColumns(*this, node);
             return;
         } {
             BbNode::setDim(dim);
