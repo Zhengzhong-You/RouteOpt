@@ -52,10 +52,12 @@ namespace RouteOpt::Application::CVRP {
         printHeadLines("Pricing Level: " + message);
     }
 
-    bool tellIfInt(const std::vector<double> &X) {
+    bool tellIfInt(const std::vector<double> &X, const std::vector<SequenceInfo> &cols) {
         bool is_integer = true;
-        for (double i: X) {
-            if (i > TOLERANCE && std::abs(i - 1) > TOLERANCE) {
+        for (int i = 0; i < X.size(); ++i) {
+            auto val = X[i];
+            if (val < TOLERANCE) continue;
+            if ((cols[i].forward_concatenate_pos < -1) || (std::abs(val - 1) > TOLERANCE)) {
                 is_integer = false;
                 break;
             }
@@ -74,9 +76,192 @@ namespace RouteOpt::Application::CVRP {
         }
     }
 
+    void updateAverageRouteLength(CVRP_Pricing &pricing_controller, BbNode *node) {
+        double len = 0;
+        for (const auto &col: node->getCols()) {
+            if (col.forward_concatenate_pos >= -1) {
+                len += static_cast<double>(col.col_seq.size());
+            }
+        }
+        len /= static_cast<double>(node->getCols().size());
+        pricing_controller.refAverageRouteLength().updateAverage(len);
+    }
+
+    namespace StabilizationDetail {
+        void updateIncumbentDualSolution(CVRP_Pricing &pricing_controller, BbNode *node, bool &if_incumbent_update) {
+            auto &incumbent_dual_solution = pricing_controller.refIncumbentDualSolution().first;
+            pricing_controller.refIncumbentDualSolution().second = 0;
+            SAFE_SOLVER(node->refSolver().reoptimize(SOLVER_DUAL_SIMPLEX))
+            int num_row;
+            SAFE_SOLVER(node->refSolver().getNumRow(&num_row))
+            incumbent_dual_solution.resize(num_row);
+            SAFE_SOLVER(node->refSolver().getDual(0, num_row, incumbent_dual_solution.data()))
+            if_incumbent_update = true;
+        }
+
+        void adjustStabilizationAndRebuildLP(CVRP_Pricing &pricing_controller, BbNode *node,
+                                             const std::vector<double> &X,
+                                             bool &if_incumbent_update) {
+            if (pricing_controller.getStabDelta() > MIN_STAB_DELTA) {
+                const auto &cols = node->getCols();
+                bool if_use = false;
+                int num_col;
+                SAFE_SOLVER(node->refSolver().getNumCol(&num_col))
+                for (int i = 0; i < num_col; ++i) {
+                    if (X[i] > TOLERANCE && cols[i].forward_concatenate_pos == STAB_ARTI_COLUMN_IDX) {
+                        if_use = true;
+                        break;
+                    }
+                }
+                if (!if_use) {
+                    pricing_controller.refStabDelta() /= STAB_DELTA_DECAY_FACTOR;
+                    // std::cout << "delta= " << pricing_controller.getStabDelta() << std::endl;
+                }
+                if (if_incumbent_update || !if_use) {
+                    if_incumbent_update = false;
+                    //rebuild this LP;
+                    auto &incumbent_dual_solution = pricing_controller.refIncumbentDualSolution().first;
+                    for (int i = 0; i < num_col; ++i) {
+                        if (cols[i].forward_concatenate_pos == STAB_ARTI_COLUMN_IDX) {
+                            double obj = (cols[i].col_seq[1] == POSITIVE_ARTI_COLUMN_COL_SEQ
+                                              ? incumbent_dual_solution[cols[i].col_seq[0]]
+                                              : -incumbent_dual_solution[cols[i].col_seq[0]]) +
+                                         pricing_controller.getStabDelta();
+                            SAFE_SOLVER(node->refSolver().changeObj(i, 1, &obj))
+                        }
+                    }
+                    SAFE_SOLVER(node->refSolver().updateModel())
+                }
+            }
+        }
+
+        void updateIncumbentDualIfLBImproves(CVRP_Pricing &pricing_controller, int dim, double prior_value,
+                                             const std::vector<double> &pi4_labeling,
+                                             bool &if_incumbent_update) {
+            double num_route_sol = dim / pricing_controller.getAverageRouteLength();
+            auto lb = prior_value + num_route_sol * pricing_controller.getSmallestRC();
+            if (lb > pricing_controller.getIncumbentDualSolution().second + TOLERANCE) {
+                pricing_controller.refIncumbentDualSolution().first = pi4_labeling;
+                pricing_controller.refIncumbentDualSolution().second = lb;
+                if_incumbent_update = true;
+            }
+        }
+
+        void rmAllArtiColumns(BbNode *node) {
+            auto &cols = node->getCols();
+            std::vector<int> col_idx;
+            for (int i = 0; i < cols.size(); ++i) {
+                if (cols[i].forward_concatenate_pos == STAB_ARTI_COLUMN_IDX) {
+                    col_idx.emplace_back(i);
+                }
+            }
+            if (!col_idx.empty()) {
+                node->rmLPCols(col_idx);
+                SAFE_SOLVER(node->refSolver().reoptimize(SOLVER_PRIMAL_SIMPLEX))
+            }
+        }
+
+        bool adjustStabGammaAndCleanArtificialColumns(CVRP_Pricing &pricing_controller, BbNode *node,
+                                                      bool if_last_round_cg_convergent) {
+            if (
+                if_last_round_cg_convergent) {
+                SAFE_SOLVER(node->refSolver().reoptimize(SOLVER_PRIMAL_SIMPLEX))
+                int num_col;
+                SAFE_SOLVER(node->refSolver().getNumCol(&num_col))
+                std::vector<double> X(num_col);
+                SAFE_SOLVER(node->refSolver().getX(0, num_col, X.data()))
+                const auto &cols = node->getCols();
+                bool if_use = false;
+                for (int i = 0; i < num_col; ++i) {
+                    if (cols[i].forward_concatenate_pos == STAB_ARTI_COLUMN_IDX && X[i] > TOLERANCE) {
+                        if_use = true;
+                        break;
+                    }
+                }
+                if (if_use) {
+                    pricing_controller.refStabGamma() /= STAB_GAMMA_DECAY_FACTOR;
+                    // std::cout << "gamma= " << pricing_controller.getStabGamma() << std::endl;
+                    if (pricing_controller.getStabGamma() < MIN_STAB_GAMMA) { pricing_controller.refStabGamma() = 0.; }
+                    if (equalFloat(0., pricing_controller.getStabGamma())) {
+                        rmAllArtiColumns(node);
+                    } else {
+                        for (int i = 0; i < num_col; ++i) {
+                            if (cols[i].forward_concatenate_pos == STAB_ARTI_COLUMN_IDX) {
+                                double ub;
+                                SAFE_SOLVER(node->refSolver().getColUpper(i, &ub))
+                                SAFE_SOLVER(node->refSolver().setColUpper(i, ub/STAB_GAMMA_DECAY_FACTOR))
+                            }
+                        }
+                        SAFE_SOLVER(node->refSolver().updateModel())
+                    }
+                    return true;
+                }
+                rmAllArtiColumns(node);
+            }
+            return false;
+        }
+
+        void initializeStabilizationColumns(CVRP_Pricing &pricing_controller, BbNode *node, double ub) {
+            SAFE_SOLVER(node->refSolver().reoptimize(SOLVER_BARRIER))
+            int num_row;
+            SAFE_SOLVER(node->refSolver().getNumRow(&num_row))
+            std::vector<double> dual(num_row, 0);
+            pricing_controller.refIncumbentDualSolution() = {dual, 0.};
+            SAFE_SOLVER(node->refSolver().getDual(0, num_row, dual.data()))
+
+
+            if (equalFloat(node->getValue(), 0)) {
+                // std::cout << "adjust the stab delta!" << std::endl;
+                double lp_val;
+                SAFE_SOLVER(node->refSolver().getObjVal(&lp_val))
+                pricing_controller.refStabDelta() =
+                        lp_val / num_row / INITIAL_STAB_KAPA / VERY_INITIAL_STAB_KAPA;
+            } else {
+                pricing_controller.refStabDelta() = node->getValue() / num_row / INITIAL_STAB_KAPA;
+            }
+
+            pricing_controller.refStabGamma() = INITIAL_STAB_GAMMA;
+
+            const auto &gamma = pricing_controller.getStabGamma();
+
+            std::vector<double> rhs(num_row);
+
+            SAFE_SOLVER(node->refSolver().getRhs(0, num_row, rhs.data()))
+            std::vector<int> vbeg, vind;
+            std::vector<double> vval, obj, ub_vec;
+            auto &cols = node->refCols();
+            for (int i = 0; i < num_row; ++i) {
+                //
+                cols.emplace_back();
+                cols.back().forward_concatenate_pos = STAB_ARTI_COLUMN_IDX;
+                cols.back().col_seq = {i, POSITIVE_ARTI_COLUMN_COL_SEQ};
+                vbeg.emplace_back(static_cast<int>(vind.size()));
+                vind.emplace_back(i);
+                vval.emplace_back(1.);
+                obj.emplace_back(ub);
+                double a_prime = equalFloat(rhs[i], 0.) ? 1 : std::abs(rhs[i]);
+                ub_vec.emplace_back(a_prime * gamma);
+                //
+                cols.emplace_back();
+                cols.back().forward_concatenate_pos = STAB_ARTI_COLUMN_IDX;
+                cols.back().col_seq = {i, NEGATIVE_ARTI_COLUMN_COL_SEQ};
+                vbeg.emplace_back(static_cast<int>(vind.size()));
+                vind.emplace_back(i);
+                vval.emplace_back(-1.);
+                obj.emplace_back(ub);
+                ub_vec.emplace_back(a_prime * gamma);
+            }
+            vbeg.emplace_back(static_cast<int>(vind.size()));
+            SAFE_SOLVER(node->refSolver().addVars(static_cast<int>(vbeg.size())-1, static_cast<int>(vind.size()),
+                vbeg.data(), vind.data(), vval.data(), obj.data(), nullptr,
+                ub_vec.data(), nullptr, nullptr))
+            SAFE_SOLVER(node->refSolver().updateModel())
+        }
+    }
+
     void CVRPSolver::updateIntegerSolution(double val, const std::vector<double> &X,
                                            const std::vector<SequenceInfo> &cols, bool &if_integer, bool &if_feasible) {
-        if (tellIfInt(X)) if_integer = true;
+        if (tellIfInt(X, cols)) if_integer = true;
         else {
             if_integer = false;
             if_feasible = false;
@@ -104,7 +289,8 @@ namespace RouteOpt::Application::CVRP {
 
     void CVRPSolver::runColumnGenerationType(BbNode *node, PRICING_LEVEL cg_mode, double time_limit,
                                              bool if_possible_terminate_early,
-                                             bool if_fix_row, bool if_fix_meet_point, bool if_allow_delete_col) {
+                                             bool if_fix_row, bool if_fix_meet_point, bool if_allow_delete_col,
+                                             bool if_last_cg_type, bool if_stabilization) {
         if (node->getIfTerminate()) return;
 
         int num_row;
@@ -114,6 +300,7 @@ namespace RouteOpt::Application::CVRP {
         int ccnt = 0;
         int iter = 0;
         double prior_value = node->getValue();
+        double t_lp, t_pricing;
         int lp_method = SOLVER_BARRIER;
 
         double mt = 0, spt = 0;
@@ -126,13 +313,19 @@ namespace RouteOpt::Application::CVRP {
         constexpr bool if_symmetry = !if_symmetry_prohibit(app_type);
         pricing_controller.initializeOnceB4WholePricing();
 
+        bool if_incumbent_update = false;
+
         while (true) {
         START_OVER:
             if (node->getIfTerminate()) goto BREAK;
 
-            mt += TimeSetter::measure([&]() {
+
+            t_lp = TimeSetter::measure([&]() {
                 node->optimizeLPForOneIteration(prior_value, if_allow_delete_col, lp_method);
             });
+
+            mt += t_lp;
+            if (cg_mode == PRICING_LEVEL::EXACT) pricing_controller.refTimeLP().updateAverage(t_lp);
 
             lp_method = SOLVER_PRIMAL_SIMPLEX;
 
@@ -149,6 +342,10 @@ namespace RouteOpt::Application::CVRP {
                 SAFE_SOLVER(node->refSolver().getNumRow(&num_row))
                 pi4_labeling.resize(num_row);
                 lp_method = SOLVER_DUAL_SIMPLEX;
+                if (if_stabilization) {
+                    StabilizationDetail::updateIncumbentDualSolution(
+                        pricing_controller, node, if_incumbent_update);
+                }
                 goto START_OVER;
             }
 
@@ -180,7 +377,11 @@ namespace RouteOpt::Application::CVRP {
 
             ++iter;
 
-            spt += TimeSetter::measure([&]() {
+            if (if_stabilization) {
+                StabilizationDetail::adjustStabilizationAndRebuildLP(pricing_controller, node, X, if_incumbent_update);
+            }
+
+            t_pricing = TimeSetter::measure([&]() {
                 switch (cg_mode) {
                     case PRICING_LEVEL::LIGHT:
                         ccnt = pricing_controller.generateColumnsByHeuristic<if_symmetry, PRICING_LEVEL::LIGHT>();
@@ -189,12 +390,17 @@ namespace RouteOpt::Application::CVRP {
                         ccnt = pricing_controller.generateColumnsByHeuristic<if_symmetry, PRICING_LEVEL::HEAVY>();
                         break;
                     case PRICING_LEVEL::EXACT:
+                        pricing_controller.refNumColGeneratedUB() = if_last_cg_type
+                                                                        ? MaxNumRoutesInExactPricingLow
+                                                                        : MaxNumRoutesInExactPricingHigh;
                         ccnt = pricing_controller.generateColumnsByExact<if_symmetry>(time_limit);
                         if (!if_fix_meet_point) pricing_controller.adjustResourceMeetPointInPricing<if_symmetry>();
                         pricing_controller.setTerminateMarker(prior_value, ub, node->refIfTerminate());
                         break;
                 }
             });
+            spt += t_pricing;
+            if (cg_mode == PRICING_LEVEL::EXACT)pricing_controller.refTimePricing().updateAverage(t_pricing);
             if (cg_mode == PRICING_LEVEL::EXACT && !pricing_controller.getIfCompleteCG())goto BREAK;
 
             if (!node->getIfTerminate())add_column_controller.addColumns(ccnt, pi4_labeling, true);
@@ -203,9 +409,34 @@ namespace RouteOpt::Application::CVRP {
                 if (cg_mode == PRICING_LEVEL::EXACT) optimal_dual_vector = pi4_labeling;
                 goto BREAK;
             }
+
+            if (if_stabilization) {
+                StabilizationDetail::updateIncumbentDualIfLBImproves(pricing_controller,
+                                                                     dim,
+                                                                     prior_value,
+                                                                     pi4_labeling,
+                                                                     if_incumbent_update);
+            }
+
             continue;
 
         BREAK:
+            if (if_last_cg_type) {
+                if (if_stabilization) {
+                    if (cg_mode == PRICING_LEVEL::EXACT) {
+                        if (StabilizationDetail::adjustStabGammaAndCleanArtificialColumns(
+                            pricing_controller, node, pricing_controller.getIfCompleteCG())) {
+                            goto START_OVER;
+                        }
+                        if (pricing_controller.getIfCompleteCG() == false) StabilizationDetail::rmAllArtiColumns(node);
+                    } else {
+                        if (StabilizationDetail::adjustStabGammaAndCleanArtificialColumns(
+                            pricing_controller, node, true)) {
+                            goto START_OVER;
+                        }
+                    }
+                }
+            }
             printInfoLabeling(iter, num_col, num_row, mt, spt, prior_value, ub, true);
             break;
         }
@@ -217,31 +448,44 @@ namespace RouteOpt::Application::CVRP {
                                        bool if_fix_row, bool if_fix_meet_point, bool if_allow_delete_col,
                                        double time_limit) {
         std::cout << SMALL_PHASE_SEPARATION;
+
+        constexpr bool if_stabilization = IF_USE_STAB;
+
+        if (if_stabilization) {
+            // std::cout << "open stabilization but not in exact phase!" << std::endl;
+            StabilizationDetail::initializeStabilizationColumns(pricing_controller, node, ub);
+        }
+
         if (if_open_heur) {
             runColumnGenerationType(node, PRICING_LEVEL::LIGHT, std::numeric_limits<float>::max(),
                                     if_possible_terminate_early, if_fix_row,
-                                    if_fix_meet_point, if_allow_delete_col);
+                                    if_fix_meet_point, if_allow_delete_col, false, if_stabilization);
+
 
             runColumnGenerationType(node, PRICING_LEVEL::HEAVY, std::numeric_limits<float>::max(),
                                     if_possible_terminate_early, if_fix_row,
-                                    if_fix_meet_point, if_allow_delete_col);
+                                    if_fix_meet_point, if_allow_delete_col, true, if_stabilization);
         }
 
         if (if_open_exact) {
             runColumnGenerationType(node, PRICING_LEVEL::EXACT, time_limit, if_possible_terminate_early,
                                     if_fix_row,
-                                    if_fix_meet_point, if_allow_delete_col);
+                                    if_fix_meet_point, if_allow_delete_col, false, false);
             if (!pricing_controller.getIfCompleteCG()) goto QUIT;
             int num_col;
             SAFE_SOLVER(node->refSolver().getNumCol(&num_col))
             if (num_col > LP_COL_FINAL_LIMIT && if_allow_delete_col) node->cleanIndexColForNode();
         }
 
+
         if (if_update_node_val) {
             if (node->getIfTerminate()) {
                 node->refValue() = ub;
             } else {
-                if (pricing_controller.getIfCompleteCG()) SAFE_SOLVER(node->refSolver().getObjVal(& node->refValue()))
+                if (pricing_controller.getIfCompleteCG()) {
+                    SAFE_SOLVER(node->refSolver().getObjVal(& node->refValue()))
+                    updateAverageRouteLength(pricing_controller, node);
+                }
             }
         }
 
@@ -286,16 +530,16 @@ namespace RouteOpt::Application::CVRP {
             }
         }
 
-        if (static_cast<int>(candidates.size()) > MAX_NUM_ROUTES_Exact) {
+        if (static_cast<int>(candidates.size()) > MaxNumRoutesInExactInspection) {
             std::nth_element(
                 candidates.begin(),
-                candidates.begin() + MAX_NUM_ROUTES_Exact,
+                candidates.begin() + MaxNumRoutesInExactInspection,
                 candidates.end(),
                 [](auto &lhs, auto &rhs) {
                     return lhs.second < rhs.second;
                 }
             );
-            candidates.resize(MAX_NUM_ROUTES_Exact);
+            candidates.resize(MaxNumRoutesInExactInspection);
         }
 
         col_added.resize(candidates.size());
