@@ -49,12 +49,10 @@ namespace RouteOpt::Rank1Cuts::Separation {
         if_suc = true;
         auto &arc_mem = cut.arc_mem;
         std::unordered_set<std::pair<int, int>, PairHasher> existing_arcs;
-        if (!arc_mem.empty()) {
-            for (auto &info: arc_mem) {
-                int end = info.second;
-                for (int j: info.first) {
-                    existing_arcs.emplace(j, end);
-                }
+        for (auto &info: arc_mem) {
+            int end = info.second;
+            for (int j: info.first) {
+                existing_arcs.emplace(j, end);
             }
         }
 
