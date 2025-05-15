@@ -43,7 +43,7 @@ namespace RouteOpt::Rank1Cuts::Separation {
             }
         }
         std::transform(num_vis_times.begin(), num_vis_times.end(), num_vis_times.begin(),
-                  [denominator](const int x) { return static_cast<int>(x / denominator); });
+                       [denominator](const int x) { return static_cast<int>(x / denominator); });
         cutLong mem_long = 0;
         int num = 0;
         for (auto &route: sol) {
@@ -558,7 +558,7 @@ namespace RouteOpt::Rank1Cuts::Separation {
         }
         plan.resize(mem_other.size());
         std::transform(mem_other.begin(), mem_other.end(), plan.begin(),
-                  [](const auto &i) { return i.second; });
+                       [](const auto &i) { return i.second; });
     QUIT:;
     }
 
