@@ -58,7 +58,7 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
     struct R1CUseStates {
         /// For each customer i
         r1cIndex union_map{}; ///< Bitset representing union (C+M) mapping (1 represents presence of the cut).
-        std::vector<int> v_union_mem; ///< Vector representing union (C+M) cuts
+        std::vector<int> v_union_mem; ///< Vector representing union (C+M) memory
         std::vector<std::pair<int, int> > sparse{};
         ///< Sparse representation of states (pair format, e.g., index in pricing and value).
         r1cIndex sparse_map{}; ///< Bitset for sparse mapping (only for C).
