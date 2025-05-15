@@ -59,7 +59,8 @@ namespace RouteOpt::Rank1Cuts::Separation {
      * This enum defines the memory mode for the separation process:
      * - NO_MEMORY: No memory is used.
      * - NODE_MEMORY: Node-based memory is utilized.
-     * - ARC_MEMORY: Arc-based memory is applied.
+     * - ARC_MEMORY: Arc-based memory is applied. (edge memory implementation, i.e., the arc memory is always symmetric,
+     *               A-> B implies B->A)
      */
     enum class MemoryType {
         NO_MEMORY = 0,
