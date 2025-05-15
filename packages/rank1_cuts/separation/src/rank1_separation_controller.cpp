@@ -72,8 +72,8 @@ namespace RouteOpt::Rank1Cuts::Separation {
                   });
 
 
-        if (limited_memory_type == MemoryType::ARC_MEMORY) {
-            //since hard pricing, then we carefully treat memory
+        if (limited_memory_type != MemoryType::NODE_MEMORY) {
+            // hard pricing, we carefully treat memory
             for (auto it = sort_sol.begin(); it != sort_sol.end();) {
                 if (it->frac_x < SOL_X_RANK1_TOLERANCE || it->frac_x > 1 - SOL_X_RANK1_TOLERANCE) {
                     it = sort_sol.erase(it);
