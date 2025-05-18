@@ -49,10 +49,10 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
             }
         }
 
-        for (auto &pr: cut_map.sparse) {
-            if (record.test(pr.first)) {
-                out_idx[out_num++] = pr.first;
-                out_map[pr.first] = pr.second;
+        for (auto &[fst, snd]: cut_map.sparse) {
+            if (record.test(fst)) {
+                out_idx[out_num++] = fst;
+                out_map[fst] = snd;
             }
         }
     }
