@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include "rank1_coefficient_controller.hpp"
 
 
@@ -33,6 +34,16 @@ namespace RouteOpt::Rank1Cuts::CoefficientGetter {
             auto denominator = rank1CutsDataShared.getDenominator(size, r1c.info_r1c.second);
             const auto &multi = rank1CutsDataShared.getMultiplier(size, r1c.info_r1c.second);
             lp_r1c_denominator[num] = denominator;
+
+            //get memory represented by node;
+            std::unordered_set<int> node_m;
+            for (auto &m: r1c.arc_mem) {
+                node_m.emplace(m.first);
+                node_m.emplace(m.second);
+            }
+            node_m.erase(RANK1_INVALID);
+            std::vector<int> node_m_vec(node_m.begin(), node_m.end());
+
             for (int j = 0; j < r1c.info_r1c.first.size(); ++j) {
                 int n = r1c.info_r1c.first[j];
                 auto &tmp_n = lp_v_cut_map[n];
@@ -42,11 +53,18 @@ namespace RouteOpt::Rank1Cuts::CoefficientGetter {
                 for (int k = 0; k < dim; ++k) {
                     lp_v_v_use_states[k][n][num] = add;
                 }
-            }
-            for (auto &m: r1c.arc_mem) {
-                for (auto &k: m.first) {
-                    lp_v_v_use_states[k][m.second][num] = 0;
+                for (int k: node_m_vec) {
+                    lp_v_v_use_states[n][k][num] = 0;
                 }
+            }
+            for (auto [fst, snd]: r1c.arc_mem) {
+                if (fst == RANK1_INVALID || snd == RANK1_INVALID) continue;
+                if (lp_v_v_use_states[fst][snd][num] != RANK1_INVALID
+                    || lp_v_v_use_states[snd][fst][num] != RANK1_INVALID
+                )
+                    THROW_RUNTIME_ERROR("repeat arc")
+                lp_v_v_use_states[fst][snd][num] = 0;
+                lp_v_v_use_states[snd][fst][num] = 0;
             }
             ++num;
         }
