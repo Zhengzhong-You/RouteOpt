@@ -1,9 +1,11 @@
-/* 
+/*
  * Copyright (c) 2025 Zhengzhong (Ricky) You.
  * All rights reserved.
  * Software: RouteOpt
  * License: GPL-3.0
  */
+
+#include <unordered_set>
 
 #include "rank1_rc_controller.hpp"
 #include "route_opt_macro.hpp"
@@ -54,7 +56,16 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
                                                                     r1c.info_r1c.second);
             rank1_dual[num] = pi_vector[r1c.idx_r1c];
             cg_r1c_denominator[num] = denominator;
-            revised_rank1_dual[num] = rank1_dual[num]; //reserved for future sue
+            revised_rank1_dual[num] = rank1_dual[num]; //reserved for future use
+
+            //get memory represented by node;
+            std::unordered_set<int> node_m;
+            for (auto &m: r1c.arc_mem) {
+                node_m.emplace(m.first);
+                node_m.emplace(m.second);
+            }
+            node_m.erase(RANK1_INVALID);
+            std::vector<int> node_m_vec(node_m.begin(), node_m.end());
 
             for (int j = 0; j < r1c.info_r1c.first.size(); ++j) {
                 int n = r1c.info_r1c.first[j];
@@ -67,14 +78,27 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
                 for (int k = 0; k < dim; ++k) {
                     cg_v_v_use_states[k][n][num] = add;
                 }
-            }
-            for (auto &m: r1c.arc_mem) {
-                cg_v_cut_map[m.second].v_union_mem.emplace_back(num);
-                cg_v_cut_map[m.second].union_map.set(num);
-                for (auto &k: m.first) {
-                    cg_v_v_use_states[k][m.second][num] = 0;
+                for (int k: node_m_vec) {
+                    cg_v_v_use_states[n][k][num] = 0;
                 }
             }
+
+            for (int k: node_m_vec) {
+                cg_v_cut_map[k].v_union_mem.emplace_back(num);
+                cg_v_cut_map[k].union_map.set(num);
+            }
+
+
+            for (auto [fst, snd]: r1c.arc_mem) {
+                if (fst == RANK1_INVALID || snd == RANK1_INVALID) continue;
+                if (cg_v_v_use_states[fst][snd][num] != RANK1_INVALID
+                    || cg_v_v_use_states[snd][fst][num] != RANK1_INVALID
+                )
+                    THROW_RUNTIME_ERROR("repeat arc")
+                cg_v_v_use_states[fst][snd][num] = 0;
+                cg_v_v_use_states[snd][fst][num] = 0;
+            }
+
             ++num;
         }
     }
