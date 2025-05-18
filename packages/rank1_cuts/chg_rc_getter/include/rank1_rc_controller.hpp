@@ -32,7 +32,7 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
     struct R1CPricingStat {
         int num{}; ///< Number of valid cuts.
         int *valid_cut_idx{}; ///< Pointer to an array of valid cut indices.
-        int *cut_map{}; ///< Pointer to the complete cut map array.
+        int *cut_map{}; ///< Pointer to the cut state.
 
         /**
          * @brief Copies pricing statistics from another R1CPricingStat instance.
@@ -201,7 +201,7 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
 
     private:
         int *label_int_space{}; ///< Dynamically allocated memory space for label assignments.
-        std::vector<R1CUseStates> cg_v_cut_map{}; ///< Vector of cut state usage for column generation.
+        std::vector<R1CUseStates> cg_v_cut_map{}; ///< Vector of cut's state usage for column generation.
         // 3D vector representing state usage:
         // - 0: remember; RANK1_INVALID: forget; >0: add.
         std::vector<std::vector<std::vector<int> > > cg_v_v_use_states{};
