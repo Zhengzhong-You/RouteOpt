@@ -60,9 +60,6 @@ namespace RouteOpt::Rank1Cuts::Separation {
                                                const std::vector<R1c> &old_cuts) {
         // Update using setter methods
         cleanData();
-        if (limited_memory_type == MemoryType::ARC_MEMORY) {
-            if_once_use_no_symmetry_mem = true;
-        }
         sharedData.setLimitedMemoryType(limited_memory_type);
         memGen.setPricingHardLevel(pricing_hard_level);
         auto sort_sol = sol;
@@ -105,7 +102,6 @@ namespace RouteOpt::Rank1Cuts::Separation {
         for (auto &r1c: existing_cuts) r1c.arc_mem.clear();
         for (auto &sol: sol_vec) {
             cleanData();
-            if_once_use_no_symmetry_mem = true;
             sharedData.setLimitedMemoryType(MemoryType::ARC_MEMORY);
             memGen.setPricingHardLevel(PRICING_HARD_LEVEL::EXTREMELY_HARD);
             sharedData.setSol(sol);
