@@ -93,15 +93,6 @@ namespace RouteOpt::Rank1Cuts::Separation {
          */
         void convert2ArcMemory(std::vector<R1c> &existing_cuts);
 
-        /**
-         * @brief Retrieves the flag indicating whether the "no symmetry memory" has been used.
-         *
-         * @return auto Boolean flag value.
-         */
-        [[nodiscard]] auto getIfOnceUseNoSymmetryMem() const {
-            return if_once_use_no_symmetry_mem;
-        }
-
         // Delete default constructor to enforce the use of the parameterized constructor.
         Rank1SeparationController() = delete;
 
@@ -122,9 +113,6 @@ namespace RouteOpt::Rank1Cuts::Separation {
         MemGenerator memGen;
         // Module for selecting the most effective cuts from the generated cuts.
         CutSelector cutSelector;
-
-        // Flag indicating whether the "no symmetry memory" has been used once.
-        bool if_once_use_no_symmetry_mem{false};
 
         /**
          * @brief Cleans internal data in preparation for a new round of processing.
