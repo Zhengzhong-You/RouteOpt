@@ -49,10 +49,19 @@ namespace RouteOpt::Rank1Cuts::Separation {
         if_suc = true;
         auto &arc_mem = cut.arc_mem;
         std::unordered_set<std::pair<int, int>, PairHasher> existing_arcs;
+        // 1. arcs between inside, 2. arcs from c to inside;
         for (auto &info: arc_mem) {
-            int end = info.second;
-            for (int j: info.first) {
-                existing_arcs.emplace(j, end);
+            if (info.second == RANK1_INVALID) {
+                for (auto &it: cut.info_r1c.first) {
+                    existing_arcs.emplace(it, info.first);
+                }
+                continue;
+            }
+            existing_arcs.emplace(info.first, info.second);
+            existing_arcs.emplace(info.second, info.first); //keep symmetry
+            for (auto &it: cut.info_r1c.first) {
+                existing_arcs.emplace(it, info.first);
+                existing_arcs.emplace(it, info.second);
             }
         }
 
@@ -68,11 +77,10 @@ namespace RouteOpt::Rank1Cuts::Separation {
                                                              cut.info_r1c.second);
         sparseRowVectorXI vec(sol_matrix.cols());
         for (auto i: cut.info_r1c.first) {
-            vec += sol_matrix.row(i);
+            vec += sol_matrix.row(i) * map_vertex_state[i];
         }
         vec /= denominator;
         vec.prune(0);
-
         std::vector<Arcs> all_arcs;
         for (sparseRowVectorXI::InnerIterator it(vec, 0); it; ++it) {
             int col = static_cast<int>(it.col());
@@ -102,17 +110,27 @@ namespace RouteOpt::Rank1Cuts::Separation {
 
 
         if (if_suc) {
-            arc_mem.clear();
-            std::unordered_map<int, std::vector<int> > map_vertex_arcs;
-            cutLong tmp = 0;
-            for (auto i: cut.info_r1c.first)tmp.set(i);
+            cutLong cut_info = 0;
+            for (auto i: cut.info_r1c.first) cut_info.set(i);
+            std::unordered_set<std::pair<int, int>, PairHasher> reduced_arcs;
             for (auto &it: existing_arcs) {
-                if (tmp.test(it.second)) continue;
-                map_vertex_arcs[it.second].emplace_back(it.first);
+                int ai = it.first, aj = it.second;
+                if (cut_info.test(ai) && cut_info.test(aj)) {
+                    continue;
+                }
+                if (cut_info.test(ai)) {
+                    auto pr = std::make_pair(aj, RANK1_INVALID);
+                    if (reduced_arcs.find(pr) == reduced_arcs.end()) {
+                        reduced_arcs.insert(pr);
+                    }
+                } else {
+                    auto pr = ai < aj ? std::make_pair(ai, aj) : std::make_pair(aj, ai);
+                    if (reduced_arcs.find(pr) == reduced_arcs.end()) {
+                        reduced_arcs.insert(pr);
+                    }
+                }
             }
-            for (auto &it: map_vertex_arcs) {
-                arc_mem.emplace_back(it.second, it.first);
-            }
+            arc_mem.assign(reduced_arcs.begin(), reduced_arcs.end());
         }
     }
 
@@ -193,8 +211,8 @@ namespace RouteOpt::Rank1Cuts::Separation {
          * e.g.: --------|------------|--------------|----------------
          * 	                 0            1
          * we have now 2 segments.
-         * and we std::set initial state () to be 0 and we do extend the state where it must be larger than sparse_rep.back()
-         * the extension ends when the coeff reaches the std::max coeff,
+         * and we set initial state () to be 0 and we do extend the state where it must be larger than sparse_rep.back()
+         * the extension ends when the coeff reaches the max coeff,
          * dominance rule 1(extension): used segments are subset; coeff is same; state is the same
          * dominance rule 2(finish): used segments are subset;
          */
@@ -266,17 +284,19 @@ namespace RouteOpt::Rank1Cuts::Separation {
             }
         }
 
-        auto &last_state = states[max_coeff][0];
-        auto &last_state_vec = last_state.first;
-        auto &last_num = last_state.second;
         plans.clear();
-        plans.resize(last_num);
-        for (int i = 0; i < last_num; ++i) {
-            auto &label = last_state_vec[i];
-            for (int j = 0; j < MAX_NUMBER_SEGMENT_FOR_ONE_COLUMN; ++j) {
-                if (label.bit.test(j)) {
-                    plans[i].emplace_back(j);
+        for (int s = 0; s < denominator; ++s) {
+            auto &bucket_vec = states[max_coeff][s].first;
+            int bucket_num = states[max_coeff][s].second;
+            for (int i = 0; i < bucket_num; ++i) {
+                auto &label = bucket_vec[i];
+                std::vector<int> one_plan;
+                for (int j = 0; j < MAX_NUMBER_SEGMENT_FOR_ONE_COLUMN; ++j) {
+                    if (label.bit.test(j)) {
+                        one_plan.emplace_back(j);
+                    }
                 }
+                plans.emplace_back(std::move(one_plan));
             }
         }
         if (plans.empty())
