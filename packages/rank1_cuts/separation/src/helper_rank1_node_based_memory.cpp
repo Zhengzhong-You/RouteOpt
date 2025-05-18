@@ -284,6 +284,22 @@ namespace RouteOpt::Rank1Cuts::Separation {
         }
     }
 
+    void translateMemInt2MemPair(const std::unordered_set<int> &mem_set, std::vector<std::pair<int, int> > &mem_pair) {
+        std::vector<int> mem(mem_set.begin(), mem_set.end());
+        std::sort(mem.begin(), mem.end());
+        //write mem_pair
+        mem_pair.clear();
+        if (mem.size() == 1) {
+            mem_pair.emplace_back(mem.front(), RANK1_INVALID);
+        } else {
+            for (int i = 0; i < static_cast<int>(mem.size()) - 1; ++i) {
+                for (int j = i + 1; j < static_cast<int>(mem.size()); ++j) {
+                    mem_pair.emplace_back(mem[i], mem[j]);
+                }
+            }
+        }
+    }
+
     void constructMemoryVertexBased(const Rank1CutsDataShared &rank1CutsDataShared, DataShared &sharedData,
                                     const PRICING_HARD_LEVEL pricing_hard_level, Solver &solver,
                                     std::unordered_map<std::vector<int>, std::vector<std::vector<int> >,
@@ -299,8 +315,10 @@ namespace RouteOpt::Rank1Cuts::Separation {
             if (c.idx_r1c != INITIAL_IDX_R1C) {
                 auto &arc_mem = c.arc_mem;
                 for (auto &m: arc_mem) {
+                    mem.emplace(m.first);
                     mem.emplace(m.second);
                 }
+                mem.erase(RANK1_INVALID);
             }
             bool if_suc;
             auto &cut = c.info_r1c;
@@ -314,12 +332,11 @@ namespace RouteOpt::Rank1Cuts::Separation {
                                  if_suc);
             }
             if (if_suc) {
-                auto &arc_mem = c.arc_mem;
-                arc_mem.assign(mem.size(), std::make_pair(tmp_fill, 0));
-                int cnt = 0;
-                for (auto &m: mem) {
-                    arc_mem[cnt++].second = m;
+                for (auto &i: c.info_r1c.first) {
+                    if (mem.find(i) != mem.end())
+                        THROW_RUNTIME_ERROR("mem should not have cut vertex!");
                 }
+                translateMemInt2MemPair(mem, c.arc_mem);
                 ++it;
             } else {
                 it = cuts.erase(it);
