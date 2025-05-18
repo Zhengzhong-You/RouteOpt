@@ -62,7 +62,7 @@ namespace RouteOpt::Rank1Cuts {
         int rhs{};
         // General arc memory representation: classify the arc memory by the "end" vertex.
         // E.g., arc_mem={{{1,2},3} , {{1,2},4}} means we have arcs: 1->3, 2->3, and 1->4, 2->4.
-        std::vector<std::pair<std::vector<int>, int> > arc_mem{};
+        std::vector<std::pair<int, int> > arc_mem{};
     };
 
     /**
