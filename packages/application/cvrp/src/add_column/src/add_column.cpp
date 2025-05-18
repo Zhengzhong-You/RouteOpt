@@ -33,10 +33,8 @@ namespace RouteOpt::Application::CVRP {
                             std::cout << "j= " << j << std::endl;
                             for (auto &r1c: r1cs) {
                                 if (r1c.idx_r1c == j) {
-                                    std::cout << " arc_mem= ";
                                     for (auto &it: r1c.arc_mem) {
-                                        // for (auto &it2: it.first) std::cout << it2 << " ";
-                                        std::cout << " to " << it.second << std::endl;
+                                        std::cout << it.first << " " << it.second << " ; ";
                                     }
                                     std::cout << " info= ";
                                     for (auto &it: r1c.info_r1c.first)std::cout << it << " ";

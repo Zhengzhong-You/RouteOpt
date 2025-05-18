@@ -58,15 +58,6 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
             cg_r1c_denominator[num] = denominator;
             revised_rank1_dual[num] = rank1_dual[num]; //reserved for future use
 
-            //get memory represented by node;
-            std::unordered_set<int> node_m;
-            for (auto &m: r1c.arc_mem) {
-                node_m.emplace(m.first);
-                node_m.emplace(m.second);
-            }
-            node_m.erase(RANK1_INVALID);
-            std::vector<int> node_m_vec(node_m.begin(), node_m.end());
-
             for (int j = 0; j < r1c.info_r1c.first.size(); ++j) {
                 int n = r1c.info_r1c.first[j];
                 auto &tmp_n = cg_v_cut_map[n];
@@ -78,25 +69,20 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
                 for (int k = 0; k < dim; ++k) {
                     cg_v_v_use_states[k][n][num] = add;
                 }
-                for (int k: node_m_vec) {
-                    cg_v_v_use_states[n][k][num] = 0;
-                }
-            }
-
-            for (int k: node_m_vec) {
-                cg_v_cut_map[k].v_union_mem.emplace_back(num);
-                cg_v_cut_map[k].union_map.set(num);
             }
 
 
             for (auto [fst, snd]: r1c.arc_mem) {
-                if (fst == RANK1_INVALID || snd == RANK1_INVALID) continue;
-                if (cg_v_v_use_states[fst][snd][num] != RANK1_INVALID
-                    || cg_v_v_use_states[snd][fst][num] != RANK1_INVALID
-                )
-                    THROW_RUNTIME_ERROR("repeat arc")
-                cg_v_v_use_states[fst][snd][num] = 0;
-                cg_v_v_use_states[snd][fst][num] = 0;
+                if (!cg_v_cut_map[fst].union_map.test(num)) {
+                    cg_v_cut_map[fst].union_map.set(num);
+                    cg_v_cut_map[fst].v_union_mem.emplace_back(num);
+                }
+                if (!cg_v_cut_map[snd].union_map.test(num)) {
+                    cg_v_cut_map[snd].union_map.set(num);
+                    cg_v_cut_map[snd].v_union_mem.emplace_back(num);
+                }
+                if (cg_v_v_use_states[fst][snd][num] == RANK1_INVALID) cg_v_v_use_states[fst][snd][num] = 0;
+                if (cg_v_v_use_states[snd][fst][num] == RANK1_INVALID) cg_v_v_use_states[snd][fst][num] = 0;
             }
 
             ++num;

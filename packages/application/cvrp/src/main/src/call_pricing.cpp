@@ -64,10 +64,9 @@ namespace RouteOpt::Application::CVRP {
         constexpr bool if_possible_terminate_early = false;
         constexpr bool if_fix_row = false;
         constexpr bool if_allow_delete_col = true;
+        constexpr bool if_fix_meet_point = false;
 
         bool if_consider_regenerate_bucket_graph = node->getIfRootNode();
-        bool if_fix_meet_point = (!node->getR1Cs().empty()) &&
-                                 (rank1_separation_controller.getIfOnceUseNoSymmetryMem());
 
         solveLPInLabeling(node, if_open_heur, if_open_exact, if_update_node_val,
                           if_consider_regenerate_bucket_graph, if_possible_terminate_early,

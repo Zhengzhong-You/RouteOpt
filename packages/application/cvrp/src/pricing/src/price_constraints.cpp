@@ -51,7 +51,8 @@ namespace RouteOpt::Application::CVRP {
                 chg_cost_mat4_vertex[brc.edge.second][brc.edge.first] =
                         std::numeric_limits<float>::max(); //do not use double since the number will overflow
             } else {
-                if (brc.edge.first == 0) adjust_brc_dual4_single_route[brc.edge.second] = pi_vector[brc.idx_brc];
+                // in case multiple same branching constraints, we use += instead of just =;
+                if (brc.edge.first == 0) adjust_brc_dual4_single_route[brc.edge.second] += pi_vector[brc.idx_brc];
                 chg_cost_mat4_vertex[brc.edge.first][brc.edge.second] -= pi_vector[brc.idx_brc];
                 chg_cost_mat4_vertex[brc.edge.second][brc.edge.first] -= pi_vector[brc.idx_brc];
             }

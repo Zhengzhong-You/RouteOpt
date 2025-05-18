@@ -21,6 +21,8 @@
 #include <unordered_map>
 #include <bitset>
 
+#include "rank1_separation_macro.hpp"
+
 namespace RouteOpt::Rank1Cuts {
     // Maximum number of Rank-1 cuts (R1Cs) considered during the pricing process.
     constexpr int MAX_NUM_R1CS_IN_PRICING = 2048;
@@ -60,9 +62,27 @@ namespace RouteOpt::Rank1Cuts {
         int idx_r1c{INITIAL_IDX_R1C};
         // The right-hand side (rhs) value of the cut;
         int rhs{};
-        // General arc memory representation: classify the arc memory by the "end" vertex.
-        // E.g., arc_mem={{{1,2},3} , {{1,2},4}} means we have arcs: 1->3, 2->3, and 1->4, 2->4.
+        // General arc memory representation;
         std::vector<std::pair<int, int> > arc_mem{};
+
+        bool tellIfNodeMemory() const {
+            Separation::cutLong c = 0;
+            for (auto &i: info_r1c.first) {
+                c.set(i);
+            }
+            Separation::cutLong m = 0;
+            int cnt = 0;
+            for (auto &i: arc_mem) {
+                m.set(i.first);
+                m.set(i.second);
+                if (!c.test(i.first) && !c.test(i.second)) ++cnt;
+            }
+            m &= ~c;
+            if (m.count() * (m.count() - 1) / 2 == cnt) {
+                return true;
+            }
+            return false;
+        }
     };
 
     /**

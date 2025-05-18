@@ -48,9 +48,10 @@ namespace RouteOpt::Rank1Cuts::Separation {
         for (int i = 0; i < sol.size(); ++i)frac_routes_vio[i] = sol[i].frac_x;
         for (int i = 0; i < cuts.size(); ++i)cuts_vio[i].first = cuts_coeffs[i].dot(frac_routes_vio) - rhs[i];
 
-        std::sort(cuts_vio.begin(), cuts_vio.end(), [](const std::pair<double, int> &a, const std::pair<double, int> &b) {
-            return a.first > b.first;
-        });
+        std::sort(cuts_vio.begin(), cuts_vio.end(),
+                  [](const std::pair<double, int> &a, const std::pair<double, int> &b) {
+                      return a.first > b.first;
+                  });
 
         int left_cuts = MAX_NUM_R1CS_IN_PRICING - static_cast<int>(old_cuts.size()) -
                         MIN_CUTS_ADDED_PER_ROUND;
@@ -63,12 +64,18 @@ namespace RouteOpt::Rank1Cuts::Separation {
 
         std::vector<int> vertex_related_r1c(rank1CutsDataShared.getDim(), MAX_POSSIBLE_NUM_R1CS_FOR_VERTEX - 1);
 
+
         for (auto &r1c: old_cuts) {
+            std::unordered_set<int> nodes;
             for (auto &it: r1c.info_r1c.first) {
-                --vertex_related_r1c[it];
+                nodes.emplace(it);
             }
             for (auto &it: r1c.arc_mem) {
-                --vertex_related_r1c[it.second];
+                nodes.emplace(it.first);
+                nodes.emplace(it.second);
+            }
+            for (auto &it: nodes) {
+                --vertex_related_r1c[it];
             }
         }
 
@@ -79,19 +86,22 @@ namespace RouteOpt::Rank1Cuts::Separation {
             auto &c = cuts[idx];
             bool if_keep = true;
             auto tmp = vertex_related_r1c;
-            for (auto j: c.info_r1c.first) {
-                if (tmp[j] <= 0) {
-                    if_keep = false;
-                    break;
-                }
-                --tmp[j];
+
+            std::unordered_set<int> nodes;
+            for (auto &it: c.info_r1c.first) {
+                nodes.emplace(it);
             }
-            for (auto &j: c.arc_mem) {
-                if (tmp[j.second] <= 0) {
+            for (auto &it: c.arc_mem) {
+                nodes.emplace(it.first);
+                nodes.emplace(it.second);
+            }
+
+            for (auto &it: nodes) {
+                if (tmp[it] <= 0) {
                     if_keep = false;
                     break;
                 }
-                --tmp[j.second];
+                --tmp[it];
             }
             if (!if_keep) continue;
             vertex_related_r1c = tmp;

@@ -51,18 +51,8 @@ namespace RouteOpt::Rank1Cuts::Separation {
         std::unordered_set<std::pair<int, int>, PairHasher> existing_arcs;
         // 1. arcs between inside, 2. arcs from c to inside;
         for (auto &info: arc_mem) {
-            if (info.second == RANK1_INVALID) {
-                for (auto &it: cut.info_r1c.first) {
-                    existing_arcs.emplace(it, info.first);
-                }
-                continue;
-            }
             existing_arcs.emplace(info.first, info.second);
             existing_arcs.emplace(info.second, info.first); //keep symmetry
-            for (auto &it: cut.info_r1c.first) {
-                existing_arcs.emplace(it, info.first);
-                existing_arcs.emplace(it, info.second);
-            }
         }
 
 
@@ -115,19 +105,14 @@ namespace RouteOpt::Rank1Cuts::Separation {
             std::unordered_set<std::pair<int, int>, PairHasher> reduced_arcs;
             for (auto &it: existing_arcs) {
                 int ai = it.first, aj = it.second;
-                if (cut_info.test(ai) && cut_info.test(aj)) {
+                if (cut_info.test(aj)) {
                     continue;
                 }
                 if (cut_info.test(ai)) {
-                    auto pr = std::make_pair(aj, RANK1_INVALID);
-                    if (reduced_arcs.find(pr) == reduced_arcs.end()) {
-                        reduced_arcs.insert(pr);
-                    }
+                    reduced_arcs.insert(it);
                 } else {
                     auto pr = ai < aj ? std::make_pair(ai, aj) : std::make_pair(aj, ai);
-                    if (reduced_arcs.find(pr) == reduced_arcs.end()) {
-                        reduced_arcs.insert(pr);
-                    }
+                    reduced_arcs.insert(pr);
                 }
             }
             arc_mem.assign(reduced_arcs.begin(), reduced_arcs.end());

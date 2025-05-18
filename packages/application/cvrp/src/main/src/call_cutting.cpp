@@ -16,15 +16,13 @@ namespace RouteOpt::Application::CVRP {
         bool if_node_memory = true;
         constexpr bool if_print_tail_reason = true;
 
-        inline void trySetInitialIfNodeMemory(const std::vector<R1c> &r1cs, int dim) {
+        inline void trySetInitialIfNodeMemory(const std::vector<R1c> &r1cs) {
             if (!if_node_memory) return;
+            //node memory size must be = m(m-1)/2;
             for (auto &r1c: r1cs) {
-                for (auto &m: r1c.arc_mem) {
-                    if (m.first.empty()) continue;
-                    if (m.first.size() != dim) {
-                        if_node_memory = false;
-                        return;
-                    }
+                if (!r1c.tellIfNodeMemory()) {
+                    if_node_memory = false;
+                    return;
                 }
             }
         }
@@ -110,11 +108,11 @@ namespace RouteOpt::Application::CVRP {
             double gap_improved = now_val - past_val;
             if (gap_improved < -TOLERANCE * now_val) {
                 THROW_RUNTIME_ERROR("lp value decreased!");
-            } else if (gap_improved < TOLERANCE * now_val) {
+            }
+            if (gap_improved < TOLERANCE * now_val) {
                 if_tail_off = true;
                 goto QUIT;
             }
-
 
             if (!if_only_check_counter && !equalFloat(br_value_improved, 0.)) {
                 if (equalFloat(eps_max, 0.)) eps_max = std::numeric_limits<float>::max();
@@ -404,7 +402,12 @@ namespace RouteOpt::Application::CVRP {
             return;
         }
 
-        CuttingDetail::trySetInitialIfNodeMemory(node->getR1Cs(), dim);
+        if (pricing_controller.getAverageRouteLength() >
+            NODE_MEMORY_ROUTE_LENGTH && CuttingDetail::if_node_memory == true && node->getIfRootNode()) {
+            PRINT_REMIND("arc memory is used due to long route length");
+        }
+
+        CuttingDetail::trySetInitialIfNodeMemory(node->getR1Cs());
         std::vector<double> x;
         std::vector<double> sol_x;
         std::vector<SequenceInfo> sols;
@@ -438,7 +441,6 @@ namespace RouteOpt::Application::CVRP {
         SAFE_SOLVER(node->refSolver().getX(0, cols.size(), x.data()))
         CuttingDetail::getSols(x, cols, sol_x, sols);
 
-
         SAFE_SOLVER(node->refSolver().getNumRow(&num_row))
         old_row = num_row;
 
@@ -454,7 +456,7 @@ namespace RouteOpt::Application::CVRP {
             if_collect_sol
         );
 
-        if (limited_memory_type == Rank1Cuts::Separation::MemoryType::ARC_MEMORY) {
+        if (limited_memory_type != Rank1Cuts::Separation::MemoryType::NODE_MEMORY) {
             if (rollback_solver.model) rollback_solver.freeModel();
             rollback_solver.model = node->refSolver().copyModel();
             rollback_cols = cols;
@@ -502,7 +504,9 @@ namespace RouteOpt::Application::CVRP {
     PRICING:
         if (old_row == num_row) {
             goto SET_TAIL_OFF;
-        } {
+        }
+        //
+        {
             bool if_care_lb_improvement = !node->getIfInEnumState();
             auto if_continue = node->validateCuts(old_row, if_care_lb_improvement);
             if (!if_continue) {
