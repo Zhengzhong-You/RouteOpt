@@ -7,6 +7,8 @@
 
 #ifndef ROUTE_OPT_ENUMERATION_HPP
 #define ROUTE_OPT_ENUMERATION_HPP
+#include <valarray>
+
 #include "cvrp_pricing_controller.hpp"
 
 namespace RouteOpt::Application::CVRP {
@@ -118,10 +120,10 @@ namespace RouteOpt::Application::CVRP {
                                                          min_enumeration_fail_gap)) << std::endl;
         }
 
-         template<bool if_symmetry>
-         void adjustMeetPoint(int num_forward_labels_in_enu,
-                              int num_backward_labels_in_enu,
-                              double &meet_point_resource_in_bi_dir_enu) {
+        template<bool if_symmetry>
+        void adjustMeetPoint(int num_forward_labels_in_enu,
+                             int num_backward_labels_in_enu,
+                             double &meet_point_resource_in_bi_dir_enu) {
             if constexpr (if_symmetry) return;
             if (num_backward_labels_in_enu == 0) return;
             double dif = std::abs(num_forward_labels_in_enu - num_backward_labels_in_enu);
@@ -131,6 +133,68 @@ namespace RouteOpt::Application::CVRP {
                     meet_point_resource_in_bi_dir_enu *= (1 - MeetPointFactor);
                 } else {
                     meet_point_resource_in_bi_dir_enu *= (1 + MeetPointFactor);
+                }
+            }
+        }
+
+        inline double getThresholdN(double m, int a0, double q) {
+            if (q <= 1 + TOLERANCE) return m / a0 + TOLERANCE;
+            return std::log(1 + m * (q - 1) / a0) / std::log(q) + TOLERANCE;
+        }
+
+        inline bool testIfNLinearPass(double max_label, double left_bin, int left_labels) {
+            return left_labels > max_label * left_bin;
+        }
+
+        template<bool dir>
+        void setLabelLimitMiddleCheck(const std::vector<int> &aq,
+                                      int num_label,
+                                      int max_label_in_enumeration,
+                                      double stop_b,
+                                      ENUMERATION_STATE &status) {
+            if (num_label < NumCheckLabelInEnumeration) return;
+            double q = 0.0;
+            bool hasPrev = false;
+            int prev = 0;
+            int max_idx = -1;
+            int max_val = -1;
+
+            for (int i = (dir ? 0 : static_cast<int>(aq.size() - 1)); dir ? (i < aq.size()) : (i >= 0);
+                 dir ? (++i) : (--i)) {
+                int v = aq[i];
+                if (v == 0) continue;
+                if (hasPrev) {
+                    q += v / static_cast<double>(prev);
+                }
+                prev = v;
+                hasPrev = true;
+                if (v > max_val) {
+                    max_val = v;
+                    max_idx = i;
+                }
+            }
+
+
+            if (q == 0.0) return;
+
+            if (!testIfNLinearPass(max_val, std::abs(stop_b - max_idx),
+                                   max_label_in_enumeration - num_label)) {
+                status = dir ? ENUMERATION_STATE::LABEL_FOR_LIMIT : ENUMERATION_STATE::LABEL_BACK_LIMIT;
+                // std::cout << "fail to pass linear test" <<
+                //         std::endl;
+                return;
+            }
+
+            double n = getThresholdN(MaxNumLabelsCheckBinFactorInEnumeration * max_label_in_enumeration, num_label,
+                                     q) * (
+                           dir ? (max_idx) : (aq.size() - max_idx - 1)) * ToleranceFactorInEnumerationLabelChecking;
+            if constexpr (dir) {
+                if (n < stop_b) {
+                    status = ENUMERATION_STATE::LABEL_FOR_LIMIT;
+                }
+            } else {
+                if (static_cast<double>(aq.size()) - n > stop_b) {
+                    status = ENUMERATION_STATE::LABEL_BACK_LIMIT;
                 }
             }
         }
@@ -198,8 +262,9 @@ namespace RouteOpt::Application::CVRP {
         std::cout << SMALL_PHASE_SEPARATION;
         printHeadLines("Try Enumeration");
 
-        if (std::abs(meet_point_resource_in_bi_dir_enu) < TOLERANCE)
+        if (std::abs(meet_point_resource_in_bi_dir_enu) < TOLERANCE) {
             meet_point_resource_in_bi_dir_enu = meet_point_resource_in_bi_dir;
+        }
 
 
         priceConstraints(rccs,
@@ -209,7 +274,9 @@ namespace RouteOpt::Application::CVRP {
 
         this->opt_gap = opt_gap;
 
+        ENUMERATION_STATE status;
         auto if_succeed = enumerateRoutes<if_symmetry>(if_in_enu_state,
+                                                       status,
                                                        index_columns_in_enumeration_column_pool,
                                                        cost_for_columns_in_enumeration_column_pool,
                                                        valid_size,
@@ -229,10 +296,13 @@ namespace RouteOpt::Application::CVRP {
                                                    max_enumeration_success_gap,
                                                    min_enumeration_fail_gap);
 
-        if (if_succeed && !if_fix_meet_point)
+        if (!if_fix_meet_point)
+            if (if_succeed || status == ENUMERATION_STATE::LABEL_BACK_LIMIT) {
                 EnumerationDetail::adjustMeetPoint<if_symmetry>(static_cast<int>(num_forward_labels_in_enu),
                                                                 static_cast<int>(num_backward_labels_in_enu),
                                                                 meet_point_resource_in_bi_dir_enu);
+            }
+
 
         glob_timer.report();
 
@@ -243,6 +313,7 @@ namespace RouteOpt::Application::CVRP {
     template<bool if_symmetry>
     bool CVRP_Pricing::enumerateRoutes(
         bool &if_in_enu_state,
+        ENUMERATION_STATE &status,
         RowVectorXT &index_columns_in_enumeration_column_pool,
         RowVectorXd &cost_for_columns_in_enumeration_column_pool,
         int &valid_size,
@@ -252,13 +323,9 @@ namespace RouteOpt::Application::CVRP {
         if (if_force_enumeration_suc) {
             max_label_in_enumeration = std::numeric_limits<int>::max();
             max_route_in_enumeration = std::numeric_limits<int>::max();
-            max_route_half_in_enumeration = std::numeric_limits<int>::max();
-            max_enumeration_time = std::numeric_limits<float>::max();
         } else {
             max_label_in_enumeration = MaxNumLabelInEnumeration;
-            max_route_half_in_enumeration = MaxNumRouteInEnumeration_half;
             max_route_in_enumeration = MaxNumRouteInEnumeration;
-            max_enumeration_time = HardTimeThresholdInAllEnumeration;
         }
         int num_routes_now = 0;
         auto &cost_m = cost_for_columns_in_enumeration_column_pool;
@@ -290,7 +357,6 @@ namespace RouteOpt::Application::CVRP {
         }
 
 
-        ENUMERATION_STATE status;
         auto eps = TimeSetter::measure([&]() {
             if constexpr (!if_symmetry) {
                 status = enumerateHalfwardRoutes<true, false>(Tags, copy_Backward_bucket, num_routes_now);
@@ -397,31 +463,14 @@ namespace RouteOpt::Application::CVRP {
 
         initializeLabels<dir, if_symmetry, false, true, true>();
 
-        auto initial_time = std::chrono::high_resolution_clock::now();
-        std::chrono::time_point<std::chrono::high_resolution_clock> beg, end;
-        double old_labels = 0;
 
-
-        auto stop_b = static_cast<int>(meet_point_resource_in_bi_dir_enu / step_size);
+        step_size_label_check_in_enumeration = resource.resources[0] / LabelsCheckBinInEnumeration;
+        label_per_bin_in_enumeration.assign(
+            static_cast<int>(resource.resources[0] / (step_size_label_check_in_enumeration - 1)) + 1,
+            0);
+        double stop_b = meet_point_resource_in_bi_dir_enu / step_size_label_check_in_enumeration;
 
         for (int b = dir ? 0 : num_buckets_per_vertex - 1; dir ? b < num_buckets_per_vertex : b >= 0; dir ? ++b : --b) {
-            double time_4_b;
-            double label_4_b;
-            if (dir ? b < stop_b : b > stop_b) {
-                beg = std::chrono::high_resolution_clock::now();
-                old_labels = dir ? num_forward_labels_in_enu : num_backward_labels_in_enu;
-                double left_time = max_enumeration_time - (std::chrono::duration<double>(
-                                       beg - initial_time).count());
-                double left_label = max_label_in_enumeration - (dir
-                                                                    ? num_forward_labels_in_enu
-                                                                    : num_backward_labels_in_enu);
-                label_4_b = left_label / std::abs(stop_b - b);
-                time_4_b = left_time / std::abs(stop_b - b);
-            } else {
-                time_4_b = std::numeric_limits<float>::max();
-                label_4_b = std::numeric_limits<float>::max();
-            }
-
             for (auto &comp: dir ? topological_order_forward_ptr->at(b) : topological_order_backward_ptr->at(b)) {
                 int index = 0;
             STILL_EXIST:
@@ -443,14 +492,15 @@ namespace RouteOpt::Application::CVRP {
                             status);
                         if (status != ENUMERATION_STATE::NORMAL) goto outside;
                     }
+                    EnumerationDetail::setLabelLimitMiddleCheck<dir>(label_per_bin_in_enumeration,
+                                                                     dir
+                                                                         ? num_forward_labels_in_enu
+                                                                         : num_backward_labels_in_enu,
+                                                                     max_label_in_enumeration,
+                                                                     stop_b,
+                                                                     status);
+                    if (status != ENUMERATION_STATE::NORMAL) goto outside;
                     valid_num = 0;
-                    end = std::chrono::high_resolution_clock::now();
-                    if (std::chrono::duration<double>(end - beg).count() > time_4_b || (dir
-                                ? num_forward_labels_in_enu
-                                : num_backward_labels_in_enu) - old_labels > label_4_b) {
-                        status = ENUMERATION_STATE::TIME_LIMIT;
-                        goto outside;
-                    }
                 }
                 for (index = 0; index < comp.size(); ++index) {
                     int i = comp[index];
@@ -593,10 +643,6 @@ namespace RouteOpt::Application::CVRP {
                     if (Tags.find(tmp_PI) == Tags.end()) {
                         Tags[tmp_PI] = {all_label + idx_glo, nullptr, path_cost};
                         ++num_routes_now;
-                        if (num_routes_now > max_route_half_in_enumeration) {
-                            status = ENUMERATION_STATE::ROUTE_LIMIT;
-                            goto QUIT;
-                        }
                     } else if (std::get<2>(Tags[tmp_PI]) > path_cost) {
                         Tags[tmp_PI] = {all_label + idx_glo, nullptr, path_cost};
                     }
@@ -604,9 +650,11 @@ namespace RouteOpt::Application::CVRP {
             }
 
             if ((dir ? ++num_forward_labels_in_enu : ++num_backward_labels_in_enu) > max_label_in_enumeration) {
-                status = ENUMERATION_STATE::LABEL_LIMIT;
+                status = dir ? ENUMERATION_STATE::LABEL_FOR_LIMIT : ENUMERATION_STATE::LABEL_BACK_LIMIT;
                 goto QUIT;
             }
+            ++label_per_bin_in_enumeration[static_cast<int>(
+                tmp_Resource.resources[0] / step_size_label_check_in_enumeration)];
             ++idx_glo; //can be put here, because once go outside, the function will end
             if (idx_glo == label_assign) {
                 status = ENUMERATION_STATE::OUT_OF_MEMORY;
@@ -628,7 +676,7 @@ namespace RouteOpt::Application::CVRP {
         tmp_PI.set(j);
         tmp_Cost = ki->cost + cost_mat4_vertex_ref.get()[i][j];
         new_label->end_vertex = j;
-    };
+    }
 
     template<bool dir>
     void CVRP_Pricing::doDominanceEnumerationLabel(int j, int bj, bool &if_suc) {
@@ -649,6 +697,7 @@ namespace RouteOpt::Application::CVRP {
                     kj->is_extended = true;
                     *it = new_label;
                     dir ? --num_forward_labels_in_enu : --num_backward_labels_in_enu;
+                    --label_per_bin_in_enumeration[kj->res.resources[0] / step_size_label_check_in_enumeration];
                     break;
                 }
                 if (state == dominanceCoreInEnumeration_STATE::KJ_DOMINATE_KI) {

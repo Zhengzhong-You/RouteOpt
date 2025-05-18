@@ -509,7 +509,7 @@ namespace RouteOpt::Application::CVRP {
         {
             bool if_care_lb_improvement = !node->getIfInEnumState();
             auto if_continue = node->validateCuts(old_row, if_care_lb_improvement);
-            if (!if_continue) {
+            if (!if_continue && CuttingDetail::if_pure_rcc_tail) {
                 goto QUIT;
             }
         }
@@ -561,6 +561,19 @@ namespace RouteOpt::Application::CVRP {
         }
         if (!if_tail_off) goto CUTTING;
     QUIT:
+
+        //
+        if (!node->getIfTerminate()) {
+            SAFE_SOLVER(node->refSolver().getX(0, cols.size(), x.data()))
+            double obj;
+            SAFE_SOLVER(node->refSolver().getObjVal(&obj))
+            bool if_integer, if_feasible;
+            updateIntegerSolution(obj, x, cols, if_integer, if_feasible);
+            if (if_integer && if_feasible) {
+                node->refValue() = obj;
+                node->refIfTerminate() = true;
+            }
+        }
         if (rollback_solver.model) rollback_solver.freeModel();
         if (!node->getIfTerminate() && !node->getIfInEnumState()) {
             node->cleanIndexColForNode();

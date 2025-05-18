@@ -195,23 +195,12 @@ namespace RouteOpt::Application::CVRP {
                 r1c.arc_mem.resize(arc_mem_count);
                 for (int j = 0; j < arc_mem_count; ++j) {
                     auto &arc_mem_pair = r1c.arc_mem[j];
-                    int arc_size = 0;
-                    iss.read(reinterpret_cast<char *>(&arc_size), sizeof(arc_size));
+                    iss.read(reinterpret_cast<char *>(&arc_mem_pair.first), sizeof(arc_mem_pair.first));
                     if (!iss)
-                        THROW_RUNTIME_ERROR("error reading arc size for arc_mem " + std::to_string(j) +
-                        " for r1c " + std::to_string(i));
-                    arc_mem_pair.first.resize(arc_size);
-                    for (int k = 0; k < arc_size; ++k) {
-                        iss.read(reinterpret_cast<char *>(&arc_mem_pair.first[k]), sizeof(arc_mem_pair.first[k]));
-                        if (!iss)
-                            THROW_RUNTIME_ERROR("error reading arc_mem element " + std::to_string(k) +
-                            " for arc_mem " + std::to_string(j) +
-                            " for r1c " + std::to_string(i));
-                    }
+                        THROW_RUNTIME_ERROR("error reading r1c arc_mem.first for r1c " + std::to_string(i));
                     iss.read(reinterpret_cast<char *>(&arc_mem_pair.second), sizeof(arc_mem_pair.second));
                     if (!iss)
-                        THROW_RUNTIME_ERROR("error reading arc_mem mem value for arc_mem " + std::to_string(j) +
-                        " for r1c " + std::to_string(i));
+                        THROW_RUNTIME_ERROR("error reading r1c arc_mem.second for r1c " + std::to_string(i));
                 }
             }
 

@@ -14,7 +14,6 @@
 #include "rcc_separation_controller.hpp"
 #include "capsep.h"
 #include "cnstrmgr.h"
-#include "rank1_macro.hpp"
 
 
 namespace RouteOpt::RCCs::Separation {

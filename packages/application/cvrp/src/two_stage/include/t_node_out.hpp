@@ -160,14 +160,8 @@ namespace RouteOpt::Application::CVRP {
                 int arc_mem_count = static_cast<int>(r1c.arc_mem.size());
                 oss.write(reinterpret_cast<const char *>(&arc_mem_count), sizeof(arc_mem_count));
                 for (const auto &pair: r1c.arc_mem) {
-                    const auto &arc = pair.first;
-                    const auto &mem = pair.second;
-                    int arc_size = static_cast<int>(arc.size());
-                    oss.write(reinterpret_cast<const char *>(&arc_size), sizeof(arc_size));
-                    for (const auto &i: arc) {
-                        oss.write(reinterpret_cast<const char *>(&i), sizeof(i));
-                    }
-                    oss.write(reinterpret_cast<const char *>(&mem), sizeof(mem));
+                    oss.write(reinterpret_cast<const char *>(&pair.first), sizeof(pair.first));
+                    oss.write(reinterpret_cast<const char *>(&pair.second), sizeof(pair.second));
                 }
             }
 
