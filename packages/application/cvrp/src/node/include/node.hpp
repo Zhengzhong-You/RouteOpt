@@ -283,9 +283,9 @@ namespace RouteOpt::Application::CVRP {
             const std::vector<routeOptLong> &ng_mem4_vertex, const std::vector<double> &optional_demand,
             double optional_cap);
 
-        void cleanIndexColForNode(double ratio= COL_KEEP_FRAC);
+        void cleanIndexColForNode(double ratio = COL_KEEP_FRAC);
 
-        bool validateCuts(int old_num, bool if_care_lb_improvement);
+        bool validateCuts(int old_num, bool if_care_lb_improvement, double cutting_branching_ratio);
 
         void mergeR1Cs();
 

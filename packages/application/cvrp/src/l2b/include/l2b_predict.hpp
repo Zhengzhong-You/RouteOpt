@@ -89,7 +89,9 @@ namespace RouteOpt::Application::CVRP {
 
         void predict_model_1(std::vector<BrCType> &candidate_vector);
 
-        void predict_model_2(const Branching::BranchingDataShared<BrCType, Hasher> &branching_data_shared);
+        void predict_model_2(const Branching::BranchingHistory<BrCType, Hasher> &branching_history,
+                             const Branching::BranchingDataShared<BrCType, Hasher> &branching_data_shared,
+                             bool if_trust);
 
         void testCGOneSide(Node *node, const BrCType &candidate, bool dir,
                            Branching::BranchingHistory<BrCType, Hasher> &branching_history);
@@ -104,7 +106,7 @@ namespace RouteOpt::Application::CVRP {
                             Branching::BranchingHistory<BrCType, Hasher> &branching_history,
                             Branching::BranchingDataShared<BrCType, Hasher> &branching_data_shared,
                             Branching::CandidateSelector::BranchingTesting<Node, BrCType, Hasher> &branching_testing,
-                            double local_gap);
+                            double local_gap, int tree_level);
     };
 }
 

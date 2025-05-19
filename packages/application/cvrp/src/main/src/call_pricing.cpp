@@ -16,19 +16,20 @@ namespace RouteOpt::Application::CVRP {
                 PairHasher>::checkIfStopGeneratingData(node->getTreeSize(), node->refIfTerminate());
             if (node->getIfTerminate()) return;
         }
-        callPricing(node, std::numeric_limits<float>::max());
+        double eps;
+        callPricing(node, std::numeric_limits<float>::max(), eps);
         if (node->getIfRootNode() && app_type == APPLICATION_TYPE::VRPTW)
             augmentNGRound(
                 node, pricing_controller.refNG());
     }
 
-    void CVRPSolver::callPricing(BbNode *node, double labeling_time_limit) {
+    void CVRPSolver::callPricing(BbNode *node, double labeling_time_limit, double &time_4_pure_pricing) {
         if (node->getIfInEnumState()) {
         ENU:
-            callInspection(node);
+            callInspection(node, time_4_pure_pricing);
             BbNode::regenerateEnumMat(node, nullptr, false, optimal_dual_vector);
         } else {
-            callLabeling(node, labeling_time_limit);
+            callLabeling(node, labeling_time_limit, time_4_pure_pricing);
             if (node->getIfInEnumState()) {
                 goto ENU;
             }
@@ -51,13 +52,15 @@ namespace RouteOpt::Application::CVRP {
         }
     }
 
-    void CVRPSolver::callInspection(BbNode *node) {
+    void CVRPSolver::callInspection(BbNode *node, double &time_4_pure_pricing) {
         constexpr bool if_update_column_pool = true;
         constexpr bool if_allow_delete_col = true;
-        solveLPByInspection(node, if_update_column_pool, if_allow_delete_col);
+        time_4_pure_pricing = TimeSetter::measure([&]() {
+            solveLPByInspection(node, if_update_column_pool, if_allow_delete_col);
+        });
     };
 
-    void CVRPSolver::callLabeling(BbNode *node, double labeling_time_limit) {
+    void CVRPSolver::callLabeling(BbNode *node, double labeling_time_limit, double &time_4_pure_pricing) {
         constexpr bool if_open_heur = true;
         constexpr bool if_open_exact = true;
         constexpr bool if_update_node_val = true;
@@ -68,9 +71,11 @@ namespace RouteOpt::Application::CVRP {
 
         bool if_consider_regenerate_bucket_graph = node->getIfRootNode();
 
-        solveLPInLabeling(node, if_open_heur, if_open_exact, if_update_node_val,
-                          if_consider_regenerate_bucket_graph, if_possible_terminate_early,
-                          if_fix_row, if_fix_meet_point, if_allow_delete_col, labeling_time_limit);
+        time_4_pure_pricing = TimeSetter::measure([&]() {
+            solveLPInLabeling(node, if_open_heur, if_open_exact, if_update_node_val,
+                              if_consider_regenerate_bucket_graph, if_possible_terminate_early,
+                              if_fix_row, if_fix_meet_point, if_allow_delete_col, labeling_time_limit);
+        });
 
 
         if (node->getIfTerminate() || !pricing_controller.getIfCompleteCG()) return;

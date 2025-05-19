@@ -72,10 +72,6 @@ namespace RouteOpt::Application::CVRP {
         }
     QUIT:
         if (!if_exact_labeling_finished || if_short_memory) if_arc_elimination_succeed = false;
-        if (if_arc_elimination_succeed) {
-            gap_improved_4_arc_elimination_n_enumeration += GapBarIncreased4ArcEliminationNEnumeration;
-            arc_elimination_time += ArcEliminationTimeIncreased;
-        }
     }
 
     inline bool CVRP_Pricing::determineIfArcElimination(double ub, double opt_gap, double &last_gap) {
@@ -89,8 +85,8 @@ namespace RouteOpt::Application::CVRP {
             goto QUIT;
         }
 
-        if (last_gap / now_gap > gap_improved_4_arc_elimination_n_enumeration
-            || now_gap < gap_tolerance4_arc_elimination_n_enumeration) {
+        if ((last_gap / now_gap > gap_improved_4_arc_elimination_n_enumeration)
+            || (now_gap < gap_tolerance4_arc_elimination_n_enumeration)) {
             goto QUIT;
         }
         return false;

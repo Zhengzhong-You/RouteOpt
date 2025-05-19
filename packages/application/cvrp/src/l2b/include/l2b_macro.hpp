@@ -15,6 +15,8 @@ namespace RouteOpt::Application::CVRP {
     constexpr int MAX_NUM_RUN_OPTIMAL_K = 10;
     constexpr int ML_RANDOM_SEED = 42;
     constexpr int L2B_SIMULATE_NUM = 30;
+    constexpr int CONSERVATIVE_LP_TESTING_THRESHOLD = 10;
+    //if lower than this number, then we trust our second stage model
     constexpr int MAX_TREE_LEVEL = 5;
     constexpr int MAX_R_SECOND_STAGE = 2; //scale the prediction value to 0-2!
     constexpr int MAX_RANK_DEVIATION = (MAX_R_SECOND_STAGE + 2);

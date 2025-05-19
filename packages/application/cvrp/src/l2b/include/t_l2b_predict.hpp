@@ -14,9 +14,43 @@
 #include "route_opt_macro.hpp"
 
 namespace RouteOpt::Application::CVRP {
+    namespace L2BPredictDetail {
+        template<typename BrCType, typename Hasher>
+        bool checkIfCGRecorded(
+            const Branching::BranchingHistory<BrCType, Hasher> &branching_history,
+            const BrCType &candidate) {
+            // Arrays of pointers to the corresponding 'up' and 'down' maps
+            std::array<const std::unordered_map<BrCType, std::pair<double, int>, Hasher> *, 2> improvement_ups = {
+                &branching_history.exact_improvement_up,
+                &branching_history.heuristic_improvement_up,
+            };
+
+            std::array<const std::unordered_map<BrCType, std::pair<double, int>, Hasher> *, 2> improvement_downs = {
+                &branching_history.exact_improvement_down,
+                &branching_history.heuristic_improvement_down,
+            };
+
+            // Iterating over the arrays
+            for (size_t i = 0; i < improvement_ups.size(); ++i) {
+                auto &up_map = improvement_ups[i];
+                auto &down_map = improvement_downs[i]; // Select the matching down std::map
+
+                auto up_iter = up_map->find(candidate);
+                if (up_iter != up_map->end()) {
+                    auto down_iter = down_map->find(candidate);
+                    if (down_iter != down_map->end()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
     template<typename Node, typename BrCType, typename Hasher>
     void Predict<Node, BrCType, Hasher>::predict_model_2(
-        const Branching::BranchingDataShared<BrCType, Hasher> &branching_data_shared) {
+        const Branching::BranchingHistory<BrCType, Hasher> &branching_history,
+        const Branching::BranchingDataShared<BrCType, Hasher> &branching_data_shared, bool if_trust) {
         const auto &branch_pair = branching_data_shared.getBranchPair();
         edge_lp_pre.clear();
         his_recording.clear();
@@ -88,6 +122,7 @@ namespace RouteOpt::Application::CVRP {
         float max_val = *std::max_element(output_result, output_result + output_length);
         for (unsigned int i = 0; i < output_length; i++) {
             auto &e = edge_lp_pre[branch_pair[i / 2]];
+
             auto val = std::max(
                 static_cast<int>((output_result[i] - min_val) / (max_val - min_val) * (MAX_R_SECOND_STAGE + 1) -
                                  TOLERANCE),
@@ -95,7 +130,11 @@ namespace RouteOpt::Application::CVRP {
             auto &lp = i % 2 == 0 ? e.first.lp : e.second.lp;
             if (lp >= TRUST_SCORE && val == 0) {
                 val = BEST_PRE;
-                lp = TRUST_SCORE + 1; // tie breaker
+                lp = TRUST_SCORE + 1; // tiebreaker
+            }
+            if (!L2BPredictDetail::checkIfCGRecorded<BrCType, Hasher>(branching_history, branch_pair[i / 2]) &&
+                !if_trust) {
+                val = MAX_R_SECOND_STAGE;
             }
             i % 2 == 0 ? e.first.pre = val : e.second.pre = val;
         }
@@ -261,7 +300,7 @@ namespace RouteOpt::Application::CVRP {
         Branching::BranchingHistory<BrCType, Hasher> &branching_history,
         Branching::BranchingDataShared<BrCType, Hasher> &branching_data_shared,
         Branching::CandidateSelector::BranchingTesting<Node, BrCType, Hasher> &branching_testing,
-        double local_gap) {
+        double local_gap, int tree_level) {
         branching_testing.refLPTimeCnt().first = TimeSetter::measure([&]() {
             l2b_controller_ref.get().getFeatureDataPhase2(node, branching_data_shared, branching_history,
                                                           branching_testing,
@@ -270,7 +309,10 @@ namespace RouteOpt::Application::CVRP {
         branching_testing.refLPTimeCnt().second = branching_testing.getNumPhase0() == 1
                                                       ? 0
                                                       : 2 * branching_testing.getNumPhase0();
-        predict_model_2(branching_data_shared);
+
+        predict_model_2(branching_history, branching_data_shared,
+                        branching_testing.getNumPhase0() < CONSERVATIVE_LP_TESTING_THRESHOLD);
+
         branching_testing.refHeuristicTimeCnt().first = TimeSetter::measure([&]() {
             deeperTesting(node, branching_data_shared, branching_history);
         });
@@ -290,7 +332,7 @@ namespace RouteOpt::Application::CVRP {
         branching_history.initialScreen(branching_data_shared, L2B_PHASE0);
         useModelPhase1(node, branching_history, branching_data_shared, branching_testing, tree_level,
                        lp_solution, route_length);
-        useModelPhase2(node, branching_history, branching_data_shared, branching_testing, local_gap);
+        useModelPhase2(node, branching_history, branching_data_shared, branching_testing, local_gap, tree_level);
     }
 }
 

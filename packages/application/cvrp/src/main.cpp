@@ -24,10 +24,14 @@ using namespace Application::CVRP;
 int main(int argc, char *argv[]) {
     // Create an instance of the solver based on the application type.
     // If the application type is CVRP, create a CVRPSolver; otherwise, create a VRPTW solver.
+
+    std::cout << "application type: " <<
+            (app_type == APPLICATION_TYPE::CVRP ? "CVRP" : "VRPTW") << std::endl;
+
+
     CVRPSolver *cvrp = app_type == APPLICATION_TYPE::CVRP
                            ? new CVRPSolver(argc, argv)
                            : new VRPTW(argc, argv);
-
     // Create a new branch-and-bound node (BbNode) as the root node.
     auto node = new BbNode();
 

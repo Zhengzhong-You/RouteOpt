@@ -115,7 +115,6 @@ namespace RouteOpt::Application::CVRP {
                 }
                 if (!if_use) {
                     pricing_controller.refStabDelta() /= STAB_DELTA_DECAY_FACTOR;
-                    // std::cout << "delta= " << pricing_controller.getStabDelta() << std::endl;
                 }
                 if (if_incumbent_update || !if_use) {
                     if_incumbent_update = false;

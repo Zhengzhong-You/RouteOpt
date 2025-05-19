@@ -88,7 +88,7 @@ namespace RouteOpt::Application::CVRP {
                                                       ? 1
                                                       : 2;
 
-    constexpr int NODE_MEMORY_ROUTE_LENGTH{10};
+    constexpr int NODE_MEMORY_ROUTE_LENGTH{16};
 
     enum class NUM_TESTING {
         PHASE0 = 30,
@@ -116,7 +116,8 @@ namespace RouteOpt::Application::CVRP {
     constexpr int MaxNumRoutesInExactPricingHigh = 1000;
     constexpr int MaxNumRoutesInHeavierHeur = 30;
     constexpr int MaxNumRoutesInLighterHeur = 30;
-    constexpr double CUTTING_BRANCHING_RATIO = 1.0;
+    constexpr double CUTTING_BRANCHING_RATIO = 0.2;
+    constexpr double CUTTING_BRANCHING_RATIO_LOW = 0.1;
     constexpr double FracMemTolerance = 0.8;
     constexpr int NUM_THREADS_LP = 1;
     constexpr double MIP_GAP_TOLERANCE = 1e-9;

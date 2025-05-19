@@ -12,8 +12,7 @@ namespace RouteOpt::Application::CVRP {
         if constexpr (ml_type == ML_TYPE::ML_GET_DATA_1 || ml_type == ML_TYPE::ML_GET_DATA_2) {
             return;
         }
-        bool if_fix_meet_point = (!node->getR1Cs().empty()) &&
-                                 (rank1_separation_controller.getIfOnceUseNoSymmetryMem());
+        constexpr bool if_fix_meet_point = false;
         auto if_suc = pricing_controller.enumerateMIP<!IF_SYMMETRY_PROHIBIT>(node->getRCCs(), node->getR1Cs(),
                                                                              node->getBrCs(), optimal_dual_vector,
                                                                              ub,

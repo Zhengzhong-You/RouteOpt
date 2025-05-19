@@ -253,11 +253,11 @@ namespace RouteOpt::Application::CVRP {
                                         Solver &solver) {
         };
 
-        void callInspection(BbNode *node);
+        void callInspection(BbNode *node, double &time_4_pure_pricing);
 
-        void callLabeling(BbNode *node, double labeling_time_limit);
+        void callLabeling(BbNode *node, double labeling_time_limit, double &time_4_pure_pricing);
 
-        void callPricing(BbNode *node, double labeling_time_limit);
+        void callPricing(BbNode *node, double labeling_time_limit, double &time_4_pure_pricing);
     };
 
     namespace ConstructInitialColumnsDetail {

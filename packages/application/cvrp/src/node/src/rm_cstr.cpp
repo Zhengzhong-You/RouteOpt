@@ -132,7 +132,7 @@ namespace RouteOpt::Application::CVRP {
         }
     }
 
-    bool BbNode::validateCuts(int old_num, bool if_care_lb_improvement) {
+    bool BbNode::validateCuts(int old_num, bool if_care_lb_improvement, double cutting_branching_ratio) {
         /**
          * since this mode only delete cuts by slack and only new cuts will be tested,
          * therefore, the rcc can be safely deleted
@@ -142,7 +142,9 @@ namespace RouteOpt::Application::CVRP {
         if (if_care_lb_improvement) {
             double lp_val;
             SAFE_SOLVER(solver.getObjVal(&lp_val))
-            if (lp_val - value < CUTTING_BRANCHING_RATIO * br_value_improved) {
+            if (lp_val - value < cutting_branching_ratio * br_value_improved) {
+                std::cout << "br_value_improved= " << br_value_improved << " cutting_branching_ratio= " <<
+                        cutting_branching_ratio << " ";
                 if_continue = false;
                 std::cout << "minor (" << lp_val - value << ") improvement after cutting, stop this cutting iteration"
                         <<

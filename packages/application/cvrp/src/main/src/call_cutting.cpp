@@ -79,22 +79,11 @@ namespace RouteOpt::Application::CVRP {
             return false;
         }
 
-        inline bool increaseCondition3(double lb, double gap_improved, int &tail_off_counter) {
-            if ((gap_improved / lb) < LB_RELATIVE_IMPROVE_THRESHOLD) {
-                ++tail_off_counter;
-                if constexpr (if_print_tail_reason)
-                    PRINT_REMIND("3: gap improved= " + std::to_string(gap_improved) + " ratio= " + std::to_string(
-                    gap_improved / lb) + " threshold= " + std::to_string(LB_RELATIVE_IMPROVE_THRESHOLD));
-                return true;
-            }
-            return false;
-        }
-
         // Try to increase the tail-off counter if any condition is satisfied.
         inline bool tryIncreaseTailOffCounter(double ub, double lb, double gap_improved, int &tail_off_counter) {
             if (increaseCondition1(gap_improved, tail_off_counter) ||
-                increaseCondition2(ub, lb, gap_improved, tail_off_counter) ||
-                increaseCondition3(lb, gap_improved, tail_off_counter)) {
+                increaseCondition2(ub, lb, gap_improved, tail_off_counter)
+                ) {
                 return true;
             };
             return false;
@@ -104,7 +93,8 @@ namespace RouteOpt::Application::CVRP {
                                  bool if_only_check_counter,
                                  double &eps_max,
                                  bool &if_tail_off,
-                                 int &tail_off_counter) {
+                                 int &tail_off_counter,
+                                 double cutting_branching_ratio) {
             double gap_improved = now_val - past_val;
             if (gap_improved < -TOLERANCE * now_val) {
                 THROW_RUNTIME_ERROR("lp value decreased!");
@@ -116,19 +106,19 @@ namespace RouteOpt::Application::CVRP {
 
             if (!if_only_check_counter && !equalFloat(br_value_improved, 0.)) {
                 if (equalFloat(eps_max, 0.)) eps_max = std::numeric_limits<float>::max();
-                if (eps > CUTTING_BRANCHING_RATIO * gap_improved / br_value_improved * eps_max) {
+                if (eps > gap_improved / cutting_branching_ratio / br_value_improved * eps_max) {
                     if_tail_off = true;
                     if constexpr (if_print_tail_reason)
                         PRINT_REMIND("eps= " + std::to_string(eps) + " threshold= " + std::to_string(
-                        CUTTING_BRANCHING_RATIO * gap_improved / br_value_improved * eps_max));
+                        gap_improved / cutting_branching_ratio / br_value_improved * eps_max));
 
                     goto QUIT;
                 }
-                if (gap_improved < CUTTING_BRANCHING_RATIO * br_value_improved) {
+                if (gap_improved < cutting_branching_ratio * br_value_improved) {
                     if_tail_off = true;
                     if constexpr (if_print_tail_reason)
                         PRINT_REMIND("gap improved= " + std::to_string(gap_improved) + " threshold= " + std::to_string(
-                        CUTTING_BRANCHING_RATIO* br_value_improved));
+                        cutting_branching_ratio* br_value_improved));
                     goto QUIT;
                 }
                 if (eps > TailOffHardTime) {
@@ -402,8 +392,10 @@ namespace RouteOpt::Application::CVRP {
             return;
         }
 
+
         if (pricing_controller.getAverageRouteLength() >
             NODE_MEMORY_ROUTE_LENGTH && CuttingDetail::if_node_memory == true && node->getIfRootNode()) {
+            CuttingDetail::if_node_memory = false;
             PRINT_REMIND("arc memory is used due to long route length");
         }
 
@@ -508,7 +500,10 @@ namespace RouteOpt::Application::CVRP {
         //
         {
             bool if_care_lb_improvement = !node->getIfInEnumState();
-            auto if_continue = node->validateCuts(old_row, if_care_lb_improvement);
+            auto if_continue = node->validateCuts(old_row, if_care_lb_improvement,
+                                                  CuttingDetail::if_node_memory
+                                                      ? CUTTING_BRANCHING_RATIO
+                                                      : CUTTING_BRANCHING_RATIO_LOW);
             if (!if_continue && CuttingDetail::if_pure_rcc_tail) {
                 goto QUIT;
             }
@@ -527,9 +522,7 @@ namespace RouteOpt::Application::CVRP {
 
     ENTER:
         old_enu_state = node->getIfInEnumState();
-        eps = TimeSetter::measure([&]() {
-            callPricing(node, time_limit);
-        });
+        callPricing(node, time_limit, eps);
         if (node->getIfTerminate()) goto QUIT;
         if (!node->getIfInEnumState()) {
             if (!pricing_controller.getIfCompleteCG()) {
@@ -551,7 +544,10 @@ namespace RouteOpt::Application::CVRP {
     SET_TAIL_OFF:
         CuttingDetail::setIfTailOff(eps, ub, node->getValue(), old_val, node->getBrValueImproved(),
                                     node->getIfInEnumState(), eps_max,
-                                    if_tail_off, tail_off_counter);
+                                    if_tail_off, tail_off_counter,
+                                    CuttingDetail::if_node_memory
+                                        ? CUTTING_BRANCHING_RATIO
+                                        : CUTTING_BRANCHING_RATIO_LOW);
 
         if (node->tellIf4MIP()) {
             terminateByMIP(node);
@@ -564,6 +560,8 @@ namespace RouteOpt::Application::CVRP {
 
         //
         if (!node->getIfTerminate()) {
+            SAFE_SOLVER(node->refSolver().reoptimize())
+            x.resize(cols.size());
             SAFE_SOLVER(node->refSolver().getX(0, cols.size(), x.data()))
             double obj;
             SAFE_SOLVER(node->refSolver().getObjVal(&obj))

@@ -180,8 +180,6 @@ namespace RouteOpt::Application::CVRP {
             if (!testIfNLinearPass(max_val, std::abs(stop_b - max_idx),
                                    max_label_in_enumeration - num_label)) {
                 status = dir ? ENUMERATION_STATE::LABEL_FOR_LIMIT : ENUMERATION_STATE::LABEL_BACK_LIMIT;
-                // std::cout << "fail to pass linear test" <<
-                //         std::endl;
                 return;
             }
 
