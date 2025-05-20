@@ -16,12 +16,12 @@ namespace RouteOpt::Application::CVRP {
         double val;
         SAFE_SOLVER(solver.getObjVal(&val))
 
-        if (!if_in_enu_state) {
+        if (!if_in_enu_state && if_allow_delete_col && num_col > LP_COL_FINAL_LIMIT) {
             double tol = std::max(TOLERANCE * val, TOLERANCE);
-            if (num_col > LP_COL_FINAL_LIMIT && std::abs(prior_value - val) > tol && if_allow_delete_col)
+            if (std::abs(prior_value - val) > tol) {
                 cleanIndexColForNode();
+            }
         }
-
         prior_value = val;
     }
 }
