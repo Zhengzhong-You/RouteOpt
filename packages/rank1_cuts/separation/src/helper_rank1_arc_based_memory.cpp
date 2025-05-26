@@ -106,6 +106,7 @@ namespace RouteOpt::Rank1Cuts::Separation {
             for (auto &it: existing_arcs) {
                 int ai = it.first, aj = it.second;
                 if (cut_info.test(aj)) {
+                    reduced_arcs.insert(std::make_pair(aj, ai));
                     continue;
                 }
                 if (cut_info.test(ai)) {
@@ -129,6 +130,17 @@ namespace RouteOpt::Rank1Cuts::Separation {
         std::vector<std::vector<int> > tmp_arcs;
         std::vector<int> tmp;
         std::pair<int, int> change_direction{-1, -1};
+        int forward_pos_used = forward_pos;
+
+        /**
+         * remark: this is edge memory version, forward_pos should be 0
+         * however, the following code is retained for future use.
+         *
+         **/
+        {
+            forward_pos_used = -1;
+        }
+
         for (int i = 0; i < sequence.size(); ++i) {
             int current = sequence[i];
             if (mp_.find(current) != mp_.end()) {
@@ -137,7 +149,10 @@ namespace RouteOpt::Rank1Cuts::Separation {
                 tmp_arcs.emplace_back(tmp);
                 tmp = {current};
             } else tmp.emplace_back(current);
-            if (i == forward_pos) change_direction = {static_cast<int>(tmp_arcs.size()), static_cast<int>(tmp.size())};
+            if (i == forward_pos_used)
+                change_direction = {
+                    static_cast<int>(tmp_arcs.size()), static_cast<int>(tmp.size())
+                };
         }
         tmp_arcs.emplace_back(tmp);
 
@@ -150,7 +165,9 @@ namespace RouteOpt::Rank1Cuts::Separation {
                 for (int j = 0; j < static_cast<int>(arc.size()) - 1; ++j) {
                     arc_set.emplace(arc[j], arc[j + 1]);
                 }
-            } {
+            }
+            //
+            {
                 int i = idx;
                 if (i >= 1 && i <= size - 1) {
                     int idx2 = change_direction.second - 1;

@@ -83,7 +83,7 @@ namespace RouteOpt::Application::CVRP {
         inline bool tryIncreaseTailOffCounter(double ub, double lb, double gap_improved, int &tail_off_counter) {
             if (increaseCondition1(gap_improved, tail_off_counter) ||
                 increaseCondition2(ub, lb, gap_improved, tail_off_counter)
-                ) {
+            ) {
                 return true;
             };
             return false;
