@@ -56,7 +56,7 @@ namespace RouteOpt::Rank1Cuts::Separation {
                          int r);
 
     void combinations(const std::vector<std::vector<std::vector<int> > > &arr,
-        const std::vector<std::vector<std::unordered_set<int> >> &vec_segment,
+                      const std::vector<std::vector<std::unordered_set<int> > > &vec_segment,
                       int i,
                       const std::vector<int> &accum,
                       const std::unordered_set<int> &mem,

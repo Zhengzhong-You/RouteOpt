@@ -84,7 +84,7 @@ namespace RouteOpt::Rank1Cuts::Separation {
                             arcs);
             findLeastPlans2MakeCoeffRight(vertex_states, denominator, ps, if_suc);
             if (!if_suc) {
-                PRINT_WARNING("search least plans failed");
+                PRINT_REMIND("search least plans failed");
             } else {
                 auto &arc = all_arcs.emplace_back();
                 for (auto &p: ps) {
@@ -103,18 +103,9 @@ namespace RouteOpt::Rank1Cuts::Separation {
             cutLong cut_info = 0;
             for (auto i: cut.info_r1c.first) cut_info.set(i);
             std::unordered_set<std::pair<int, int>, PairHasher> reduced_arcs;
-            for (auto &it: existing_arcs) {
-                int ai = it.first, aj = it.second;
-                if (cut_info.test(aj)) {
-                    reduced_arcs.insert(std::make_pair(aj, ai));
-                    continue;
-                }
-                if (cut_info.test(ai)) {
-                    reduced_arcs.insert(it);
-                } else {
-                    auto pr = ai < aj ? std::make_pair(ai, aj) : std::make_pair(aj, ai);
-                    reduced_arcs.insert(pr);
-                }
+            for (auto &[ai, aj]: existing_arcs) {
+                auto pr = ai < aj ? std::make_pair(ai, aj) : std::make_pair(aj, ai);
+                reduced_arcs.insert(pr);
             }
             arc_mem.assign(reduced_arcs.begin(), reduced_arcs.end());
         }

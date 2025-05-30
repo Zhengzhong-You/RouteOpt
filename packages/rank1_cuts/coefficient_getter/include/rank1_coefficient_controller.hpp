@@ -107,8 +107,10 @@ namespace RouteOpt::Rank1Cuts::CoefficientGetter {
         ~Rank1CoefficientGetter() = default;
 
     private:
-        std::vector<std::pair<r1cIndex, std::vector<int> > > lp_v_cut_map{}; ///< Vector storing cut maps for LP.
-        std::vector<std::vector<std::vector<int> > > lp_v_v_use_states{}; ///< 3D vector representing state usage.
+        std::vector<std::pair<std::vector<int>, std::vector<int> > > lp_v_cut_map{};
+        ///if pass i, j-th cut add state k, then lp_v_cut_map[i].first[j] == k; and k is in lp_v_cut_map[i].second.//the second is the sparse representation of cuts.
+        std::vector<std::vector<r1cIndex> > lp_v_v_use_states{};
+        ///< if i->j is in memory of cut k, then lp_v_v_use_states[i][j].test(k) == true.
         std::vector<int> lp_r1c_denominator{}; ///< Vector storing denominators for Rank-1 cuts.
 
         // Reference to shared Rank-1 cuts data.

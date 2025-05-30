@@ -66,21 +66,20 @@ namespace RouteOpt::Rank1Cuts {
         std::vector<std::pair<int, int> > arc_mem{};
 
         bool tellIfNodeMemory() const {
-            Separation::cutLong c = 0;
+            routeOptLong c = 0;
             for (auto &i: info_r1c.first) {
                 c.set(i);
             }
-            Separation::cutLong m = 0;
-            int cnt = 0;
             for (auto &i: arc_mem) {
-                m.set(i.first);
-                m.set(i.second);
-                if (!c.test(i.first) && !c.test(i.second)) ++cnt;
+                c.set(i.first);
+                c.set(i.second);
             }
-            m &= ~c;
-            if (m.count() * (m.count() - 1) / 2 == cnt) {
+            auto size = c.count();
+            if (size * (size - 1) / 2 == arc_mem.size()) {
+                std::cout << "this is node memory cut, size: " << size << std::endl;
                 return true;
             }
+            std::cout << "this is arc memory cut, size: " << size << std::endl;
             return false;
         }
     };

@@ -33,6 +33,7 @@ namespace RouteOpt::Application::CVRP {
     constexpr bool CHECK_PRICING_LABELS = false;
     constexpr bool INSPECT_COLUMN_FEASIBILITY = false;
     constexpr double MeetPointFactor{0.2};
+    constexpr double MeetPointFactorDecayFactor{2.};
     constexpr double NumberOfOverLabelsInMeetPoint = 0.2;
     constexpr double BucketResizeFactorRatioDominanceChecksNonDominant = 800;
     constexpr double BucketResizeFactorNumBucketArcsPerVertex = 10000;
@@ -74,7 +75,7 @@ namespace RouteOpt::Application::CVRP {
     constexpr double STAB_DELTA_DECAY_FACTOR = 2.;
     constexpr double STAB_GAMMA_DECAY_FACTOR = 10.;
     constexpr double INITIAL_STAB_GAMMA{0.1};
-    constexpr double INITIAL_STAB_KAPA{1.};
+    constexpr double INITIAL_STAB_KAPA{1};
     constexpr double VERY_INITIAL_STAB_KAPA{10.};
     constexpr int POSITIVE_ARTI_COLUMN_COL_SEQ = 1;
     constexpr int NEGATIVE_ARTI_COLUMN_COL_SEQ = -1;

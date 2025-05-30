@@ -284,7 +284,7 @@ namespace RouteOpt::Rank1Cuts::Separation {
         }
     }
 
-    void translateMemInt2MemPair(const std::vector<int> &cut_info, const std::unordered_set<int> &mem_set,
+    void translateMemInt2MemPair(const std::unordered_set<int> &mem_set,
                                  std::vector<std::pair<int, int> > &mem_pair) {
         std::vector<int> mem(mem_set.begin(), mem_set.end());
         std::sort(mem.begin(), mem.end());
@@ -293,11 +293,6 @@ namespace RouteOpt::Rank1Cuts::Separation {
         for (int i = 0; i < static_cast<int>(mem.size()) - 1; ++i) {
             for (int j = i + 1; j < static_cast<int>(mem.size()); ++j) {
                 mem_pair.emplace_back(mem[i], mem[j]);
-            }
-        }
-        for (auto &i: cut_info) {
-            for (auto &j: mem) {
-                mem_pair.emplace_back(i, j); //from cut to mem;
             }
         }
     }
@@ -320,10 +315,6 @@ namespace RouteOpt::Rank1Cuts::Separation {
                     mem.emplace(m.first);
                     mem.emplace(m.second);
                 }
-                //rm cut vertex
-                for (auto &i: c.info_r1c.first) {
-                    mem.erase(i);
-                }
             }
             bool if_suc;
             auto &cut = c.info_r1c;
@@ -337,11 +328,10 @@ namespace RouteOpt::Rank1Cuts::Separation {
                                  if_suc);
             }
             if (if_suc) {
-                for (auto &i: c.info_r1c.first) {
-                    if (mem.find(i) != mem.end())
-                        THROW_RUNTIME_ERROR("mem should not have cut vertex!");
-                }
-                translateMemInt2MemPair(c.info_r1c.first, mem, c.arc_mem);
+                //add c.info_r1c.first to mem;
+                std::transform(cut.first.begin(), cut.first.end(), std::inserter(mem, mem.end()),
+                               [](int i) { return i; });
+                translateMemInt2MemPair(mem, c.arc_mem);
                 ++it;
             } else {
                 it = cuts.erase(it);

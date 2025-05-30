@@ -120,22 +120,6 @@ namespace RouteOpt::Application::CVRP {
                                                          min_enumeration_fail_gap)) << std::endl;
         }
 
-        template<bool if_symmetry>
-        void adjustMeetPoint(int num_forward_labels_in_enu,
-                             int num_backward_labels_in_enu,
-                             double &meet_point_resource_in_bi_dir_enu) {
-            if constexpr (if_symmetry) return;
-            if (num_backward_labels_in_enu == 0) return;
-            double dif = std::abs(num_forward_labels_in_enu - num_backward_labels_in_enu);
-            double over = dif / std::min(num_forward_labels_in_enu, num_backward_labels_in_enu);
-            if (over > NumberOfOverLabelsInMeetPoint) {
-                if (num_forward_labels_in_enu > num_backward_labels_in_enu) {
-                    meet_point_resource_in_bi_dir_enu *= (1 - MeetPointFactor);
-                } else {
-                    meet_point_resource_in_bi_dir_enu *= (1 + MeetPointFactor);
-                }
-            }
-        }
 
         inline double getThresholdN(double m, int a0, double q) {
             if (q <= 1 + TOLERANCE) return m / a0 + TOLERANCE;
@@ -251,7 +235,6 @@ namespace RouteOpt::Application::CVRP {
                                     RowVectorXT &index_columns_in_enumeration_column_pool,
                                     RowVectorXd &cost_for_columns_in_enumeration_column_pool,
                                     int &valid_size,
-                                    bool if_fix_meet_point,
                                     const std::vector<double> &optional_demand_testifier,
                                     double optional_cap_testifier) {
         if (!determineIfEnumeration<if_symmetry>(ub, opt_gap, num_forward_bucket_arcs, num_backward_bucket_arcs))
@@ -259,10 +242,6 @@ namespace RouteOpt::Application::CVRP {
 
         std::cout << SMALL_PHASE_SEPARATION;
         printHeadLines("Try Enumeration");
-
-        if (std::abs(meet_point_resource_in_bi_dir_enu) < TOLERANCE) {
-            meet_point_resource_in_bi_dir_enu = meet_point_resource_in_bi_dir;
-        }
 
 
         priceConstraints(rccs,
@@ -293,13 +272,6 @@ namespace RouteOpt::Application::CVRP {
                                                    success_enumeration_gap,
                                                    max_enumeration_success_gap,
                                                    min_enumeration_fail_gap);
-
-        if (!if_fix_meet_point)
-            if (if_succeed || status == ENUMERATION_STATE::LABEL_BACK_LIMIT) {
-                EnumerationDetail::adjustMeetPoint<if_symmetry>(static_cast<int>(num_forward_labels_in_enu),
-                                                                static_cast<int>(num_backward_labels_in_enu),
-                                                                meet_point_resource_in_bi_dir_enu);
-            }
 
 
         glob_timer.report();
@@ -466,7 +438,7 @@ namespace RouteOpt::Application::CVRP {
         label_per_bin_in_enumeration.assign(
             static_cast<int>(resource.resources[0] / (step_size_label_check_in_enumeration - 1)) + 1,
             0);
-        double stop_b = meet_point_resource_in_bi_dir_enu / step_size_label_check_in_enumeration;
+        double stop_b = meet_point_resource_in_bi_dir / step_size_label_check_in_enumeration;
 
         for (int b = dir ? 0 : num_buckets_per_vertex - 1; dir ? b < num_buckets_per_vertex : b >= 0; dir ? ++b : --b) {
             for (auto &comp: dir ? topological_order_forward_ptr->at(b) : topological_order_backward_ptr->at(b)) {
@@ -547,7 +519,7 @@ namespace RouteOpt::Application::CVRP {
                                ? static_cast<int>((resource.resources[0] - tmp_Resource.resources[0]) / step_size)
                                : static_cast<int>(tmp_Resource.resources[0] / step_size));
             if constexpr (dir) {
-                if (tmp_Resource.resources[0] > meet_point_resource_in_bi_dir_enu) {
+                if (tmp_Resource.resources[0] > meet_point_resource_in_bi_dir) {
                     if constexpr (if_symmetry) {
                         if (rc2_till_this_bin_in_forward_sense[j][arr_bj] + tmp_rc < opt_gap)
                             concatenate_labels_in_forward_cg[{i, j}].emplace_back(ki, tmp_Resource);
@@ -558,7 +530,7 @@ namespace RouteOpt::Application::CVRP {
                     continue;
                 }
             } else {
-                if (tmp_Resource.resources[0] < meet_point_resource_in_bi_dir_enu) {
+                if (tmp_Resource.resources[0] < meet_point_resource_in_bi_dir) {
                     if constexpr (if_symmetry) {
                         if (rc2_till_this_bin_in_backward_sense[j][arr_bj] + tmp_rc < opt_gap)
                             concatenate_labels_in_backward_cg[{i, j}].emplace_back(ki, tmp_Resource);

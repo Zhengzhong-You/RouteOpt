@@ -12,7 +12,6 @@ namespace RouteOpt::Application::CVRP {
         if constexpr (ml_type == ML_TYPE::ML_GET_DATA_1 || ml_type == ML_TYPE::ML_GET_DATA_2) {
             return;
         }
-        constexpr bool if_fix_meet_point = false;
         auto if_suc = pricing_controller.enumerateMIP<!IF_SYMMETRY_PROHIBIT>(node->getRCCs(), node->getR1Cs(),
                                                                              node->getBrCs(), optimal_dual_vector,
                                                                              ub,
@@ -25,7 +24,6 @@ namespace RouteOpt::Application::CVRP {
                                                                              node->
                                                                              refCostForColumnsInEnumerationColumnPool(),
                                                                              node->refValidSize(),
-                                                                             if_fix_meet_point,
                                                                              app_type == APPLICATION_TYPE::VRPTW
                                                                                  ? demand
                                                                                  : std::vector<double>{},

@@ -97,7 +97,7 @@ namespace RouteOpt::Application::CVRP {
                                  double cutting_branching_ratio) {
             double gap_improved = now_val - past_val;
             if (gap_improved < -TOLERANCE * now_val) {
-                THROW_RUNTIME_ERROR("lp value decreased!");
+                PRINT_REMIND("lp value decreased!");
             }
             if (gap_improved < TOLERANCE * now_val) {
                 if_tail_off = true;

@@ -49,19 +49,18 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
     /**
      * @brief Structure representing the usage states for Rank-1 cuts.
      *
-     * This structure contains various state representations including:
-     * - A bitset for the union map.
-     * - A vector for union memory, indicating if at least one node is used.
-     * - A sparse representation as a vector of pairs.
-     * - A bitset for the sparse map.
+     * This structure contains various state representations
      */
     struct R1CUseStates {
-        /// For each customer i
-        r1cIndex union_map{}; ///< Bitset representing union (C+M) mapping (1 represents presence of the cut).
         std::vector<int> v_union_mem; ///< Vector representing union (C+M) memory
-        std::vector<std::pair<int, int> > sparse{};
-        ///< Sparse representation of states (pair format, e.g., index in pricing and value).
-        r1cIndex sparse_map{}; ///< Bitset for sparse mapping (only for C).
+        std::pair<std::vector<int>, std::vector<int> > add_vec{};
+        ///fst cut dimension, snd sparse representation of cuts.
+
+        R1CUseStates(int cut_dim) {
+            add_vec.first.assign(cut_dim, 0);
+        }
+
+        R1CUseStates() = delete;
     };
 
     /**
@@ -202,9 +201,7 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
     private:
         int *label_int_space{}; ///< Dynamically allocated memory space for label assignments.
         std::vector<R1CUseStates> cg_v_cut_map{}; ///< Vector of cut's state usage for column generation.
-        // 3D vector representing state usage:
-        // - 0: remember; RANK1_INVALID: forget; >0: add.
-        std::vector<std::vector<std::vector<int> > > cg_v_v_use_states{};
+        std::vector<std::vector<r1cIndex> > cg_v_v_use_states{};
         std::vector<int> cg_r1c_denominator{}; ///< Vector storing denominators for Rank-1 cuts.
         std::vector<double> rank1_dual{}; ///< Vector storing nonzero dual values.
         std::vector<double> revised_rank1_dual{}; ///< Vector storing revised dual values for dominance rules.

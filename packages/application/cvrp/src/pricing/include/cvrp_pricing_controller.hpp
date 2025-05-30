@@ -306,7 +306,6 @@ namespace RouteOpt::Application::CVRP {
                           RowVectorXT &index_columns_in_enumeration_column_pool,
                           RowVectorXd &cost_for_columns_in_enumeration_column_pool,
                           int &valid_size,
-                          bool if_fix_meet_point,
                           const std::vector<double> &optional_demand_testifier,
                           double optional_cap_testifier);
 
@@ -350,6 +349,11 @@ namespace RouteOpt::Application::CVRP {
         VecLabel **if_exist_extra_labels_in_backward_sense{};
 
         res_int step_size{};
+
+        //meet point adjustment
+        double meet_point_factor{MeetPointFactor};
+        int last_tag{0}; //1 -> increase, -1-> decrease;
+
 
         int num_buckets_per_vertex{InitialNumBuckets};
         std::vector<routeOptLong> ng_mem4_vertex{};
@@ -410,7 +414,6 @@ namespace RouteOpt::Application::CVRP {
         //enumeration
         double num_forward_labels_in_enu{}, num_backward_labels_in_enu{};
         double max_gap2_try_enumeration_enumeration{InitialMaxGap2TryEnumeration};
-        double meet_point_resource_in_bi_dir_enu{};
         double max_enumeration_success_gap{};
         double min_enumeration_fail_gap{1.};
         bool if_force_enumeration_suc{};

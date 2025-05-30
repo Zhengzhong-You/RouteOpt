@@ -16,10 +16,7 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
         const std::vector<double> &pi_vector) {
         auto dim = data_shared_ref.get().getDim();
 
-        if (cg_v_cut_map.empty()) cg_v_cut_map.resize(dim);
-        if (cg_v_v_use_states.empty()) cg_v_v_use_states.resize(dim, std::vector<std::vector<int> >(dim));
 
-        std::fill(cg_v_cut_map.begin(), cg_v_cut_map.end(), R1CUseStates());
         std::vector<std::pair<int, double> > cut_dual;
         for (int i = 0; i < cuts.size(); ++i) {
             auto &r1c = cuts[i];
@@ -35,9 +32,11 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
                       return a.second > b.second;
                   });
 
+        cg_v_cut_map.assign(dim, R1CUseStates(cut_dual.size()));
+        if (cg_v_v_use_states.empty()) cg_v_v_use_states.resize(dim, std::vector<r1cIndex>(dim));
         for (int i = 0; i < dim; ++i) {
-            for (int j = 1; j < dim; ++j) {
-                cg_v_v_use_states[i][j].assign(cut_dual.size(), RANK1_INVALID);
+            for (int j = 0; j < dim; ++j) {
+                cg_v_v_use_states[i][j].reset();
             }
         }
 
@@ -58,31 +57,27 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
             cg_r1c_denominator[num] = denominator;
             revised_rank1_dual[num] = rank1_dual[num]; //reserved for future use
 
-            for (int j = 0; j < r1c.info_r1c.first.size(); ++j) {
-                int n = r1c.info_r1c.first[j];
-                auto &tmp_n = cg_v_cut_map[n];
-                int add = multi[j];
-                tmp_n.sparse.emplace_back(num, add);
-                tmp_n.sparse_map.set(num);
-                tmp_n.v_union_mem.emplace_back(num);
-                tmp_n.union_map.set(num);
-                for (int k = 0; k < dim; ++k) {
-                    cg_v_v_use_states[k][n][num] = add;
-                }
+            std::unordered_set<int> mem_set;
+
+            for (auto &[fst, snd]: r1c.arc_mem) {
+                cg_v_v_use_states[fst][snd].set(num);
+                cg_v_v_use_states[snd][fst].set(num); // keep symmetry
+                mem_set.emplace(fst);
+                mem_set.emplace(snd);
             }
 
 
-            for (auto [fst, snd]: r1c.arc_mem) {
-                if (!cg_v_cut_map[fst].union_map.test(num)) {
-                    cg_v_cut_map[fst].union_map.set(num);
-                    cg_v_cut_map[fst].v_union_mem.emplace_back(num);
-                }
-                if (!cg_v_cut_map[snd].union_map.test(num)) {
-                    cg_v_cut_map[snd].union_map.set(num);
-                    cg_v_cut_map[snd].v_union_mem.emplace_back(num);
-                }
-                if (cg_v_v_use_states[fst][snd][num] == RANK1_INVALID) cg_v_v_use_states[fst][snd][num] = 0;
-                if (cg_v_v_use_states[snd][fst][num] == RANK1_INVALID) cg_v_v_use_states[snd][fst][num] = 0;
+            for (int j = 0; j < r1c.info_r1c.first.size(); ++j) {
+                int n = r1c.info_r1c.first[j];
+                mem_set.emplace(n);
+                auto &tmp_n = cg_v_cut_map[n];
+                int add = multi[j];
+                tmp_n.add_vec.first[num] += add;
+                tmp_n.add_vec.second.emplace_back(num);
+            }
+
+            for (auto &n: mem_set) {
+                cg_v_cut_map[n].v_union_mem.emplace_back(num);
             }
 
             ++num;

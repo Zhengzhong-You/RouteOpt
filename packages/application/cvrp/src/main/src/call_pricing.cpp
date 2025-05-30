@@ -67,8 +67,8 @@ namespace RouteOpt::Application::CVRP {
         constexpr bool if_possible_terminate_early = false;
         constexpr bool if_fix_row = false;
         constexpr bool if_allow_delete_col = true;
-        constexpr bool if_fix_meet_point = false;
 
+        bool if_fix_meet_point = !node->getIfRootNode();
         bool if_consider_regenerate_bucket_graph = node->getIfRootNode();
 
         time_4_pure_pricing = TimeSetter::measure([&]() {
@@ -79,7 +79,6 @@ namespace RouteOpt::Application::CVRP {
 
 
         if (node->getIfTerminate() || !pricing_controller.getIfCompleteCG()) return;
-
         if (!node->getIfRootNode() && (ml_type == ML_TYPE::ML_GET_DATA_1 || ml_type == ML_TYPE::ML_GET_DATA_2)) return;
         pricing_controller.eliminateArcs<!IF_SYMMETRY_PROHIBIT>(node->getRCCs(), node->getR1Cs(),
                                                                 node->getBrCs(), optimal_dual_vector, ub,

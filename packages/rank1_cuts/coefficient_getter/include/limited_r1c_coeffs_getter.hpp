@@ -45,14 +45,17 @@ namespace RouteOpt::Rank1Cuts::CoefficientGetter {
             }
             std::fill(state_back.begin(), state_back.end(), 0);
             valid_sparse_num_back = 0;
+            int beg_from = old;
             old = 0;
             for (int i = static_cast<int>(seq.col_seq.size()) - 1; i > seq.forward_concatenate_pos; --i) {
                 int n = seq.col_seq[i];
                 getCoefficientExtendR1C(state_back, sparse_rep_back, cnt, valid_sparse_num_back, old, n);
                 old = n;
             }
+            int end_to = old;
             for (int i = 0; i < valid_sparse_num; ++i) {
                 int idx = sparse_rep[i];
+                if (!lp_v_v_use_states[beg_from][end_to].test(idx)) continue;
                 if (state[idx] + state_back[idx] >= lp_r1c_denominator[idx]) {
                     ++cnt[idx];
                 }
