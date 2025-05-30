@@ -84,9 +84,17 @@ namespace RouteOpt::Application::CVRP {
             double over = dif / std::min(NumExistedLabels, NumExistedLabel_back);
             if (over > NumberOfOverLabelsInMeetPoint) {
                 if (NumExistedLabels > NumExistedLabel_back) {
-                    meet_point_resource_in_bi_dir *= (1 - MeetPointFactor);
+                    if (last_tag == 1) {
+                        meet_point_factor /= MeetPointFactorDecayFactor;
+                    }
+                    last_tag = -1;
+                    meet_point_resource_in_bi_dir *= (1 - meet_point_factor);
                 } else {
-                    meet_point_resource_in_bi_dir *= (1 + MeetPointFactor);
+                    if (last_tag == -1) {
+                        meet_point_factor /= MeetPointFactorDecayFactor;
+                    }
+                    last_tag = 1;
+                    meet_point_resource_in_bi_dir *= (1 + meet_point_factor);
                 }
             }
         }
