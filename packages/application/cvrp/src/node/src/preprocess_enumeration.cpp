@@ -207,7 +207,7 @@ namespace RouteOpt::Application::CVRP {
             printTimeMessage("delete columns by branch", eps);
 
             eps = TimeSetter::measure([&] {
-                std::vector<double> duals;
+                std::vector<double> duals(num_row, -1); //to prevent any constraints are deleted in this step;
                 regenerateEnumMat(this, nullptr, false, duals);
             });
             printTimeMessage("regenerate enumeration matrix", eps);

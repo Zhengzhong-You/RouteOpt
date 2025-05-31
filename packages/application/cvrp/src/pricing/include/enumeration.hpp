@@ -291,8 +291,8 @@ namespace RouteOpt::Application::CVRP {
         double &optional_cap_testifier) {
         if_short_memory = false;
         if (if_force_enumeration_suc) {
-            max_label_in_enumeration = std::numeric_limits<int>::max();
-            max_route_in_enumeration = std::numeric_limits<int>::max();
+            max_label_in_enumeration = MaxNumLabelInEnumerationForce;
+            max_route_in_enumeration = MaxNumRouteInEnumerationForce;
         } else {
             max_label_in_enumeration = MaxNumLabelInEnumeration;
             max_route_in_enumeration = MaxNumRouteInEnumeration;

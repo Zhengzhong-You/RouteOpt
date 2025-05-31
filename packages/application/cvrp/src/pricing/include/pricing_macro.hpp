@@ -57,18 +57,20 @@ namespace RouteOpt::Application::CVRP {
     constexpr double EnumerationFailFactor = 0.8;
     constexpr double min_enumeration_exploration_added = 0.001;
     constexpr int MaxNumLabelInEnumeration{500000};
+    constexpr int MaxNumLabelInEnumerationForce{1000000};
     constexpr int NumCheckLabelInEnumeration = 50000;
     constexpr int LabelsCheckBinInEnumeration{20};
     constexpr double MaxNumLabelsCheckBinFactorInEnumeration{4.};
     constexpr double ToleranceFactorInEnumerationLabelChecking{1.3};
-    constexpr int MaxNumRouteInEnumeration = 5000000;
+    constexpr int MaxNumRouteInEnumeration{5000000};
+    constexpr int MaxNumRouteInEnumerationForce{10000000};
     constexpr int MaxNumRoute4Mip{10000}; //often adjustable parameter
     constexpr double PricingWarningThreshold = 0.9;
     constexpr double SOL_NG_X_TOLERANCE = 1e-4;
     constexpr int MaxNumColsInNGAug = 200;
 
     // stabilization
-    constexpr bool IF_USE_STAB{false};
+    constexpr bool IF_USE_STAB{true};
     constexpr int MIN_STAB_DELTA = 1;
     constexpr double MIN_STAB_GAMMA = 1e-4;
     constexpr int STAB_ARTI_COLUMN_IDX = -2;
