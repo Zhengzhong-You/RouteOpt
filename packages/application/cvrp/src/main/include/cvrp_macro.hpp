@@ -32,8 +32,8 @@ namespace RouteOpt::Application::CVRP {
         ML_USE_MODEL
     };
 
-    constexpr APPLICATION_TYPE app_type{APPLICATION_TYPE::VRPTW};
-    constexpr VRPTW_TYPE vrptw_type{VRPTW_TYPE::CAP_MAIN_RESOURCE};
+    constexpr APPLICATION_TYPE app_type{APPLICATION_TYPE::CVRP};
+    constexpr VRPTW_TYPE vrptw_type{VRPTW_TYPE::SINGLE_RESOURCE};
     constexpr ML_TYPE ml_type{ML_TYPE::ML_USE_MODEL};
 
     constexpr bool IF_WRITE_NODE_OUT{false};
@@ -88,7 +88,7 @@ namespace RouteOpt::Application::CVRP {
                                                       ? 1
                                                       : 2;
 
-    constexpr int NODE_MEMORY_ROUTE_LENGTH{16};
+    constexpr int NODE_MEMORY_ROUTE_LENGTH{20};
 
     enum class NUM_TESTING {
         PHASE0 = 30,

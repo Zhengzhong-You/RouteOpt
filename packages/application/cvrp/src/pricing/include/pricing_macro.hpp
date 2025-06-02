@@ -70,13 +70,13 @@ namespace RouteOpt::Application::CVRP {
     constexpr int MaxNumColsInNGAug = 200;
 
     // stabilization
-    constexpr bool IF_USE_STAB{true};
+    constexpr bool IF_USE_STAB{false};
     constexpr int MIN_STAB_DELTA = 1;
     constexpr double MIN_STAB_GAMMA = 1e-4;
     constexpr int STAB_ARTI_COLUMN_IDX = -2;
     constexpr double STAB_DELTA_DECAY_FACTOR = 2.;
     constexpr double STAB_GAMMA_DECAY_FACTOR = 10.;
-    constexpr double INITIAL_STAB_GAMMA{0.1};
+    constexpr double INITIAL_STAB_GAMMA{0.9};
     constexpr double INITIAL_STAB_KAPA{1};
     constexpr double VERY_INITIAL_STAB_KAPA{10.};
     constexpr int POSITIVE_ARTI_COLUMN_COL_SEQ = 1;
