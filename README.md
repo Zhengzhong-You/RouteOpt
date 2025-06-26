@@ -55,6 +55,18 @@ python3 inspect_code.py xxx.txt
 Your code will now compile with the updated parameters.
 
 
+**Note:**  
+This Python script can only modify key parameters initialized with braces `{}` in the code, for example:
+
+```cpp
+constexpr double ArcEliminationTimeIncreased = 20;
+constexpr double HardTimeThresholdInAllEnumeration = 50;
+constexpr int LABEL_ASSIGN{1600000};
+````
+
+Parameters initialized using an equals sign `=` (such as `constexpr double parameter = value;`) are not modifiable by this script.
+
+If you find parameters that should be adjustable but currently aren't, please feel free to open an issue or submit a pull request.
 
 ## Documentation
 
