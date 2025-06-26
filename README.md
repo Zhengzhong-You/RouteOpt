@@ -20,7 +20,7 @@ To get started with RouteOpt 2.0, clone the repository and follow our installati
 
 ## Updates
 
-All key parameters for RouteOpt 2.0 are stored in the `xxx_macro.hpp` file. However, modifying these parameters manually may be inconvenient. Therefore, we now provide a Python script that helps you easily update these parameters.
+All key parameters for RouteOpt 2.0 are stored in the `xxx_macro.hpp` files. However, modifying these parameters manually may be inconvenient. Therefore, we now provide a Python script that helps you easily update these parameters.
 
 We have added a `templates` folder under `packages/application/cvrp/`, which contains three `.txt` template files. You can modify these templates according to your needs. A sample template file looks like this:
 
