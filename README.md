@@ -17,6 +17,45 @@ RouteOpt 2.0 has been meticulously developed to address a wide range of optimiza
 
 To get started with RouteOpt 2.0, clone the repository and follow our installation instructions provided in the documentation. Whether you are a researcher or a practitioner, our guides and examples will help you quickly harness the full potential of RouteOpt 2.0.
 
+
+## Updates
+
+All key parameters for RouteOpt 2.0 are stored in the `xxx_macro.hpp` file. However, modifying these parameters manually may be inconvenient. Therefore, we now provide a Python script that helps you easily update these parameters.
+
+We have added a `templates` folder under `packages/application/cvrp/`, which contains three `.txt` template files. You can modify these templates according to your needs. A sample template file looks like this:
+
+```angular2html
+app_type APPLICATION_TYPE::CVRP            // Specifies CVRP application type
+ml_type  ML_TYPE::ML_USE_MODEL             // Use 2LBB method
+IF_WRITE_NODE_OUT false                    // Do not write node output
+NODE_MEMORY_ROUTE_LENGTH 20                // Use arc-memory-based rank-1 cuts if avg. route length > 20
+IF_USE_STAB false                          // Do not use stabilization techniques
+TIME_LIMIT 3600                            // Time limit set to 3600 seconds
+````
+
+If you encounter memory-related issues, refer to the troubleshooting section in our documentation and manually adjust parameters. Alternatively, you can add:
+
+```angular2html
+LABEL_ASSIGN 800000
+```
+
+in your template file to set a smaller memory request.
+
+After editing your template file (`xxx.txt`), navigate to the CVRP application directory:
+
+```bash
+cd RouteOpt/packages/application/cvrp/
+```
+
+Then run:
+
+```bash
+python3 inspect_code.py xxx.txt
+```
+Your code will now compile with the updated parameters.
+
+
+
 ## Documentation
 
 For powerful and detailed documentation, please visit our [RouteOpt Documentation](https://Zhengzhong-You.github.io/RouteOpt-Docs/
