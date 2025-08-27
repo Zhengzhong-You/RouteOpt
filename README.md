@@ -20,6 +20,21 @@ To get started with RouteOpt 2.0, clone the repository and follow our installati
 
 ## Updates
 
+## 1) Update on XGBoost Compatibility
+
+The latest XGBoost (v3.0.4) does not support models built with older versions such as v2.0.0. To avoid compatibility issues, please reinstall XGBoost. The simplest way to rebuild is to remove the old folder and run the build script again:
+
+```bash
+cd /RouteOpt/packages/external
+rm -rf xgb
+cd /RouteOpt
+python3 build.py
+```
+
+For new users, simply run `build.py`. The script will automatically pull XGBoost v2.0.0 from the official repository. We apologize for any inconvenience.
+
+## 2) RouteOpt 2.0 Parameter Management
+
 All key parameters for RouteOpt 2.0 are stored in the `xxx_macro.hpp` files. However, modifying these parameters manually may be inconvenient. Therefore, we now provide a Python script that helps you easily update these parameters.
 
 We have added a `templates` folder under `packages/application/cvrp/`, which contains three `.txt` template files. You can modify these templates according to your needs. A sample template file looks like this:
