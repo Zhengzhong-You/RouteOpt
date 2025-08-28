@@ -2,6 +2,19 @@
 
 Welcome to **RouteOpt 2.0** – the latest, state-of-the-art optimization framework that is now free for use! We are excited to introduce this new version, designed to deliver enhanced performance, flexibility, and ease-of-use for solving complex routing and optimization problems.
 
+## Installation
+### Prerequisites
+Before proceeding, ensure you have the following installed:
+- A C/C++ compiler.
+- **Ninja** build system. Install it using:
+```bash
+sudo apt-get install ninja-build # Linux
+```
+```bash
+brew install ninja # MacOS
+```
+- **Gurobi**: Make sure Gurobi is installed and note its installation path. This path will be used in the following steps. Important: Enter the full path to the Linux64 folder (e.g., /home/yzz/gurobi1000/linux64) or to the MacOS folder (e.g., /Library/gurobi1103/macos_universal2), not just the parent directory.
+
 ## Introduction
 
 RouteOpt 2.0 has been meticulously developed to address a wide range of optimization challenges, including the Capacitated Vehicle Routing Problem (CVRP) and the Vehicle Routing Problem with Time Windows (VRPTW). With an improved branching module, modular architecture, and advanced solver integration, RouteOpt 2.0 empowers you to build custom solvers with unparalleled efficiency.

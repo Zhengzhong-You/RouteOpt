@@ -6,12 +6,17 @@ import re
 import subprocess
 import multiprocessing
 import shutil
+import platform
 
 
 def run_cmd(cmd, cwd=None):
     proc = subprocess.run(
-        cmd, shell=True, cwd=cwd,
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+        cmd,
+        shell=True,
+        cwd=cwd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
     )
     if proc.returncode != 0:
         print(f"Error in: {cmd}\n{proc.stderr}")
@@ -28,7 +33,9 @@ def cpu_jobs():
 
 
 def update_cmake(gurobi_path):
-    cmake_file = os.path.join("packages", "external", "cmake_modules", "FindGUROBI.cmake")
+    cmake_file = os.path.join(
+        "packages", "external", "cmake_modules", "FindGUROBI.cmake"
+    )
     if not os.path.exists(cmake_file):
         print(f"Missing {cmake_file}")
         sys.exit(1)
@@ -39,12 +46,21 @@ def update_cmake(gurobi_path):
     new_root_line = f'set(GUROBI_ROOT "{gurobi_path}")'
     content = re.sub(r'set\s*\(\s*GUROBI_ROOT\s*".*?"\s*\)', new_root_line, content)
 
+    # Determine library extension based on platform
+    if platform.system() == "Darwin":
+        lib_ext = ".dylib"
+    elif platform.system() == "Linux":
+        lib_ext = ".so"
+    else:
+        print("Unsupported platform")
+        sys.exit(1)
+
     lib_dir = os.path.join(gurobi_path, "lib")
     if not os.path.exists(lib_dir):
         print(f"Library dir not found: {lib_dir}")
         sys.exit(1)
 
-    libs = glob.glob(os.path.join(lib_dir, "libgurobi*.so"))
+    libs = glob.glob(os.path.join(lib_dir, f"libgurobi*{lib_ext}"))
     libs = [lib for lib in libs if "_light" not in os.path.basename(lib)]
     if not libs:
         print(f"No suitable libgurobi*.so found in {lib_dir}")
@@ -53,8 +69,8 @@ def update_cmake(gurobi_path):
     lib_file = os.path.basename(libs[-1])
 
     content = re.sub(
-        r'(find_library\s*\(\s*GUROBI_LIBRARY\s*\n\s*NAMES\s+)[^\n]+',
-        r'\1' + lib_file,
+        r"(find_library\s*\(\s*GUROBI_LIBRARY\s*\n\s*NAMES\s+)[^\n]+",
+        r"\1" + lib_file,
         content,
         flags=re.MULTILINE,
     )
@@ -68,28 +84,32 @@ def ensure_xgboost_version(ext_dir, version_tag):
     repo_url = "https://github.com/dmlc/xgboost"
 
     if not os.path.exists(xgb_dir):
-        run_cmd(f'git clone --recursive --branch {version_tag} {repo_url} xgb', cwd=ext_dir)
-        run_cmd('git submodule update --init --recursive', cwd=xgb_dir)
+        run_cmd(
+            f"git clone --recursive --branch {version_tag} {repo_url} xgb", cwd=ext_dir
+        )
+        run_cmd("git submodule update --init --recursive", cwd=xgb_dir)
         return xgb_dir
 
     if not os.path.exists(os.path.join(xgb_dir, ".git")):
-        run_cmd('rm -rf xgb', cwd=ext_dir)
-        run_cmd(f'git clone --recursive --branch {version_tag} {repo_url} xgb', cwd=ext_dir)
-        run_cmd('git submodule update --init --recursive', cwd=xgb_dir)
+        run_cmd("rm -rf xgb", cwd=ext_dir)
+        run_cmd(
+            f"git clone --recursive --branch {version_tag} {repo_url} xgb", cwd=ext_dir
+        )
+        run_cmd("git submodule update --init --recursive", cwd=xgb_dir)
         return xgb_dir
 
-    run_cmd('git fetch --tags --prune', cwd=xgb_dir)
-    run_cmd(f'git checkout {version_tag}', cwd=xgb_dir)
-    run_cmd('git submodule sync --recursive', cwd=xgb_dir)
-    run_cmd('git submodule update --init --recursive', cwd=xgb_dir)
+    run_cmd("git fetch --tags --prune", cwd=xgb_dir)
+    run_cmd(f"git checkout {version_tag}", cwd=xgb_dir)
+    run_cmd("git submodule sync --recursive", cwd=xgb_dir)
+    run_cmd("git submodule update --init --recursive", cwd=xgb_dir)
     return xgb_dir
 
 
 def choose_generator():
     # Prefer Ninja if available; otherwise use Unix Makefiles
     if shutil.which("ninja"):
-        return 'Ninja'
-    return 'Unix Makefiles'
+        return "Ninja"
+    return "Unix Makefiles"
 
 
 def cmake_configure(src_dir, build_dir, extra_flags=""):
@@ -103,13 +123,13 @@ def cmake_configure(src_dir, build_dir, extra_flags=""):
 
 def cmake_build(build_dir, target=None, jobs=None):
     j = jobs or cpu_jobs()
-    tgt = f' --target {target}' if target else ''
+    tgt = f" --target {target}" if target else ""
     run_cmd(f'cmake --build "{build_dir}"{tgt} -j {j}')
 
 
 def build_xgboost(xgb_dir):
     # Clean and configure
-    run_cmd('rm -rf build bin', cwd=xgb_dir)
+    run_cmd("rm -rf build bin", cwd=xgb_dir)
     cmake_configure(xgb_dir, os.path.join(xgb_dir, "build"))
     # Build (generator-agnostic)
     cmake_build(os.path.join(xgb_dir, "build"))
@@ -119,7 +139,9 @@ def build_hgs():
     hgs_dir = os.path.join("packages", "application", "cvrp", "lib", "hgs")
     run_cmd("rm -rf lib build", cwd=hgs_dir)
     os.makedirs(os.path.join(hgs_dir, "build"), exist_ok=True)
-    run_cmd('cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..', cwd=os.path.join(hgs_dir, "build"))
+    run_cmd(
+        "cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..", cwd=os.path.join(hgs_dir, "build")
+    )
     # Use cmake --build to be generator-agnostic; install target where available
     cmake_build(os.path.join(hgs_dir, "build"))
     cmake_build(os.path.join(hgs_dir, "build"), target="install")
@@ -150,5 +172,5 @@ def main():
     print("Build process completed successfully.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
