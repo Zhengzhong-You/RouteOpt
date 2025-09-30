@@ -323,6 +323,7 @@ namespace RouteOpt::DeLuxing {
             ncol_del0 = 0;
         }
 
+        SAFE_SOLVER(solver.getNumCol(&NCol))
         std::iota(idx.data(), idx.data() + NCol, 0);
         SAFE_SOLVER(solver.delVars(NCol, idx.data()))
         SAFE_SOLVER(solver.updateModel())
