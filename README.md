@@ -2,6 +2,14 @@
 
 Welcome to **RouteOpt 2.0** – the latest, state-of-the-art optimization framework that is now free for use! We are excited to introduce this new version, designed to deliver enhanced performance, flexibility, and ease-of-use for solving complex routing and optimization problems.
 
+### Important Notice
+
+If you have any questions about using this repository — not just bug reports — feel free to open an issue. We typically respond within one day. However, before submitting, please check whether a similar issue has already been raised or resolved.
+
+Additionally, using AI-assisted coding tools such as **Claude Code** can significantly improve your understanding and navigation of this repository. Even I use such tools to facilitate code exploration (this codebase is quite extensive, and my memory isn’t perfect sometimes!).  
+
+Have fun exploring **RouteOpt 2.0**!
+
 ## Introduction
 
 RouteOpt 2.0 has been meticulously developed to address a wide range of optimization challenges, including the Capacitated Vehicle Routing Problem (CVRP) and the Vehicle Routing Problem with Time Windows (VRPTW). With an improved branching module, modular architecture, and advanced solver integration, RouteOpt 2.0 empowers you to build custom solvers with unparalleled efficiency.
