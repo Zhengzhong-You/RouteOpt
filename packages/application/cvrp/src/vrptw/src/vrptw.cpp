@@ -13,10 +13,10 @@ namespace RouteOpt::Application::CVRP {
                                          const std::vector<SequenceInfo> &cols,
                                          bool &feasible) {
         feasible = true;
-        if (cols.size() == 1) {
-            feasible = false;
-            return;
-        }
+        // if (cols.size() == 1) {
+        //     feasible = false;
+        //     return;
+        // }
         for (auto &route: cols) {
             double local_cap = 0;
             for (auto &i: route.col_seq) {
