@@ -12,6 +12,9 @@
 
 namespace RouteOpt::Application::CVRP {
     namespace detail {
+        /**
+         * DFS-based topological ordering helper
+         */
         inline void fillOrder(const std::unordered_map<int, std::vector<int> > &graph,
                               int node,
                               std::unordered_set<int> &visited,

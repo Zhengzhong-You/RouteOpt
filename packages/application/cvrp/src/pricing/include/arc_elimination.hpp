@@ -10,6 +10,10 @@
 #include <enumeration.hpp>
 
 namespace RouteOpt::Application::CVRP {
+    /**
+     * Concatenation phase during arc elimination
+     * Tests label concatenation to determine arc necessity
+     */
     template<bool dir, bool if_symmetry>
     void CVRP_Pricing::concatenatePhaseInArcElimination() {
         int bj;
@@ -50,6 +54,10 @@ namespace RouteOpt::Application::CVRP {
     QUIT:;
     }
 
+    /**
+     * Run labeling algorithm specifically for arc elimination
+     * Performs exact labeling to test arc necessity
+     */
     template<bool if_symmetry>
     void CVRP_Pricing::runLabelingForArcElimination() {
         if_arc_elimination_succeed = true;
@@ -74,6 +82,9 @@ namespace RouteOpt::Application::CVRP {
         if (!if_exact_labeling_finished || if_short_memory) if_arc_elimination_succeed = false;
     }
 
+    /**
+     * Determine whether to run arc elimination based on gap improvement
+     */
     inline bool CVRP_Pricing::determineIfArcElimination(double ub, double opt_gap, double &last_gap) {
         if_arc_elimination_succeed = false;
         if (!if_exact_labeling_finished || if_stop_arc_elimination) {
@@ -96,6 +107,10 @@ namespace RouteOpt::Application::CVRP {
         return true;
     }
 
+    /**
+     * Main arc elimination procedure
+     * Removes arcs that cannot be part of any improving solution
+     */
     template<bool if_symmetry>
     void CVRP_Pricing::eliminateArcs(
         const std::vector<Rcc> &rccs,

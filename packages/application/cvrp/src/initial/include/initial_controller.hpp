@@ -13,6 +13,10 @@
 #include "node.hpp"
 
 namespace RouteOpt::Application::CVRP {
+    /**
+     * Controller for initial solution and preprocessing
+     * Sets up initial LP model and root node
+     */
     class InitialController {
     public:
         InitialController(int &dim,

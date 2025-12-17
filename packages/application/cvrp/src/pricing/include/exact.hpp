@@ -11,6 +11,9 @@
 #include "../../main/include/cvrp_macro.hpp"
 
 namespace RouteOpt::Application::CVRP {
+    /**
+     * Generate columns using exact pricing with time limit
+     */
     template<bool if_symmetry>
     int CVRP_Pricing::generateColumnsByExact(double time_limit) {
         int ccnt = 0;

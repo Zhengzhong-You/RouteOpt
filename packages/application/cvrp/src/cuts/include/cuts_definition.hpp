@@ -17,6 +17,10 @@ namespace RouteOpt::Application::CVRP {
     constexpr int INVALID_BRC_INDEX = -1;
     constexpr int INVALID_ROW_INDEX = -1;
 
+    /**
+     * Branching constraint structure
+     * Represents edge branching decisions in branch-and-bound tree
+     */
     struct Brc {
         std::pair<int, int> edge;
         int idx_brc{INVALID_BRC_INDEX};

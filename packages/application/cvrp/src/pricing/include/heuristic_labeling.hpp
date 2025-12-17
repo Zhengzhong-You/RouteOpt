@@ -9,6 +9,9 @@
 #define ROUTE_OPT_HEURISTIC_LABELING_HPP
 
 namespace RouteOpt::Application::CVRP {
+    /**
+     * Generate columns using heuristic pricing
+     */
     template<bool if_symmetry, PRICING_LEVEL pricing_level>
     int CVRP_Pricing::generateColumnsByHeuristic() {
         if (pricing_level == PRICING_LEVEL::HEAVY) {

@@ -14,6 +14,10 @@
 
 namespace RouteOpt::Application::CVRP {
     using res_int = int; //cannot be unsigned type
+    /**
+     * Resource tuple for label states
+     * N: total number of resources, M: resources compared in dominance
+     */
     template<int N, int M> //all resource, resource that is compared in dominance rule;
     struct ResTuple {
         std::array<res_int, N> resources;
@@ -78,6 +82,9 @@ namespace RouteOpt::Application::CVRP {
     };
 
 
+    /**
+     * Base label structure for dynamic programming states
+     */
     template<typename DerivedLabel>
     struct LabelBase {
         bool is_extended{};

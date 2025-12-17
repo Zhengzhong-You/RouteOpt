@@ -20,6 +20,10 @@
 #include "get_rcc_coefficient.hpp"
 
 namespace RouteOpt::Application::CVRP {
+    /**
+     * Branch-and-bound node for CVRP solver
+     * Contains LP relaxation, cuts, and branching constraints
+     */
     class BbNode {
     public:
         //user defined functions

@@ -16,6 +16,10 @@
 #include "cvrp_macro.hpp"
 
 namespace RouteOpt::Application::CVRP {
+    /**
+     * Controller for adding columns to LP relaxation
+     * Manages column pool and adds generated routes to master problem
+     */
     class CVRP_AddColumnController {
     public:
         CVRP_AddColumnController(

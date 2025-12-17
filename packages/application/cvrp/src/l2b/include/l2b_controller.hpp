@@ -53,6 +53,10 @@ namespace RouteOpt::Application::CVRP {
         double y{};
     };
 
+    /**
+     * Learning-to-branch controller using machine learning for branching decisions
+     * Integrates ML models for variable selection in branch-and-bound
+     */
     template<typename Node, typename BrCType, typename Hasher>
     class Learning2Branch {
     public:

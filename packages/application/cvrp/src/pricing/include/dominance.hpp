@@ -11,6 +11,9 @@
 #include "cvrp_pricing_controller.hpp"
 
 namespace RouteOpt::Application::CVRP {
+    /**
+     * Check reduced cost dominance using R1C cuts
+     */
     template<bool dir>
     bool CVRP_Pricing::doRCTermDominance(Label *ki, Label *kj) {
         double gap = kj->rc - ki->rc;
@@ -18,6 +21,10 @@ namespace RouteOpt::Application::CVRP {
         return true;
     }
 
+    /**
+     * Core dominance test between two labels
+     * Checks resource consumption and visited nodes
+     */
     template<bool dir, PRICING_LEVEL pricing_level>
     bool CVRP_Pricing::dominanceCore(Label *ki, Label *kj) {
         if constexpr (pricing_level == PRICING_LEVEL::EXACT) {
@@ -40,6 +47,10 @@ namespace RouteOpt::Application::CVRP {
         return true;
     }
 
+    /**
+     * Perform dominance check when adding new label
+     * Removes dominated labels and checks if new label is dominated
+     */
     template<bool dir, PRICING_LEVEL pricing_level>
     void CVRP_Pricing::doDominance(Label *ki, int j, int bj, bool &if_suc) {
         auto &labelList_j = dir ? label_array_in_forward_sense[j][bj] : label_array_in_backward_sense[j][bj];
@@ -108,6 +119,10 @@ namespace RouteOpt::Application::CVRP {
         }
     }
 
+    /**
+     * Check if a label is dominated by existing labels in previous buckets
+     * Used to eliminate labels before extension
+     */
     template<bool dir, PRICING_LEVEL pricing_level>
     void CVRP_Pricing::checkIfDominated(Label *&ki, int i, int b,
                                         bool &if_suc) {

@@ -12,6 +12,10 @@
 #include "pricing_macro.hpp"
 
 namespace RouteOpt::Application::CVRP {
+    /**
+     * Consider whether to regenerate bucket graph based on dominance statistics
+     * Helps maintain efficiency when too many dominance checks occur
+     */
     template<bool if_symmetry>
     void CVRP_Pricing::considerRegenerateBucketGraph(
         Bucket **&all_forward_buckets, Bucket **&all_backward_buckets,

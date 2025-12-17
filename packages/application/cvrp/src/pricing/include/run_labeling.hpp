@@ -15,6 +15,11 @@
 
 
 namespace RouteOpt::Application::CVRP {
+    /**
+     * Main labeling algorithm for pricing subproblem
+     * Extends labels through bucket graph in topological order
+     * Applies dominance rules and handles time limits
+     */
     template<bool dir, bool if_last_half, bool if_complete, bool if_symmetry, PRICING_LEVEL pricing_level>
     void CVRP_Pricing::runLabeling(double time_limit) {
         if_stop_arc_elimination = pricing_level != PRICING_LEVEL::EXACT;
@@ -132,6 +137,10 @@ namespace RouteOpt::Application::CVRP {
         }
     }
 
+    /**
+     * Concatenate forward labels with backward labels to form complete routes
+     * Used in bidirectional labeling approach
+     */
     template<bool if_symmetry>
     int CVRP_Pricing::concatenateCols_prior_forward() {
         double tmp_rc;
