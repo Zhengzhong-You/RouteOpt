@@ -25,6 +25,13 @@ RouteOpt 2.0 has been meticulously developed to address a wide range of optimiza
 
 To get started with RouteOpt 2.0, clone the repository and follow our installation instructions provided in the documentation. Whether you are a researcher or a practitioner, our guides and examples will help you quickly harness the full potential of RouteOpt 2.0.
 
+## Licensing and Solver Dependencies
+
+RouteOpt is released under the GNU General Public License v3 (GPLv3).
+RouteOpt interfaces with external commercial MIP solvers (e.g., IBM ILOG CPLEX, Gurobi) through a solver-adapter layer.
+These solvers are not distributed with RouteOpt and must be obtained separately under their respective licenses.
+Users are responsible for ensuring that their use of any third-party solver complies with the solver vendor's terms.
+The adapter-based design enables adding or substituting solver backends without modifying the core RouteOpt code.
 
 ## Updates
 
