@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(hgscvrp)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCES
     src/Split.cpp

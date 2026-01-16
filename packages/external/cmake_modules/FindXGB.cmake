@@ -16,8 +16,11 @@ find_path(XGB_INCLUDE_DIR
 )
 
 find_library(XGB_LIBRARY
-        NAMES libxgboost.so
-        PATHS "${XGB_ROOT}/lib"
+        NAMES xgboost
+        PATHS
+        "${XGB_ROOT}/lib"
+        "${XGB_ROOT}/build/lib"
+        "${XGB_ROOT}/build"
 )
 
 set(XGB_INCLUDE_DIRS "${XGB_INCLUDE_DIR}")
@@ -27,4 +30,3 @@ include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(XGB DEFAULT_MSG XGB_LIBRARY XGB_INCLUDE_DIR)
 
 mark_as_advanced(XGB_INCLUDE_DIR XGB_LIBRARY)
-

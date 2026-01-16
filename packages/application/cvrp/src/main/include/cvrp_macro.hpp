@@ -57,8 +57,16 @@ namespace RouteOpt::Application::CVRP {
         return 0;
     }
 
+    constexpr double pow10_int(int exp) {
+        double value = 1.0;
+        for (int i = 0; i < exp; ++i) {
+            value *= 10.0;
+        }
+        return value;
+    }
+
     constexpr int transformed_number = get_transformed_number(app_type);
-    constexpr double round_up_tolerance = -1.0 / std::pow(10.0, transformed_number) + TOLERANCE;
+    constexpr double round_up_tolerance = -1.0 / pow10_int(transformed_number) + TOLERANCE; // std::pow not constexpr in C++20
 
     constexpr double ceilTransformedNumberRelated(double x) {
         for (int i = 0; i < transformed_number; ++i) {

@@ -27,6 +27,67 @@ def cpu_jobs():
         return 4
 
 
+def is_macos():
+    return sys.platform == "darwin"
+
+
+def has_gurobi_libs(path, exts):
+    lib_dir = os.path.join(path, "lib")
+    if not os.path.isdir(lib_dir):
+        return False
+    for ext in exts:
+        if glob.glob(os.path.join(lib_dir, f"libgurobi[0-9]*{ext}")):
+            return True
+    return False
+
+
+def is_gurobi_root(path, exts=None):
+    if not (
+        os.path.isdir(path)
+        and os.path.isdir(os.path.join(path, "lib"))
+        and os.path.isfile(os.path.join(path, "include", "gurobi_c.h"))
+    ):
+        return False
+    if exts is None:
+        return True
+    return has_gurobi_libs(path, exts)
+
+
+def resolve_gurobi_root(gurobi_path):
+    if is_macos():
+        exts = (".dylib", ".a")
+        preferred = ("macos_universal2", "macos_arm64", "macosx_arm64", "mac64")
+    else:
+        exts = (".so", ".a")
+        preferred = ("linux64", "linux_arm64", "win64")
+
+    if is_gurobi_root(gurobi_path, exts):
+        return gurobi_path
+
+    # Common platform subfolders under a versioned root.
+    for sub in preferred:
+        candidate = os.path.join(gurobi_path, sub)
+        if is_gurobi_root(candidate, exts):
+            return candidate
+
+    # Fallback: scan one level deep for a folder that looks like a Gurobi root.
+    if os.path.isdir(gurobi_path):
+        for entry in os.listdir(gurobi_path):
+            candidate = os.path.join(gurobi_path, entry)
+            if is_gurobi_root(candidate, exts):
+                return candidate
+
+    return None
+
+
+def find_gurobi_libs(lib_dir):
+    patterns = ("libgurobi[0-9]*.so", "libgurobi[0-9]*.dylib", "libgurobi[0-9]*.a")
+    libs = []
+    for pattern in patterns:
+        libs.extend(glob.glob(os.path.join(lib_dir, pattern)))
+    return [lib for lib in libs if "_light" not in os.path.basename(lib)]
+
+
 def update_cmake(gurobi_path):
     cmake_file = os.path.join("packages", "external", "cmake_modules", "FindGUROBI.cmake")
     if not os.path.exists(cmake_file):
@@ -44,14 +105,14 @@ def update_cmake(gurobi_path):
         print(f"Library dir not found: {lib_dir}")
         sys.exit(1)
 
-    libs = glob.glob(os.path.join(lib_dir, "libgurobi*.so"))
-    libs = [lib for lib in libs if "_light" not in os.path.basename(lib)]
+    libs = find_gurobi_libs(lib_dir)
     if not libs:
-        print(f"No suitable libgurobi*.so found in {lib_dir}")
+        print(f"No suitable libgurobi* found in {lib_dir}")
         sys.exit(1)
+
+    # Best-effort update if the FindGUROBI module still uses a fixed library name.
     libs.sort()
     lib_file = os.path.basename(libs[-1])
-
     content = re.sub(
         r'(find_library\s*\(\s*GUROBI_LIBRARY\s*\n\s*NAMES\s+)[^\n]+',
         r'\1' + lib_file,
@@ -110,7 +171,12 @@ def cmake_build(build_dir, target=None, jobs=None):
 def build_xgboost(xgb_dir):
     # Clean and configure
     run_cmd('rm -rf build bin', cwd=xgb_dir)
-    cmake_configure(xgb_dir, os.path.join(xgb_dir, "build"))
+    xgb_flags = []
+    if is_macos():
+        # OpenMP is mainly for XGBoost training; this build does not train models,
+        # so we do not require libomp to be installed here.
+        xgb_flags.append("-DUSE_OPENMP=OFF")
+    cmake_configure(xgb_dir, os.path.join(xgb_dir, "build"), " ".join(xgb_flags))
     # Build (generator-agnostic)
     cmake_build(os.path.join(xgb_dir, "build"))
 
@@ -134,9 +200,13 @@ def build_cvrpsep():
 def main():
     gurobi_path = input("Enter Gurobi installation path: ").strip()
     if not os.path.exists(gurobi_path):
-        print("Gurobi not found. Exiting.")
+        print("Gurobi path does not exist. Exiting.")
         sys.exit(1)
-    update_cmake(gurobi_path)
+    gurobi_root = resolve_gurobi_root(gurobi_path)
+    if not gurobi_root:
+        print("Gurobi root not found. Please provide the platform folder (e.g., linux64 or macos_universal2).")
+        sys.exit(1)
+    update_cmake(gurobi_root)
 
     XGB_VERSION = "v2.0.0"
     ext_dir = os.path.join("packages", "external")

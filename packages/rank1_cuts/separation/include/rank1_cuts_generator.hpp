@@ -13,6 +13,24 @@
 
 
 namespace RouteOpt::Rank1Cuts::Separation {
+    struct Rank1MultiLabel {
+        std::vector<int> c;
+        std::vector<int> w_no_c;
+        int plan_idx{};
+        double vio{};
+        char search_dir{};
+
+        Rank1MultiLabel(std::vector<int> c, std::vector<int> w_no_c, int plan_idx, double vio,
+                        char search_dir) : c(std::move(c)),
+                                           w_no_c(std::move(w_no_c)),
+                                           plan_idx(plan_idx),
+                                           vio(vio),
+                                           search_dir(search_dir) {
+        }
+
+        Rank1MultiLabel() = default;
+    };
+
     class CutGenerator {
     public:
         CutGenerator(const Rank1CutsDataShared &rank1CutsDataShared, DataShared &sharedData) : rank1CutsDataShared_ref(
@@ -126,23 +144,6 @@ namespace RouteOpt::Rank1Cuts::Separation {
             Rank1MultiLabel &label, int &i);
     };
 
-    struct Rank1MultiLabel {
-        std::vector<int> c;
-        std::vector<int> w_no_c;
-        int plan_idx{};
-        double vio{};
-        char search_dir{};
-
-        Rank1MultiLabel(std::vector<int> c, std::vector<int> w_no_c, int plan_idx, double vio,
-                        char search_dir) : c(std::move(c)),
-                                           w_no_c(std::move(w_no_c)),
-                                           plan_idx(plan_idx),
-                                           vio(vio),
-                                           search_dir(search_dir) {
-        }
-
-        Rank1MultiLabel() = default;
-    };
 } // namespace RouteOpt ::Rank1Cuts
 
 #endif // ROUTE_OPT_RANK1_CUTS_GENERATOR_HPP
