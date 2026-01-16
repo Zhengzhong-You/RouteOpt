@@ -18,6 +18,7 @@ set(_GUROBI_LIB_PATTERNS
         "${GUROBI_ROOT}/lib/libgurobi[0-9]*.so"
         "${GUROBI_ROOT}/lib/libgurobi[0-9]*.dylib"
         "${GUROBI_ROOT}/lib/libgurobi[0-9]*.a"
+        "${GUROBI_ROOT}/lib/gurobi[0-9]*.lib"
 )
 
 file(GLOB _GUROBI_LIBS ${_GUROBI_LIB_PATTERNS})

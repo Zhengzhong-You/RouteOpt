@@ -13,10 +13,14 @@ endif ()
 # Directly include all headers under cvrpsep/
 set(CVRPSEP_INCLUDE_DIRS "${CVRPSEP_ROOT}")
 
-# Locate libcvrpsep.a in cvrpsep/obj
+# Locate the library in legacy obj/ (Makefile) or cmake build output.
 find_library(CVRPSEP_LIBRARY
-        NAMES libcvrpsep.a
-        PATHS "${CVRPSEP_ROOT}/obj"
+        NAMES cvrpsep libcvrpsep
+        PATHS
+        "${CVRPSEP_ROOT}/obj"
+        "${CVRPSEP_ROOT}/build"
+        "${CVRPSEP_ROOT}/build/Release"
+        "${CVRPSEP_ROOT}/build/RelWithDebInfo"
         NO_DEFAULT_PATH
 )
 

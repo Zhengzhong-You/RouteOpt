@@ -31,6 +31,23 @@ def is_macos():
     return sys.platform == "darwin"
 
 
+def is_windows():
+    return os.name == "nt"
+
+
+def rm_rf(path):
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+    elif os.path.exists(path):
+        os.remove(path)
+
+
+def rm_rf_many(paths, cwd=None):
+    base = cwd or os.getcwd()
+    for rel in paths:
+        rm_rf(os.path.join(base, rel))
+
+
 def has_gurobi_libs(path, exts):
     lib_dir = os.path.join(path, "lib")
     if not os.path.isdir(lib_dir):
@@ -57,6 +74,9 @@ def resolve_gurobi_root(gurobi_path):
     if is_macos():
         exts = (".dylib", ".a")
         preferred = ("macos_universal2", "macos_arm64", "macosx_arm64", "mac64")
+    elif is_windows():
+        exts = (".lib",)
+        preferred = ("win64",)
     else:
         exts = (".so", ".a")
         preferred = ("linux64", "linux_arm64", "win64")
@@ -81,7 +101,12 @@ def resolve_gurobi_root(gurobi_path):
 
 
 def find_gurobi_libs(lib_dir):
-    patterns = ("libgurobi[0-9]*.so", "libgurobi[0-9]*.dylib", "libgurobi[0-9]*.a")
+    patterns = (
+        "libgurobi[0-9]*.so",
+        "libgurobi[0-9]*.dylib",
+        "libgurobi[0-9]*.a",
+        "gurobi[0-9]*.lib",
+    )
     libs = []
     for pattern in patterns:
         libs.extend(glob.glob(os.path.join(lib_dir, pattern)))
@@ -150,6 +175,11 @@ def choose_generator():
     # Prefer Ninja if available; otherwise use Unix Makefiles
     if shutil.which("ninja"):
         return 'Ninja'
+    if is_windows():
+        if shutil.which("nmake"):
+            return 'NMake Makefiles'
+        # Fall back to the default VS generator if available
+        return 'Visual Studio 17 2022'
     return 'Unix Makefiles'
 
 
@@ -170,7 +200,7 @@ def cmake_build(build_dir, target=None, jobs=None):
 
 def build_xgboost(xgb_dir):
     # Clean and configure
-    run_cmd('rm -rf build bin', cwd=xgb_dir)
+    rm_rf_many(["build", "bin"], cwd=xgb_dir)
     xgb_flags = []
     if is_macos():
         # OpenMP is mainly for XGBoost training; this build does not train models,
@@ -183,7 +213,7 @@ def build_xgboost(xgb_dir):
 
 def build_hgs():
     hgs_dir = os.path.join("packages", "application", "cvrp", "lib", "hgs")
-    run_cmd("rm -rf lib build", cwd=hgs_dir)
+    rm_rf_many(["lib", "build"], cwd=hgs_dir)
     os.makedirs(os.path.join(hgs_dir, "build"), exist_ok=True)
     run_cmd('cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..', cwd=os.path.join(hgs_dir, "build"))
     # Use cmake --build to be generator-agnostic; install target where available
@@ -193,8 +223,15 @@ def build_hgs():
 
 def build_cvrpsep():
     cvrpsep_dir = os.path.join("packages", "external", "cvrpsep")
-    run_cmd("rm -rf dep obj", cwd=cvrpsep_dir)
-    run_cmd("make -j {}".format(cpu_jobs()), cwd=cvrpsep_dir)
+    if shutil.which("make") and not is_windows():
+        run_cmd("rm -rf dep obj", cwd=cvrpsep_dir)
+        run_cmd("make -j {}".format(cpu_jobs()), cwd=cvrpsep_dir)
+        return
+
+    rm_rf_many(["build", "obj"], cwd=cvrpsep_dir)
+    build_dir = os.path.join(cvrpsep_dir, "build")
+    cmake_configure(cvrpsep_dir, build_dir)
+    cmake_build(build_dir)
 
 
 def main():
