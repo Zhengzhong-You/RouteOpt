@@ -1,0 +1,55 @@
+name: macos-ci
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    env:
+      GRB_WLSACCESSID: ${{ secrets.GRB_WLSACCESSID }}
+      GRB_WLSSECRET: ${{ secrets.GRB_WLSSECRET }}
+      GRB_LICENSEID: ${{ secrets.GRB_LICENSEID }}
+      GUROBI_PKG_URL: https://packages.gurobi.com/13.0/gurobi13.0.0_macos_universal2.pkg
+      GUROBI_ROOT: /Library/gurobi1300/macos_universal2
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Gurobi (pkg)
+        run: |
+          curl -L "$GUROBI_PKG_URL" -o gurobi.pkg
+          sudo /usr/sbin/installer -pkg gurobi.pkg -target /
+
+      - name: Write WLS license file
+        run: |
+          if [[ -z "$GRB_WLSACCESSID" || -z "$GRB_WLSSECRET" || -z "$GRB_LICENSEID" ]]; then
+            echo "Missing WLS secrets." >&2
+            exit 1
+          fi
+          cat > "$GITHUB_WORKSPACE/gurobi.lic" <<EOF
+WLSACCESSID=$GRB_WLSACCESSID
+WLSSECRET=$GRB_WLSSECRET
+LICENSEID=$GRB_LICENSEID
+EOF
+          echo "GRB_LICENSE_FILE=$GITHUB_WORKSPACE/gurobi.lic" >> "$GITHUB_ENV"
+
+      - name: Build RouteOpt dependencies
+        run: |
+          printf "%s\n" "$GUROBI_ROOT" | python build.py
+
+      - name: Build CVRP
+        run: |
+          cmake -S packages/application/cvrp -B packages/application/cvrp/build -DCMAKE_BUILD_TYPE=Release -DLABEL_ASSIGN_OVERRIDE=160000
+          cmake --build packages/application/cvrp/build
+
+      - name: Run CVRP smoke test
+        run: |
+          export DYLD_LIBRARY_PATH="$GUROBI_ROOT/lib:$GITHUB_WORKSPACE/packages/external/xgb/lib:$DYLD_LIBRARY_PATH"
+          cd packages/application/cvrp
+          ./bin/cvrp instance/P-n20-k2.vrp -u 217
