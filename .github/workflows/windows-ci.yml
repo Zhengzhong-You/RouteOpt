@@ -30,13 +30,15 @@ jobs:
           Invoke-WebRequest -Uri $env:GUROBI_MSI_URL -OutFile gurobi.msi
           $msiSize = (Get-Item gurobi.msi).Length
           if ($msiSize -lt 1000000) { throw "Downloaded MSI seems too small ($msiSize bytes). Check GUROBI_MSI_URL." }
+          Write-Host "Downloaded MSI size: $msiSize bytes"
 
           $extractRoot = "C:\gurobi_extract"
           if (Test-Path $extractRoot) { Remove-Item -Recurse -Force $extractRoot }
-          msiexec /a gurobi.msi /qn TARGETDIR=$extractRoot /l*v msiexec.log
-          if ($LASTEXITCODE -ne 0) {
-            Get-Content msiexec.log -Tail 200
-            throw "MSI extraction failed with exit code $LASTEXITCODE"
+          $logPath = Join-Path $env:RUNNER_TEMP "msiexec.log"
+          $proc = Start-Process msiexec -ArgumentList "/a gurobi.msi /qn TARGETDIR=$extractRoot /l*v `"$logPath`"" -Wait -PassThru
+          if ($proc.ExitCode -ne 0) {
+            if (Test-Path $logPath) { Get-Content $logPath -Tail 200 } else { Write-Host "msiexec.log not found at $logPath" }
+            throw "MSI extraction failed with exit code $($proc.ExitCode)"
           }
 
           $gurobiWin64 = Get-ChildItem -Path $extractRoot -Recurse -Directory -Filter "win64" |
