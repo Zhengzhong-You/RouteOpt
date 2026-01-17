@@ -44,11 +44,8 @@ jobs:
             echo "Missing WLS secrets." >&2
             exit 1
           fi
-          cat > "$GITHUB_WORKSPACE/gurobi.lic" <<EOF2
-WLSACCESSID=$GRB_WLSACCESSID
-WLSSECRET=$GRB_WLSSECRET
-LICENSEID=$GRB_LICENSEID
-EOF2
+          printf "WLSACCESSID=%s\nWLSSECRET=%s\nLICENSEID=%s\n" \
+            "$GRB_WLSACCESSID" "$GRB_WLSSECRET" "$GRB_LICENSEID" > "$GITHUB_WORKSPACE/gurobi.lic"
           echo "GRB_LICENSE_FILE=$GITHUB_WORKSPACE/gurobi.lic" >> "$GITHUB_ENV"
 
       - name: Build RouteOpt dependencies
