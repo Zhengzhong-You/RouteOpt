@@ -26,6 +26,17 @@ jobs:
       - name: Install Ninja
         run: choco install -y ninja
 
+      - name: Install zlib (vcpkg)
+        shell: pwsh
+        run: |
+          $vcpkgRoot = "C:\vcpkg"
+          if (-not (Test-Path $vcpkgRoot)) {
+            git clone https://github.com/microsoft/vcpkg $vcpkgRoot
+          }
+          & "$vcpkgRoot\bootstrap-vcpkg.bat"
+          & "$vcpkgRoot\vcpkg.exe" install zlib:x64-windows
+          "CMAKE_TOOLCHAIN_FILE=$vcpkgRoot\scripts\buildsystems\vcpkg.cmake" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
+
       - name: Download and extract Gurobi (MSI)
         shell: pwsh
         run: |
@@ -76,7 +87,7 @@ jobs:
       - name: Build CVRP
         shell: pwsh
         run: |
-          cmake -S packages\application\cvrp -B packages\application\cvrp\build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake -S packages\application\cvrp -B packages\application\cvrp\build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$env:CMAKE_TOOLCHAIN_FILE"
           cmake --build packages\application\cvrp\build
 
       - name: Run CVRP smoke test

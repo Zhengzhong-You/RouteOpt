@@ -202,7 +202,12 @@ def cmake_configure(src_dir, build_dir, extra_flags=""):
     gen = choose_generator()
     # CMake 4.x can fail on projects that set an old minimum; raise the policy floor.
     policy_flag = "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
-    cmd = f'cmake -B "{build_dir}" -S "{src_dir}" -DCMAKE_BUILD_TYPE=RelWithDebInfo {policy_flag} -G "{gen}" {extra_flags}'
+    toolchain = os.environ.get("CMAKE_TOOLCHAIN_FILE")
+    toolchain_flag = f'-DCMAKE_TOOLCHAIN_FILE="{toolchain}"' if toolchain else ""
+    cmd = (
+        f'cmake -B "{build_dir}" -S "{src_dir}" -DCMAKE_BUILD_TYPE=RelWithDebInfo '
+        f'{policy_flag} {toolchain_flag} -G "{gen}" {extra_flags}'
+    )
     run_cmd(cmd)
 
 
