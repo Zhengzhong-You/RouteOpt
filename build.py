@@ -130,8 +130,14 @@ def update_cmake(gurobi_path):
     with open(cmake_file, "r") as f:
         content = f.read()
 
-    new_root_line = f'set(GUROBI_ROOT "{gurobi_path}")'
-    content = re.sub(r'set\s*\(\s*GUROBI_ROOT\s*".*?"\s*\)', new_root_line, content)
+    # Use forward slashes for CMake and avoid backslash escapes in regex replacement.
+    cmake_root = gurobi_path.replace("\\", "/")
+    new_root_line = f'set(GUROBI_ROOT "{cmake_root}")'
+    content = re.sub(
+        r'set\s*\(\s*GUROBI_ROOT\s*".*?"\s*\)',
+        lambda _m: new_root_line,
+        content,
+    )
 
     lib_dir = os.path.join(gurobi_path, "lib")
     if not os.path.exists(lib_dir):
