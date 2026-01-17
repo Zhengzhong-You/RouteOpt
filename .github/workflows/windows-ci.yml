@@ -87,7 +87,7 @@ jobs:
       - name: Build CVRP
         shell: pwsh
         run: |
-          cmake -S packages\application\cvrp -B packages\application\cvrp\build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$env:CMAKE_TOOLCHAIN_FILE"
+          cmake -S packages\application\cvrp -B packages\application\cvrp\build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$env:CMAKE_TOOLCHAIN_FILE" -DLABEL_ASSIGN_OVERRIDE=160000
           cmake --build packages\application\cvrp\build
 
       - name: Run CVRP smoke test

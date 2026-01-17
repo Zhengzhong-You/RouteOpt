@@ -163,7 +163,7 @@ namespace RouteOpt::RCCs::CoefficientGetter {
 
         for (int c = 0; c < cnt; ++c) {
             for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(tmp, c); it; ++it) {
-                triplets.emplace_back(rccs[new_idx_map[c]].idx_rcc - start, it.col(), 1);
+                triplets.emplace_back(rccs[new_idx_map[c]].idx_rcc - start, static_cast<int>(it.col()), 1);
             }
         }
     }

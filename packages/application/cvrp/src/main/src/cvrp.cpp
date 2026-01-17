@@ -11,7 +11,7 @@
 namespace RouteOpt::Application::CVRP {
     void CVRPSolver::getLowerBoundofMinimumNumberCars() {
         double sum_demand = std::accumulate(demand.data() + 1, demand.data() + dim, 0.0);
-        int cap_k = std::ceil(sum_demand / cap);
+        int cap_k = static_cast<int>(std::ceil(sum_demand / cap));
         num_vehicle = cap_k;
         max_num_vehicle = dim - 1;
     }

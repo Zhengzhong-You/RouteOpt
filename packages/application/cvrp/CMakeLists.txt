@@ -79,6 +79,11 @@ if (WIN32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
 endif ()
 
+set(LABEL_ASSIGN_OVERRIDE "" CACHE STRING "Override LABEL_ASSIGN for CVRP pricing")
+if (LABEL_ASSIGN_OVERRIDE)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE LABEL_ASSIGN_OVERRIDE=${LABEL_ASSIGN_OVERRIDE})
+endif ()
+
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE

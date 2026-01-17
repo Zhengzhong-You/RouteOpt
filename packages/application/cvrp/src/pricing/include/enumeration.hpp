@@ -463,9 +463,9 @@ namespace RouteOpt::Application::CVRP {
                         if (status != ENUMERATION_STATE::NORMAL) goto outside;
                     }
                     EnumerationDetail::setLabelLimitMiddleCheck<dir>(label_per_bin_in_enumeration,
-                                                                     dir
+                                                                     static_cast<int>(dir
                                                                          ? num_forward_labels_in_enu
-                                                                         : num_backward_labels_in_enu,
+                                                                         : num_backward_labels_in_enu),
                                                                      max_label_in_enumeration,
                                                                      stop_b,
                                                                      status);

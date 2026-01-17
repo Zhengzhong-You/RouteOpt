@@ -273,8 +273,8 @@ namespace RouteOpt::Application::CVRP {
 
 
             SAFE_SOLVER(solver.XaddConstraints(
-                mat.rows(),
-                nz,
+                static_cast<int>(mat.rows()),
+                static_cast<int>(nz),
                 solver_beg.data(),
                 solver_ind.data(),
                 solver_val.data(),
@@ -430,7 +430,7 @@ namespace RouteOpt::Application::CVRP {
         old_val = node->getValue();
 
         x.resize(cols.size());
-        SAFE_SOLVER(node->refSolver().getX(0, cols.size(), x.data()))
+        SAFE_SOLVER(node->refSolver().getX(0, static_cast<int>(cols.size()), x.data()))
         CuttingDetail::getSols(x, cols, sol_x, sols);
 
         SAFE_SOLVER(node->refSolver().getNumRow(&num_row))
@@ -475,7 +475,7 @@ namespace RouteOpt::Application::CVRP {
         if (!CuttingDetail::if_pure_rcc_tail) goto PRICING;
 
 
-    RANK1: {
+    {
             CuttingDetail::callRank1(
                 limited_memory_type,
                 pricing_hard_level,
@@ -562,7 +562,7 @@ namespace RouteOpt::Application::CVRP {
         if (!node->getIfTerminate()) {
             SAFE_SOLVER(node->refSolver().reoptimize())
             x.resize(cols.size());
-            SAFE_SOLVER(node->refSolver().getX(0, cols.size(), x.data()))
+            SAFE_SOLVER(node->refSolver().getX(0, static_cast<int>(cols.size()), x.data()))
             double obj;
             SAFE_SOLVER(node->refSolver().getObjVal(&obj))
             bool if_integer, if_feasible;
