@@ -52,8 +52,15 @@ def has_gurobi_libs(path, exts):
     lib_dir = os.path.join(path, "lib")
     if not os.path.isdir(lib_dir):
         return False
+    patterns = []
     for ext in exts:
-        if glob.glob(os.path.join(lib_dir, f"libgurobi[0-9]*{ext}")):
+        if ext == ".lib":
+            patterns.append(f"gurobi[0-9]*{ext}")
+            patterns.append(f"libgurobi[0-9]*{ext}")
+        else:
+            patterns.append(f"libgurobi[0-9]*{ext}")
+    for pattern in patterns:
+        if glob.glob(os.path.join(lib_dir, pattern)):
             return True
     return False
 
@@ -106,6 +113,7 @@ def find_gurobi_libs(lib_dir):
         "libgurobi[0-9]*.dylib",
         "libgurobi[0-9]*.a",
         "gurobi[0-9]*.lib",
+        "libgurobi[0-9]*.lib",
     )
     libs = []
     for pattern in patterns:
