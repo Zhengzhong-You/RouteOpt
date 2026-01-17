@@ -229,7 +229,7 @@ def build_hgs():
     hgs_dir = os.path.join("packages", "application", "cvrp", "lib", "hgs")
     rm_rf_many(["lib", "build"], cwd=hgs_dir)
     os.makedirs(os.path.join(hgs_dir, "build"), exist_ok=True)
-    run_cmd('cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..', cwd=os.path.join(hgs_dir, "build"))
+    cmake_configure(hgs_dir, os.path.join(hgs_dir, "build"))
     # Use cmake --build to be generator-agnostic; install target where available
     cmake_build(os.path.join(hgs_dir, "build"))
     cmake_build(os.path.join(hgs_dir, "build"), target="install")
