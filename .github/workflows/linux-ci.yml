@@ -1,4 +1,4 @@
-name: macos-ci
+name: linux-ci
 
 on:
   workflow_dispatch:
@@ -7,13 +7,12 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     env:
       GRB_WLSACCESSID: ${{ secrets.GRB_WLSACCESSID }}
       GRB_WLSSECRET: ${{ secrets.GRB_WLSSECRET }}
       GRB_LICENSEID: ${{ secrets.GRB_LICENSEID }}
-      GUROBI_PKG_URL: "https://packages.gurobi.com/13.0/gurobi13.0.0_macos_universal2.pkg?_gl=1*14b58xp*_gcl_aw*R0NMLjE3Njg0OTM0NTIuQ2p3S0NBaUF2YUxMQmhCRkVpd0FZQ05UZjNUSlNWeGFYdnN2cXJKc3JSNlJBVWExbkpPN1pZUUFnRmF4bmN0X2pfVENidzFUTkFKQU54b0NSTWtRQXZEX0J3RQ..*_gcl_au*MTQzMzQ0MzgwOS4xNzY4NDkzMjE5*_ga*MTk3MTE0NTM3MC4xNzY4NDkzMjE4*_ga_RTTPP25C8N*czE3Njg2MTk0OTkkbzQkZzEkdDE3Njg2MTk1MTMkajQ2JGwwJGgxOTk3NjYwNDY4"
-      GUROBI_ROOT: /Library/gurobi1300/macos_universal2
+      GUROBI_TGZ_URL: "https://packages.gurobi.com/13.0/gurobi13.0.0_linux64.tar.gz?_gl=1*14b58xp*_gcl_aw*R0NMLjE3Njg0OTM0NTIuQ2p3S0NBaUF2YUxMQmhCRkVpd0FZQ05UZjNUSlNWeGFYdnN2cXJKc3JSNlJBVWExbkpPN1pZUUFnRmF4bmN0X2pfVENidzFUTkFKQU54b0NSTWtRQXZEX0J3RQ..*_gcl_au*MTQzMzQ0MzgwOS4xNzY4NDkzMjE5*_ga*MTk3MTE0NTM3MC4xNzY4NDkzMjE4*_ga_RTTPP25C8N*czE3Njg2MTk0OTkkbzQkZzEkdDE3Njg2MTk1MTMkajQ2JGwwJGgxOTk3NjYwNDY4"
     steps:
       - uses: actions/checkout@v4
 
@@ -21,10 +20,23 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Gurobi (pkg)
+      - name: Install system dependencies
         run: |
-          curl -L "$GUROBI_PKG_URL" -o gurobi.pkg
-          sudo /usr/sbin/installer -pkg gurobi.pkg -target /
+          sudo apt-get update
+          sudo apt-get install -y ninja-build zlib1g-dev
+
+      - name: Download and extract Gurobi (tar.gz)
+        run: |
+          curl -L "$GUROBI_TGZ_URL" -o gurobi.tar.gz
+          mkdir -p "$RUNNER_TEMP/gurobi"
+          tar -xzf gurobi.tar.gz -C "$RUNNER_TEMP/gurobi"
+          GUROBI_ROOT=$(find "$RUNNER_TEMP/gurobi" -type d -name "linux64" -exec test -f "{}/include/gurobi_c.h" \; -print -quit)
+          if [[ -z "$GUROBI_ROOT" ]]; then
+            echo "Gurobi linux64 folder not found." >&2
+            find "$RUNNER_TEMP/gurobi" -maxdepth 3 -type d
+            exit 1
+          fi
+          echo "GUROBI_ROOT=$GUROBI_ROOT" >> "$GITHUB_ENV"
 
       - name: Write WLS license file
         run: |
@@ -50,6 +62,6 @@ EOF2
 
       - name: Run CVRP smoke test
         run: |
-          export DYLD_LIBRARY_PATH="$GUROBI_ROOT/lib:$GITHUB_WORKSPACE/packages/external/xgb/lib:$DYLD_LIBRARY_PATH"
+          export LD_LIBRARY_PATH="$GUROBI_ROOT/lib:$GITHUB_WORKSPACE/packages/external/xgb/lib:$LD_LIBRARY_PATH"
           cd packages/application/cvrp
           ./bin/cvrp instance/P-n20-k2.vrp -u 217
