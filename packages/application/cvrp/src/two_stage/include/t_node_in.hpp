@@ -9,6 +9,7 @@
 #define ROUTE_OPT_T_NODE_IN_HPP
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <zlib.h>
 
 
@@ -40,6 +41,10 @@ namespace RouteOpt::Application::CVRP {
             in.read(reinterpret_cast<char *>(&compLen), sizeof(compLen));
             if (!in)
                 THROW_RUNTIME_ERROR("error reading compressed header.");
+            if (srcLen > static_cast<size_t>(std::numeric_limits<uLongf>::max()) ||
+                compLen > static_cast<size_t>(std::numeric_limits<uLong>::max())) {
+                THROW_RUNTIME_ERROR("compressed block size too large for zlib.");
+            }
 
             // Read the compressed block.
             std::vector<Bytef> compressedData(compLen);
@@ -49,9 +54,9 @@ namespace RouteOpt::Application::CVRP {
 
             // Prepare the buffer for the uncompressed data.
             rawData.resize(srcLen, '\0');
-            uLong rawDataSize = srcLen;
+            uLongf rawDataSize = static_cast<uLongf>(srcLen);
             int ret = uncompress(reinterpret_cast<Bytef *>(&rawData[0]), &rawDataSize,
-                                 compressedData.data(), compLen);
+                                 compressedData.data(), static_cast<uLong>(compLen));
             if (ret != Z_OK)
                 THROW_RUNTIME_ERROR("decompression failed with error code: " + std::to_string(ret));
         }

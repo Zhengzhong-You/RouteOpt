@@ -75,6 +75,10 @@ file(GLOB_RECURSE CVRP_SOURCES
 add_executable(${PROJECT_NAME} ${CVRP_SOURCES}
 )
 
+if (WIN32)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+endif ()
+
 
 target_link_libraries(${PROJECT_NAME}
         PRIVATE

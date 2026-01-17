@@ -9,6 +9,7 @@
 #define ROUTE_OPT_T_NODE_OUT_HPP
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <t_node_out.hpp>
 #include <zlib.h>
 #ifdef _WIN32
@@ -77,18 +78,23 @@ namespace RouteOpt::Application::CVRP {
         inline void writeCompressedData(std::ostream &out, const std::string &rawData) {
             // Get the size of the uncompressed data.
             size_t srcLen = rawData.size();
+            if (srcLen > static_cast<size_t>(std::numeric_limits<uLong>::max())) {
+                THROW_RUNTIME_ERROR("data size too large for zlib compression.");
+            }
+            auto srcLenZ = static_cast<uLong>(srcLen);
 
             // Determine the maximum compressed size.
-            size_t destLen = compressBound(srcLen);
-            std::vector<Bytef> compressedData(destLen);
+            uLongf destLenZ = compressBound(srcLenZ);
+            std::vector<Bytef> compressedData(static_cast<size_t>(destLenZ));
 
             // Compress the data using maximum compression.
-            int ret = compress2(compressedData.data(), &destLen,
+            int ret = compress2(compressedData.data(), &destLenZ,
                                 reinterpret_cast<const Bytef *>(rawData.data()),
-                                srcLen, Z_BEST_COMPRESSION);
+                                srcLenZ, Z_BEST_COMPRESSION);
             if (ret != Z_OK) {
                 THROW_RUNTIME_ERROR("compression failed with error code: " + std::to_string(ret));
             }
+            size_t destLen = static_cast<size_t>(destLenZ);
 
             // Write header information (uncompressed size and compressed size)
             out.write(reinterpret_cast<const char *>(&srcLen), sizeof(srcLen));
