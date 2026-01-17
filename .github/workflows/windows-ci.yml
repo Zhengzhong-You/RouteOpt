@@ -1,0 +1,70 @@
+name: windows-ci
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      GRB_WLSACCESSID: ${{ secrets.GRB_WLSACCESSID }}
+      GRB_WLSSECRET: ${{ secrets.GRB_WLSSECRET }}
+      GRB_LICENSEID: ${{ secrets.GRB_LICENSEID }}
+      GUROBI_MSI_URL: ${{ secrets.GUROBI_MSI_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Ninja
+        run: choco install -y ninja
+
+      - name: Download and extract Gurobi (MSI)
+        shell: pwsh
+        run: |
+          if (-not $env:GUROBI_MSI_URL) { throw "Missing GUROBI_MSI_URL secret." }
+          Invoke-WebRequest -Uri $env:GUROBI_MSI_URL -OutFile gurobi.msi
+          msiexec /a gurobi.msi /qn TARGETDIR=C:\
+
+          $gurobiRoot = Get-ChildItem -Path C:\ -Directory -Filter "gurobi*" |
+            Sort-Object Name -Descending | Select-Object -First 1
+          if (-not $gurobiRoot) { throw "Gurobi root folder not found under C:\\" }
+
+          $gurobiWin64 = Join-Path $gurobiRoot.FullName "win64"
+          if (-not (Test-Path $gurobiWin64)) { throw "Expected win64 folder at $gurobiWin64" }
+
+          "GUROBI_ROOT=$gurobiWin64" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
+
+      - name: Write WLS license file
+        shell: pwsh
+        run: |
+          if (-not $env:GRB_WLSACCESSID -or -not $env:GRB_WLSSECRET -or -not $env:GRB_LICENSEID) {
+            throw "Missing WLS secrets."
+          }
+          @"
+WLSACCESSID=$env:GRB_WLSACCESSID
+WLSSECRET=$env:GRB_WLSSECRET
+LICENSEID=$env:GRB_LICENSEID
+"@ | Out-File -Encoding ascii $env:GITHUB_WORKSPACE\gurobi.lic
+
+          "GRB_LICENSE_FILE=$env:GITHUB_WORKSPACE\gurobi.lic" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
+
+      - name: Build RouteOpt dependencies
+        shell: pwsh
+        run: |
+          $env:GUROBI_ROOT | python build.py
+
+      - name: Build CVRP
+        shell: pwsh
+        run: |
+          cmake -S packages\application\cvrp -B packages\application\cvrp\build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build packages\application\cvrp\build
+
+      - name: Run CVRP smoke test
+        shell: pwsh
+        run: |
+          .\packages\application\cvrp\bin\cvrp.exe packages\application\cvrp\instance\P-n20-k2.vrp -u 217
