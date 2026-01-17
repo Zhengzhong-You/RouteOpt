@@ -155,7 +155,7 @@ namespace RouteOpt::Rank1Cuts::CoefficientGetter {
             tmp /= denominator;
             for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator it(tmp, 0); it; ++it) {
                 auto val_ = static_cast<int>(it.value() + TOLERANCE);
-                if (val_)triplets.emplace_back(r1c.idx_r1c - start, it.col(), val_);
+                if (val_)triplets.emplace_back(r1c.idx_r1c - start, static_cast<int>(it.col()), val_);
             }
         }
     }

@@ -18,7 +18,8 @@ namespace RouteOpt::Rank1Cuts::RCGetter {
 
 
         std::vector<std::pair<int, double> > cut_dual;
-        for (int i = 0; i < cuts.size(); ++i) {
+        const int cut_count = static_cast<int>(cuts.size());
+        for (int i = 0; i < cut_count; ++i) {
             auto &r1c = cuts[i];
             double dual = std::abs(pi_vector[r1c.idx_r1c]);
             if (dual < DUAL_TOLERANCE) {

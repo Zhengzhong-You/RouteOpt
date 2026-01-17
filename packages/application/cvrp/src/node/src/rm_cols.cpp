@@ -27,7 +27,7 @@ namespace RouteOpt::Application::CVRP {
         ++delta;
         for (int j = *stop_sign + 1; j < num_col; ++j) cols[j - delta] = cols[j];
 
-        SAFE_SOLVER(solver.delVars(sort_col_idx.size(), sort_col_idx.data()))
+        SAFE_SOLVER(solver.delVars(static_cast<int>(sort_col_idx.size()), sort_col_idx.data()))
         SAFE_SOLVER(solver.updateModel())
         SAFE_SOLVER(solver.getNumCol(&num_col))
         cols.resize(num_col);

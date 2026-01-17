@@ -23,13 +23,15 @@ namespace RouteOpt::Application::CVRP {
                     cind.emplace(cind.begin(), 0);
                     cval.emplace(cval.begin(), 1);
                 }
-                SAFE_SOLVER(node_solver.addConstraint(cind.size(), cind.data(), cval.data(), SOLVER_EQUAL, 1, nullptr))
+                SAFE_SOLVER(node_solver.addConstraint(static_cast<int>(cind.size()), cind.data(), cval.data(),
+                    SOLVER_EQUAL, 1, nullptr))
             } else {
                 if (cind.front() == 0) {
                     cind.erase(cind.begin());
                     cval.erase(cval.begin());
                 }
-                SAFE_SOLVER(node_solver.addConstraint(cind.size(), cind.data(), cval.data(), SOLVER_EQUAL, 0, nullptr))
+                SAFE_SOLVER(node_solver.addConstraint(static_cast<int>(cind.size()), cind.data(), cval.data(),
+                    SOLVER_EQUAL, 0, nullptr))
             }
             SAFE_SOLVER(node_solver.updateModel())
         }
@@ -329,8 +331,8 @@ namespace RouteOpt::Application::CVRP {
         edge_map.reserve(dim * dim);
         auto &cols = node->cols;
         std::vector<double> x(cols.size());
-        SAFE_SOLVER(node->solver.getX(0, cols.size(), x.data()))
-        for (int i = 0; i < cols.size(); ++i) {
+        SAFE_SOLVER(node->solver.getX(0, static_cast<int>(cols.size()), x.data()))
+        for (int i = 0; i < static_cast<int>(cols.size()); ++i) {
             const auto val = x[i];
             if (val < SOL_X_TOLERANCE) continue;
             const auto &seq = cols[i].col_seq;
@@ -347,7 +349,7 @@ namespace RouteOpt::Application::CVRP {
             if (brc.br_dir) {
                 if (!equalFloat(edge_map[brc.edge], 1., EDGE_IF_ONE_TOLERANCE)) {
                     //print the col
-                    for (int i = 0; i < cols.size(); ++i) {
+                    for (int i = 0; i < static_cast<int>(cols.size()); ++i) {
                         const auto val = x[i];
                         if (val < SOL_X_TOLERANCE) continue;
                         const auto &seq = cols[i].col_seq;

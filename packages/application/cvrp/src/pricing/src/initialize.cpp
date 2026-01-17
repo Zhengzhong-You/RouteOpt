@@ -47,7 +47,7 @@ namespace RouteOpt::Application::CVRP {
 
     void CVRP_Pricing::assignMemory() {
         double aver = getAverageRouteLength();
-        mem4_pricing = aver * (MAX_ROUTE_PRICING);
+        mem4_pricing = static_cast<size_t>(aver * MAX_ROUTE_PRICING);
         col_pool4_pricing = new int[mem4_pricing];
 
         label_assign = LABEL_ASSIGN / 2;

@@ -277,13 +277,14 @@ namespace RouteOpt::Application::CVRP {
         std::vector<Eigen::Triplet<double> > triplets;
         triplets.reserve(
             static_cast<size_t>(static_cast<double>(Col_added.size()) * num_row * NodeLPDensityEstimation));
-        size_t num = 0;
+        int num = 0;
         for (auto &it: mat) {
             for (int i = 0; i < it.rows(); ++i) {
                 for (Eigen::SparseMatrix<double, Eigen::RowMajor>::InnerIterator inner_it(it, i); inner_it; ++
                      inner_it) {
-                    if (if_col_added[inner_it.col()] != -1) {
-                        triplets.emplace_back(num, if_col_added[inner_it.col()], inner_it.value());
+                    const int col_idx = static_cast<int>(inner_it.col());
+                    if (if_col_added[col_idx] != -1) {
+                        triplets.emplace_back(num, if_col_added[col_idx], inner_it.value());
                     }
                 }
                 ++num;
