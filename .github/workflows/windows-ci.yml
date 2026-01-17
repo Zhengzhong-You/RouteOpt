@@ -28,16 +28,26 @@ jobs:
         run: |
           if (-not $env:GUROBI_MSI_URL) { throw "Missing GUROBI_MSI_URL secret." }
           Invoke-WebRequest -Uri $env:GUROBI_MSI_URL -OutFile gurobi.msi
-          msiexec /a gurobi.msi /qn TARGETDIR=C:\
+          $msiSize = (Get-Item gurobi.msi).Length
+          if ($msiSize -lt 1000000) { throw "Downloaded MSI seems too small ($msiSize bytes). Check GUROBI_MSI_URL." }
 
-          $gurobiRoot = Get-ChildItem -Path C:\ -Directory -Filter "gurobi*" |
-            Sort-Object Name -Descending | Select-Object -First 1
-          if (-not $gurobiRoot) { throw "Gurobi root folder not found under C:\\" }
+          $extractRoot = "C:\gurobi_extract"
+          if (Test-Path $extractRoot) { Remove-Item -Recurse -Force $extractRoot }
+          msiexec /a gurobi.msi /qn TARGETDIR=$extractRoot /l*v msiexec.log
+          if ($LASTEXITCODE -ne 0) {
+            Get-Content msiexec.log -Tail 200
+            throw "MSI extraction failed with exit code $LASTEXITCODE"
+          }
 
-          $gurobiWin64 = Join-Path $gurobiRoot.FullName "win64"
-          if (-not (Test-Path $gurobiWin64)) { throw "Expected win64 folder at $gurobiWin64" }
+          $gurobiWin64 = Get-ChildItem -Path $extractRoot -Recurse -Directory -Filter "win64" |
+            Where-Object { Test-Path (Join-Path $_.FullName "include\gurobi_c.h") } |
+            Select-Object -First 1
+          if (-not $gurobiWin64) {
+            Get-ChildItem -Path $extractRoot -Depth 2 | Out-String | Write-Host
+            throw "Gurobi win64 folder not found under $extractRoot"
+          }
 
-          "GUROBI_ROOT=$gurobiWin64" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
+          "GUROBI_ROOT=$($gurobiWin64.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
 
       - name: Write WLS license file
         shell: pwsh
