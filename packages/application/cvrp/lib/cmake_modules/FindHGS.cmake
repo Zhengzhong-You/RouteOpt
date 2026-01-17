@@ -7,10 +7,14 @@ find_path(HGS_INCLUDE_DIR
 )
 
 find_library(HGS_LIBRARY
-        NAMES hgscvrp
+        NAMES hgscvrp libhgscvrp
         PATHS
         "${HGS_ROOT}/lib"
+        "${HGS_ROOT}/build"
         "${HGS_ROOT}/build/lib"
+        "${HGS_ROOT}/build/Release"
+        "${HGS_ROOT}/build/RelWithDebInfo"
+        "${HGS_ROOT}/build/Debug"
 )
 
 
