@@ -45,11 +45,11 @@ jobs:
           if (-not $env:GRB_WLSACCESSID -or -not $env:GRB_WLSSECRET -or -not $env:GRB_LICENSEID) {
             throw "Missing WLS secrets."
           }
-          @"
-WLSACCESSID=$env:GRB_WLSACCESSID
-WLSSECRET=$env:GRB_WLSSECRET
-LICENSEID=$env:GRB_LICENSEID
-"@ | Out-File -Encoding ascii $env:GITHUB_WORKSPACE\gurobi.lic
+          @(
+            "WLSACCESSID=$env:GRB_WLSACCESSID"
+            "WLSSECRET=$env:GRB_WLSSECRET"
+            "LICENSEID=$env:GRB_LICENSEID"
+          ) | Out-File -Encoding ascii $env:GITHUB_WORKSPACE\gurobi.lic
 
           "GRB_LICENSE_FILE=$env:GITHUB_WORKSPACE\gurobi.lic" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
 
