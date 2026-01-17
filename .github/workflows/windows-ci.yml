@@ -93,4 +93,8 @@ jobs:
       - name: Run CVRP smoke test
         shell: pwsh
         run: |
+          if (-not $env:GUROBI_ROOT) { throw "GUROBI_ROOT is not set." }
+          $xgbDllDir = Join-Path $env:GITHUB_WORKSPACE "packages\external\xgb\lib"
+          $gurobiBin = Join-Path $env:GUROBI_ROOT "bin"
+          $env:PATH = "$gurobiBin;$xgbDllDir;$env:PATH"
           .\packages\application\cvrp\bin\cvrp.exe packages\application\cvrp\instance\P-n20-k2.vrp -u 217
