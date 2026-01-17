@@ -117,13 +117,13 @@ namespace RouteOpt::DeLuxing::KMeans {
         uint32_t closest_mean(const std::vector<T> &point, const std::vector<std::vector<T> > &means) {
             assert(!means.empty());
             T smallest_distance = distance_squared(point, means[0]);
-            typename std::vector<T>::size_type index = 0;
+            uint32_t index = 0;
             T distance;
             for (size_t i = 1; i < means.size(); ++i) {
                 distance = distance_squared(point, means[i]);
                 if (distance < smallest_distance) {
                     smallest_distance = distance;
-                    index = i;
+                    index = static_cast<uint32_t>(i);
                 }
             }
             return index;
