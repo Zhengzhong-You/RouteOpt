@@ -25,6 +25,8 @@ RouteOpt 2.0 has been meticulously developed to address a wide range of optimiza
 
 To get started with RouteOpt 2.0, clone the repository and follow our installation instructions provided in the documentation. Whether you are a researcher or a practitioner, our guides and examples will help you quickly harness the full potential of RouteOpt 2.0.
 
+**Supported platforms:** macOS and Windows (Linux support is planned).
+
 ## Licensing and Solver Dependencies
 
 RouteOpt is released under the GNU General Public License v3 (GPLv3).
