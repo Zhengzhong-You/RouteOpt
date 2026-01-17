@@ -7,6 +7,7 @@
 
 
 #include <algorithm>
+#include <numeric>
 #include "route_opt_macro.hpp"
 #include "deluxing_macro.hpp"
 #include "deluxing_controller.hpp"
