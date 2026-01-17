@@ -97,4 +97,6 @@ jobs:
           $xgbDllDir = Join-Path $env:GITHUB_WORKSPACE "packages\external\xgb\lib"
           $gurobiBin = Join-Path $env:GUROBI_ROOT "bin"
           $env:PATH = "$gurobiBin;$xgbDllDir;$env:PATH"
-          .\packages\application\cvrp\bin\cvrp.exe packages\application\cvrp\instance\P-n20-k2.vrp -u 217
+          Push-Location packages\application\cvrp
+          .\bin\cvrp.exe instance\P-n20-k2.vrp -u 217
+          Pop-Location
