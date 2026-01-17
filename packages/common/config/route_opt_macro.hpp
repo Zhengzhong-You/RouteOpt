@@ -88,7 +88,7 @@ namespace RouteOpt {
      * @param tolerance Acceptable difference between x and y (default is TOLERANCE).
      * @return true if the difference is less than the tolerance, false otherwise.
      */
-    constexpr bool equalFloat(double x, double y, double tolerance = TOLERANCE) {
+    inline bool equalFloat(double x, double y, double tolerance = TOLERANCE) {
         return std::fabs(x - y) < tolerance;
     }
 
@@ -98,7 +98,7 @@ namespace RouteOpt {
      * @param x The number to check.
      * @return true if x is not an integer (has a fractional part), false otherwise.
      */
-    constexpr bool checkFrac(double x, double tolerance = TOLERANCE) {
+    inline bool checkFrac(double x, double tolerance = TOLERANCE) {
         return !equalFloat(std::fmod(x, 1.), 0, tolerance);
     }
 

@@ -11,6 +11,12 @@
 #include <iostream>
 #include <t_node_out.hpp>
 #include <zlib.h>
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+#else
+#include <sys/resource.h>
+#endif
 
 #include "two_stage_macro.hpp"
 #include "cvrp_pricing_controller.hpp"
@@ -22,9 +28,19 @@ namespace RouteOpt::Application::CVRP {
         inline std::ofstream outFile{};
 
         inline void reportMemoryUsage() {
+#ifdef _WIN32
+            PROCESS_MEMORY_COUNTERS info{};
+            if (GetProcessMemoryInfo(GetCurrentProcess(), &info, sizeof(info))) {
+                std::cout << "memory usage= " << (info.WorkingSetSize / (1024.0 * 1024.0 * 1024.0)) << "GB."
+                          << std::endl;
+            } else {
+                std::cout << "memory usage= N/A" << std::endl;
+            }
+#else
             rusage usage{};
             getrusage(RUSAGE_SELF, &usage);
             std::cout << "memory usage= " << usage.ru_maxrss / 1048576 << "GB." << std::endl;
+#endif
         }
 
         inline void initFileStream(const std::string &file_name, int memory_usage_limit) {

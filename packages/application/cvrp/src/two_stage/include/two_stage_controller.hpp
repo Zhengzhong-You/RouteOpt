@@ -7,7 +7,12 @@
 
 #ifndef ROUTE_OPT_TWO_STAGE_CONTROLLER_HPP
 #define ROUTE_OPT_TWO_STAGE_CONTROLLER_HPP
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+#else
 #include <sys/resource.h>
+#endif
 #include "cvrp_pricing_controller.hpp"
 #include "label.hpp"
 
