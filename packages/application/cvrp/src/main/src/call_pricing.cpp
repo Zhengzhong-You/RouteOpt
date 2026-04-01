@@ -90,8 +90,6 @@ namespace RouteOpt::Application::CVRP {
         bool repairSpecialEdgeIntegralRouteFractionality(const std::vector<double> &x,
                                                          const std::vector<SequenceInfo> &cols,
                                                          int dim,
-                                                         const std::vector<double> &demand,
-                                                         double cap,
                                                          std::vector<SequenceInfo> &repaired_routes) {
             struct FractionalRoute {
                 double value{};
@@ -140,13 +138,10 @@ namespace RouteOpt::Application::CVRP {
 
             std::vector<int> coverage(dim, 0);
             for (const auto &route: repaired_routes) {
-                double local_cap = 0;
                 for (auto node: route.col_seq) {
                     if (node <= 0 || node >= dim) return false;
                     ++coverage[node];
-                    local_cap += demand[node];
                 }
-                if (local_cap > cap + TOLERANCE) return false;
             }
             for (int i = 1; i < dim; ++i) {
                 if (coverage[i] != 1) return false;
@@ -208,15 +203,13 @@ namespace RouteOpt::Application::CVRP {
                     double current_lp;
                     SAFE_SOLVER(node->refSolver().getObjVal(&current_lp))
                     std::vector<SequenceInfo> repaired_routes;
-                    if (!repairSpecialEdgeIntegralRouteFractionality(x, node->getCols(), dim, demand,
-                                                                     cap, repaired_routes)) {
+                    if (!repairSpecialEdgeIntegralRouteFractionality(x, node->getCols(), dim, repaired_routes)) {
                         THROW_RUNTIME_ERROR(
                             "BUG: edge-integral but route-fractional LP solution could not be repaired by the special-case concatenation logic");
                     }
 
-                    std::vector<double> repaired_x(repaired_routes.size(), 1.0);
                     bool if_feasible;
-                    checkSolutionFeasibility(repaired_x, repaired_routes, if_feasible);
+                    checkSolutionFeasibility(repaired_routes, if_feasible);
                     if (!if_feasible) {
                         THROW_RUNTIME_ERROR(
                             "BUG: repaired edge-integral route-fractional LP solution failed feasibility verification");

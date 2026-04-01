@@ -9,25 +9,34 @@
 #include "vrptw_macro.hpp"
 
 namespace RouteOpt::Application::CVRP {
-    void VRPTW::checkSolutionFeasibility(const std::vector<double> &X,
-                                         const std::vector<SequenceInfo> &cols,
+    bool VRPTW::checkRouteTimeWindowFeasibility(const SequenceInfo &route) const {
+        const auto &earliest_time = getEarliestTime();
+        const auto &latest_time = getLatestTime();
+        const auto &service_time = getServiceTime();
+        const auto &cost_mat4_vertex = getDisMat();
+        double now = 0;
+        int prev = 0;
+        for (auto node: route.col_seq) {
+            now += service_time[prev] + cost_mat4_vertex[prev][node];
+            now = std::max(now, earliest_time[node]);
+            if (now > latest_time[node] + TOLERANCE) {
+                return false;
+            }
+            prev = node;
+        }
+        now += service_time[prev] + cost_mat4_vertex[prev][0];
+        return now <= latest_time[0] + TOLERANCE;
+    }
+
+    void VRPTW::checkSolutionFeasibility(const std::vector<SequenceInfo> &cols,
                                          bool &feasible) {
         feasible = true;
-        // if (cols.size() == 1) {
-        //     feasible = false;
-        //     return;
-        // }
-        for (auto &route: cols) {
-            double local_cap = 0;
-            for (auto &i: route.col_seq) {
-                local_cap += getDemand()[i];
+        for (const auto &route: cols) {
+            if (!checkRouteDemandFeasibility(route)) {
+                feasible = false;
+                break;
             }
-            if (local_cap > getCap() + TOLERANCE) {
-                std::cout << "demand for route ";
-                // for (auto &i: route.col_seq) {
-                //     std::cout << i << " ";
-                // }
-                std::cout << " is " << local_cap << ", while cap= " << getCap() << std::endl;
+            if (!checkRouteTimeWindowFeasibility(route)) {
                 feasible = false;
                 break;
             }

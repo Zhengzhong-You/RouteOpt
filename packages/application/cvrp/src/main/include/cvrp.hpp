@@ -179,6 +179,21 @@ namespace RouteOpt::Application::CVRP {
 
         void initSolver();
 
+    protected:
+        bool checkRouteDemandFeasibility(const SequenceInfo &route) const;
+
+        const auto &getEarliestTime() const {
+            return earliest_time;
+        }
+
+        const auto &getLatestTime() const {
+            return latest_time;
+        }
+
+        const auto &getServiceTime() const {
+            return service_time;
+        }
+
     private:
         Solver solver{};
         int num_vehicle{}, max_num_vehicle{};
@@ -240,11 +255,8 @@ namespace RouteOpt::Application::CVRP {
                                      bool if_fix_row, bool if_fix_meet_point, bool if_allow_delete_col,
                                      bool if_last_cg_type, bool if_stabilization);
 
-        virtual void checkSolutionFeasibility(const std::vector<double> &X,
-                                              const std::vector<SequenceInfo> &cols,
-                                              bool &feasible) {
-            feasible = true;
-        };
+        virtual void checkSolutionFeasibility(const std::vector<SequenceInfo> &cols,
+                                              bool &feasible);
 
         virtual void addFeasibilityCuts(int &num_row,
                                         const std::vector<double> &x,

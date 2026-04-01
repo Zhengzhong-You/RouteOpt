@@ -9,6 +9,25 @@
 #include "cvrp.hpp"
 
 namespace RouteOpt::Application::CVRP {
+    bool CVRPSolver::checkRouteDemandFeasibility(const SequenceInfo &route) const {
+        double local_cap = 0;
+        for (auto node: route.col_seq) {
+            local_cap += demand[node];
+        }
+        return local_cap <= cap + TOLERANCE;
+    }
+
+    void CVRPSolver::checkSolutionFeasibility(const std::vector<SequenceInfo> &cols,
+                                              bool &feasible) {
+        feasible = true;
+        for (const auto &route: cols) {
+            if (!checkRouteDemandFeasibility(route)) {
+                feasible = false;
+                break;
+            }
+        }
+    }
+
     void CVRPSolver::getLowerBoundofMinimumNumberCars() {
         double sum_demand = std::accumulate(demand.data() + 1, demand.data() + dim, 0.0);
         int cap_k = static_cast<int>(std::ceil(sum_demand / cap));
@@ -23,6 +42,19 @@ namespace RouteOpt::Application::CVRP {
 
 
     void CVRPSolver::printOptSol(std::ostream &os, int num_nodes, double lower_bound) {
+        if (!ip_opt_sol.empty()) {
+            std::vector<SequenceInfo> routes(ip_opt_sol.size());
+            for (int i = 0; i < static_cast<int>(ip_opt_sol.size()); ++i) {
+                routes[i].col_seq = ip_opt_sol[i];
+                routes[i].forward_concatenate_pos = static_cast<int>(ip_opt_sol[i].size()) - 1;
+            }
+            bool if_feasible;
+            checkSolutionFeasibility(routes, if_feasible);
+            if (!if_feasible) {
+                THROW_RUNTIME_ERROR("stored solution is infeasible before printing");
+            }
+        }
+
         os << BIG_PHASE_SEPARATION;
         os << "\x1b[32m<Instance: " << ins_name << ">\n"
                 << "<Solution>\n";

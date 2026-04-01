@@ -23,8 +23,9 @@ namespace RouteOpt::Application::CVRP {
         ~VRPTW() override = default;
 
     private:
-        void checkSolutionFeasibility(const std::vector<double> &X,
-                                      const std::vector<SequenceInfo> &cols,
+        bool checkRouteTimeWindowFeasibility(const SequenceInfo &route) const;
+
+        void checkSolutionFeasibility(const std::vector<SequenceInfo> &cols,
                                       bool &feasible) override;
 
         void addFeasibilityCuts(int &num_row,

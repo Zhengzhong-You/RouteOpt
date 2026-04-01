@@ -267,15 +267,13 @@ namespace RouteOpt::Application::CVRP {
             return;
         }
         if (val + TOLERANCE < ub) {
-            std::vector<double> sol;
             std::vector<SequenceInfo> sols;
             for (int i = 0; i < cols.size(); ++i) {
                 if (X[i] > 0.5) {
-                    sol.emplace_back(X[i]);
                     sols.emplace_back(cols[i]);
                 }
             }
-            checkSolutionFeasibility(sol, sols, if_feasible);
+            checkSolutionFeasibility(sols, if_feasible);
             if (if_feasible) {
                 ub = val;
                 updateIPOptSol(X, cols, ip_opt_sol);
