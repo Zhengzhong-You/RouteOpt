@@ -5,15 +5,78 @@
  * License: GPL-3.0
  */
 
-#include <string>
+#include <algorithm>
+#include <cctype>
+#include <fstream>
 #include <iostream>
 #include <sstream>
-#include <fstream>
+#include <string>
+#include <vector>
 #include "read_data_controller.hpp"
 #include "read_data_macro.hpp"
 #include "route_opt_macro.hpp"
 
 namespace RouteOpt::Application::CVRP {
+    namespace {
+        std::string trimCopy(const std::string &input) {
+            const auto first = input.find_first_not_of(" \t\r\n");
+            if (first == std::string::npos) {
+                return {};
+            }
+            const auto last = input.find_last_not_of(" \t\r\n");
+            return input.substr(first, last - first + 1);
+        }
+
+        std::string toUpperAscii(std::string input) {
+            std::transform(input.begin(), input.end(), input.begin(), [](const unsigned char ch) {
+                return static_cast<char>(std::toupper(ch));
+            });
+            return input;
+        }
+
+        bool startsWithKey(const std::string &line, const std::string &key) {
+            const auto trimmed = trimCopy(line);
+            const auto upper_line = toUpperAscii(trimmed);
+            const auto upper_key = toUpperAscii(key);
+            if (upper_line.size() < upper_key.size() || upper_line.compare(0, upper_key.size(), upper_key) != 0) {
+                return false;
+            }
+            if (upper_line.size() == upper_key.size()) {
+                return true;
+            }
+            const unsigned char next = static_cast<unsigned char>(upper_line[upper_key.size()]);
+            return std::isspace(next) || next == ':';
+        }
+
+        bool isSectionLine(const std::string &line, const std::string &section_name) {
+            return toUpperAscii(trimCopy(line)) == toUpperAscii(section_name);
+        }
+
+        std::string extractHeaderValue(const std::string &line) {
+            const auto colon_pos = line.find(':');
+            if (colon_pos != std::string::npos) {
+                return trimCopy(line.substr(colon_pos + 1));
+            }
+
+            std::istringstream iss(line);
+            std::string key;
+            iss >> key;
+            std::string remainder;
+            std::getline(iss, remainder);
+            return trimCopy(remainder);
+        }
+
+        std::size_t findSectionIndex(const std::vector<std::string> &lines, const std::string &section_name) {
+            for (std::size_t i = 0; i < lines.size(); ++i) {
+                if (isSectionLine(lines[i], section_name)) {
+                    return i;
+                }
+            }
+            return lines.size();
+        }
+
+    }
+
     void CVRP_ReadDataController::generateInstancePath(int argc, char *argv[]) {
         int n = READ_NO_LINE;
         bool if_type1 = false;
@@ -225,78 +288,170 @@ namespace RouteOpt::Application::CVRP {
     }
 
     void CVRP_ReadDataController::parseCVRPSolver() {
-        std::string line, name, tmp_string, tmp_string_2;
+        file.clear();
+        file.seekg(0, std::ios::beg);
+
+        std::vector<std::string> lines;
+        std::string line;
         while (std::getline(file, line)) {
-            std::istringstream iss(line);
-            std::string key;
-            iss >> key;
-            if (key == "NAME") {
-                iss >> key; // Discard the ":"
-                iss >> name;
-                if (name.find('k') != std::string::npos) {
-                    size_t k_pos = name.find_last_of('k');
-                    num_vehicle_ref.get() = std::stoi(name.substr(k_pos + 1));
-                } else {
-                    num_vehicle_ref.get() = -1;
+            lines.push_back(line);
+        }
+
+        std::string name;
+        bool has_capacity = false;
+        bool has_vehicles = false;
+        num_vehicle_ref.get() = -1;
+
+        for (const auto &raw_line: lines) {
+            if (startsWithKey(raw_line, "NAME")) {
+                name = extractHeaderValue(raw_line);
+                if (!has_vehicles) {
+                    const auto k_pos = name.find_last_of('k');
+                    if (k_pos != std::string::npos && k_pos + 1 < name.size()) {
+                        num_vehicle_ref.get() = std::stoi(name.substr(k_pos + 1));
+                    }
                 }
-            } else if (key == "DIMENSION") {
-                iss >> key; // Discard the ":"
-                iss >> dim_ref.get();
-                break;
+            } else if (startsWithKey(raw_line, "VEHICLES")) {
+                std::stringstream ss(extractHeaderValue(raw_line));
+                if (!(ss >> num_vehicle_ref.get())) {
+                    THROW_RUNTIME_ERROR("Invalid VEHICLES header: " + raw_line);
+                }
+                has_vehicles = true;
+            } else if (startsWithKey(raw_line, "DIMENSION")) {
+                std::stringstream ss(extractHeaderValue(raw_line));
+                if (!(ss >> dim_ref.get())) {
+                    THROW_RUNTIME_ERROR("Invalid DIMENSION header: " + raw_line);
+                }
+            } else if (startsWithKey(raw_line, "CAPACITY")) {
+                std::stringstream ss(extractHeaderValue(raw_line));
+                if (!(ss >> cap_ref.get())) {
+                    THROW_RUNTIME_ERROR("Invalid CAPACITY header: " + raw_line);
+                }
+                has_capacity = true;
             }
         }
 
+        if (dim_ref.get() <= 0) {
+            THROW_RUNTIME_ERROR("Missing or invalid DIMENSION in CVRP instance: " + f_name_ref.get());
+        }
+        if (!has_capacity) {
+            THROW_RUNTIME_ERROR("Missing CAPACITY in CVRP instance: " + f_name_ref.get());
+        }
         if (num_vehicle_ref.get() == -1) {
             num_vehicle_ref.get() = dim_ref.get() - 1;
         }
 
-        std::getline(file, tmp_string);
-        while (true) {
-            if (tmp_string.find("CAPACITY") != std::string::npos) {
-                std::stringstream temp_ss(tmp_string);
-                temp_ss >> tmp_string_2;
-                temp_ss >> tmp_string_2;
-                temp_ss >> cap_ref.get();
-                break;
-            }
-            std::getline(file, tmp_string);
+        const auto node_coord_idx = findSectionIndex(lines, "NODE_COORD_SECTION");
+        const auto demand_idx = findSectionIndex(lines, "DEMAND_SECTION");
+        const auto depot_idx = findSectionIndex(lines, "DEPOT_SECTION");
+
+        if (node_coord_idx == lines.size()) {
+            THROW_RUNTIME_ERROR("Missing NODE_COORD_SECTION in CVRP instance: " + f_name_ref.get());
+        }
+        if (demand_idx == lines.size()) {
+            THROW_RUNTIME_ERROR("Missing DEMAND_SECTION in CVRP instance: " + f_name_ref.get());
+        }
+        if (depot_idx == lines.size()) {
+            THROW_RUNTIME_ERROR("Missing DEPOT_SECTION in CVRP instance: " + f_name_ref.get());
+        }
+        if (!(node_coord_idx < demand_idx && demand_idx < depot_idx)) {
+            THROW_RUNTIME_ERROR("Unexpected CVRP section order in instance: " + f_name_ref.get());
         }
 
-        int tmp_j = 0;
         auto &info_vertex = info_vertex_ref.get();
-        info_vertex.resize(dim_ref.get(), std::vector<double>(4));
-        std::getline(file, tmp_string);
-        while (true) {
-            std::getline(file, tmp_string);
-            if (tmp_string.find("DEMAND_SECTION") != std::string::npos || tmp_j == dim_ref.get()) {
-                break;
+        info_vertex.assign(dim_ref.get(), std::vector<double>(4, 0.0));
+        std::vector<bool> coord_seen(dim_ref.get(), false);
+        std::vector<bool> demand_seen(dim_ref.get(), false);
+
+        // Parse TSPLIB sections by node id so optional headers and line ordering do not shift data.
+        for (std::size_t i = node_coord_idx + 1; i < demand_idx; ++i) {
+            const auto trimmed = trimCopy(lines[i]);
+            if (trimmed.empty() || isSectionLine(trimmed, "EOF")) {
+                continue;
             }
-            std::stringstream temp_ss(tmp_string);
-            temp_ss >> info_vertex[tmp_j][0];
-            temp_ss >> info_vertex[tmp_j][1];
-            temp_ss >> info_vertex[tmp_j][2];
-            ++tmp_j;
+
+            std::stringstream ss(trimmed);
+            int node_id = 0;
+            double x = 0.0;
+            double y = 0.0;
+            if (!(ss >> node_id >> x >> y)) {
+                THROW_RUNTIME_ERROR("Malformed NODE_COORD_SECTION entry: " + lines[i]);
+            }
+            if (node_id < 1 || node_id > dim_ref.get()) {
+                THROW_RUNTIME_ERROR("Coordinate node id out of range: " + lines[i]);
+            }
+            if (coord_seen[node_id - 1]) {
+                THROW_RUNTIME_ERROR("Duplicate coordinate entry for node " + std::to_string(node_id));
+            }
+
+            info_vertex[node_id - 1][0] = node_id;
+            info_vertex[node_id - 1][1] = x;
+            info_vertex[node_id - 1][2] = y;
+            coord_seen[node_id - 1] = true;
         }
 
-        while (true) {
-            if (tmp_string.find("DEMAND_SECTION") != std::string::npos) {
-                break;
+        for (int node_id = 1; node_id <= dim_ref.get(); ++node_id) {
+            if (!coord_seen[node_id - 1]) {
+                THROW_RUNTIME_ERROR("Missing coordinate entry for node " + std::to_string(node_id));
             }
-            std::getline(file, tmp_string);
         }
 
-        int tmp_int;
-        tmp_j = 0;
-        while (true) {
-            std::getline(file, tmp_string);
-            if (tmp_string.find("DEPOT_SECTION") != std::string::npos || tmp_j == dim_ref.get()) {
+        for (std::size_t i = demand_idx + 1; i < depot_idx; ++i) {
+            const auto trimmed = trimCopy(lines[i]);
+            if (trimmed.empty() || isSectionLine(trimmed, "EOF")) {
+                continue;
+            }
+
+            std::stringstream ss(trimmed);
+            int node_id = 0;
+            double demand = 0.0;
+            if (!(ss >> node_id >> demand)) {
+                THROW_RUNTIME_ERROR("Malformed DEMAND_SECTION entry: " + lines[i]);
+            }
+            if (node_id < 1 || node_id > dim_ref.get()) {
+                THROW_RUNTIME_ERROR("Demand node id out of range: " + lines[i]);
+            }
+            if (demand_seen[node_id - 1]) {
+                THROW_RUNTIME_ERROR("Duplicate demand entry for node " + std::to_string(node_id));
+            }
+
+            info_vertex[node_id - 1][3] = demand;
+            demand_seen[node_id - 1] = true;
+        }
+
+        for (int node_id = 1; node_id <= dim_ref.get(); ++node_id) {
+            if (!demand_seen[node_id - 1]) {
+                THROW_RUNTIME_ERROR("Missing demand entry for node " + std::to_string(node_id));
+            }
+        }
+
+        std::vector<int> depot_nodes;
+        for (std::size_t i = depot_idx + 1; i < lines.size(); ++i) {
+            const auto trimmed = trimCopy(lines[i]);
+            if (trimmed.empty() || isSectionLine(trimmed, "EOF")) {
+                continue;
+            }
+
+            std::stringstream ss(trimmed);
+            int depot_id = 0;
+            if (!(ss >> depot_id)) {
+                THROW_RUNTIME_ERROR("Malformed DEPOT_SECTION entry: " + lines[i]);
+            }
+            if (depot_id == -1) {
                 break;
             }
-            std::stringstream temp_ss(tmp_string);
-            temp_ss >> tmp_int;
-            temp_ss >> info_vertex[tmp_j][3];
-            ++tmp_j;
+            depot_nodes.push_back(depot_id);
         }
-        info_vertex.resize(dim_ref.get());
+
+        if (depot_nodes.empty()) {
+            THROW_RUNTIME_ERROR("DEPOT_SECTION does not contain a depot node");
+        }
+        if (depot_nodes.size() != 1) {
+            THROW_RUNTIME_ERROR("Only single-depot CVRP instances are supported");
+        }
+        if (depot_nodes.front() != 1) {
+            THROW_RUNTIME_ERROR("Unsupported depot id " + std::to_string(depot_nodes.front()) +
+                                "; RouteOpt expects the depot to be node 1");
+        }
     }
 }
