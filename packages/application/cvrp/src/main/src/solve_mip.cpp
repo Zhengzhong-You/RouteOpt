@@ -15,6 +15,8 @@ namespace RouteOpt::Application::CVRP {
         SAFE_SOLVER(solver.getNumCol(&num_col))
         std::vector<char> xtype(num_col, SOLVER_BINARY);
         SAFE_SOLVER(solver.setEnvCutoff(ub + round_up_tolerance))
+        SAFE_SOLVER(solver.setEnvFeasibilityTol(FeasibilityTol, false))
+        SAFE_SOLVER(solver.setEnvIntFeasTol(IntFeasTol, false))
         SAFE_SOLVER(solver.setVTypeArray(0, num_col, xtype.data()))
 
         auto eps = TimeSetter::measure([&]() {

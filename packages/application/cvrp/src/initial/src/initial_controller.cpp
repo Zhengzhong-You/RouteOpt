@@ -57,5 +57,6 @@ namespace RouteOpt::Application::CVRP {
         SAFE_SOLVER(solver.setEnvInfUnbdInfo(1, true))
         SAFE_SOLVER(solver.setEnvMIPGap(MIP_GAP_TOLERANCE, true))
         SAFE_SOLVER(solver.setEnvFeasibilityTol(FeasibilityTol, true))
+        SAFE_SOLVER(solver.setEnvIntFeasTol(IntFeasTol, true))
     }
 }

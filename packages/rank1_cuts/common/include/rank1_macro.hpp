@@ -76,10 +76,8 @@ namespace RouteOpt::Rank1Cuts {
             }
             auto size = c.count();
             if (size * (size - 1) / 2 == arc_mem.size()) {
-                std::cout << "this is node memory cut, size: " << size << std::endl;
                 return true;
             }
-            std::cout << "this is arc memory cut, size: " << size << std::endl;
             return false;
         }
     };

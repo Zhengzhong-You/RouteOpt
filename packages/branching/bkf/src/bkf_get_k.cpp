@@ -18,7 +18,7 @@ namespace RouteOpt::Branching::BKF {
                                 double lb) {
         int num = static_cast<int>(all_n);
         if (!if_init) {
-            BKF_VERBOSE_EXEC(std::cout << "we directly test "<< num << std::endl;)
+            BKF_VERBOSE_EXEC(std::cout << "phase-2 LP test count= " << num << std::endl;)
         QUIT:
             if_init = true;
             return num;

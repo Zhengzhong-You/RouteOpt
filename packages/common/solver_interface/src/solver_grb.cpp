@@ -138,6 +138,15 @@ namespace RouteOpt {
         return error;
     }
 
+    int Solver::setEnvIntFeasTol(double value, bool if_model_free) {
+        int error;
+        if (if_model_free)
+            error = GRBsetdblparam(env, "IntFeasTol", value);
+        else
+            error = GRBsetdblparam(GRBgetenv(model), "IntFeasTol", value);
+        return error;
+    }
+
     int Solver::newModel(const char *const Pname, int numvars,
                          double *const obj, double *const lb, double *const ub, char *const vtype,
                          char **const varnames) {

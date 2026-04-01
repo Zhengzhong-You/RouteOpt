@@ -126,6 +126,10 @@ namespace RouteOpt {
       return CPXsetdblparam(env, CPXPARAM_EpRHS, value);
       }
 
+    int Solver::setEnvIntFeasTol(double value, bool if_model_free) {
+        return CPXsetdblparam(env, CPXPARAM_MIP_Tolerances_Integrality, value);
+    }
+
     int Solver::newModel(const char *const Pname, int numvars,
                          double *const obj, double *const lb, double *const ub, char *const vtype,
                          char **const varnames) {

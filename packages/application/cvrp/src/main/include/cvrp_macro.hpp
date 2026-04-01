@@ -130,6 +130,8 @@ namespace RouteOpt::Application::CVRP {
     constexpr int NUM_THREADS_LP = 1;
     constexpr double MIP_GAP_TOLERANCE = 1e-9;
     constexpr double FeasibilityTol = 1e-7;
+    constexpr double IntFeasTol = FeasibilityTol;
+    static_assert(IntFeasTol <= TOLERANCE, "IntFeasTol must not exceed the post-solve integrality test tolerance.");
     constexpr int LP_COL_FINAL_LIMIT = 10000;
     constexpr double COL_KEEP_FRAC = 0.67;
     constexpr double EDGE_IF_ONE_TOLERANCE = 1e-4;

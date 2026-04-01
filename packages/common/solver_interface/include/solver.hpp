@@ -620,6 +620,14 @@ namespace RouteOpt {
         int setEnvFeasibilityTol(double value, bool if_model_free);
 
         /**
+         * @brief Set the integer feasibility tolerance for the solver environment.
+         * @param value Tolerance value.
+         * @param if_model_free Flag indicating if the model has not bound to the environment.
+         * @return Status code.
+         */
+        int setEnvIntFeasTol(double value, bool if_model_free);
+
+        /**
          * @brief Set the cutoff value for the solver environment.
          * @param value Cutoff value.
          * @return Status code.
