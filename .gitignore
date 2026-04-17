@@ -3,3 +3,23 @@
 *.iml
 .idea
 .gitignore.swp
+
+# External package build outputs
+/packages/external/**/obj/
+/packages/external/**/dep/
+/packages/external/**/build/
+/packages/external/**/CMakeFiles/
+/packages/external/**/cmake-build-*/
+/packages/external/**/CMakeCache.txt
+/packages/external/**/cmake_install.cmake
+/packages/external/**/build.ninja
+/packages/external/**/.ninja_deps
+/packages/external/**/.ninja_log
+/packages/external/**/*.o
+/packages/external/**/*.obj
+/packages/external/**/*.a
+/packages/external/**/*.so
+/packages/external/**/*.dylib
+/packages/external/**/*.dll
+/packages/external/**/*.lib
+/packages/external/**/*.d
