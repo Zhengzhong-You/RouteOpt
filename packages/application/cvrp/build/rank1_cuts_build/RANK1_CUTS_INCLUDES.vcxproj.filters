@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\coefficient_getter\src\recover_r1c_in_enum.cpp">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{2B6BDD68-2190-3E71-8A81-A1981227AAD7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\src\Split.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\src\Population.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\src\Params.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\src\my_hgs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\src\LocalSearch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\src\InstanceCVRPLIB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\src\Individual.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\src\Genetic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\src\C_Interface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\src\AlgorithmParameters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\lib\hgs\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{64FCCA2C-A3CF-39D2-8CFD-C348EEB344F0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,13 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/build/cmake_install.cmake",
+		"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/build/external_build/cmake_install.cmake",
+		"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/build/common_build/cmake_install.cmake",
+		"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/build/branching_build/cmake_install.cmake",
+		"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/build/rcc_build/cmake_install.cmake",
+		"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/build/rank1_cuts_build/cmake_install.cmake",
+		"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/build/deluxing_build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

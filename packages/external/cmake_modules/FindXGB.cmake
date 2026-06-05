@@ -16,17 +16,33 @@ find_path(XGB_INCLUDE_DIR
 )
 
 find_library(XGB_LIBRARY
-        NAMES xgboost
+        NAMES xgboost objxgboost
         PATHS
         "${XGB_ROOT}/lib"
         "${XGB_ROOT}/build/lib"
         "${XGB_ROOT}/build"
+        "${XGB_ROOT}/build/Release"
+        "${XGB_ROOT}/build/src/Release"
+        "${XGB_ROOT}/build/src/objxgboost.dir/Release"
 )
 
-set(XGB_INCLUDE_DIRS "${XGB_INCLUDE_DIR}")
-set(XGB_LIBRARIES "${XGB_LIBRARY}")
+find_library(DMLC_LIBRARY
+        NAMES dmlc
+        PATHS
+        "${XGB_ROOT}/build/dmlc-core/Release"
+        "${XGB_ROOT}/build/dmlc-core"
+        "${XGB_ROOT}/lib"
+)
+
+set(XGB_INCLUDE_DIRS "${XGB_INCLUDE_DIR}" "${XGB_ROOT}/rabit/include" "${XGB_ROOT}/dmlc-core/include")
+if (DMLC_LIBRARY)
+    set(XGB_LIBRARIES "${XGB_LIBRARY}" "${DMLC_LIBRARY}")
+else()
+    set(XGB_LIBRARIES "${XGB_LIBRARY}")
+endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(XGB DEFAULT_MSG XGB_LIBRARY XGB_INCLUDE_DIR)
 
-mark_as_advanced(XGB_INCLUDE_DIR XGB_LIBRARY)
+mark_as_advanced(XGB_INCLUDE_DIR XGB_LIBRARY DMLC_LIBRARY)
+

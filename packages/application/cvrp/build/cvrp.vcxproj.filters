@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\add_column\src\add_column.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\heuristics\src\hgs_controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\initial\src\initial_controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\add_brc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\call_cutting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\call_dynamic_ng.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\call_enumeration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\call_pricing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\call_read_node_in.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\call_write_node_out.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\cg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\cvrp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\ml_candidate_selection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\set_env.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\main\src\solve_mip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\node\src\manage_enumeration_matrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\node\src\node.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\node\src\optimize_lp_one_iter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\node\src\preprocess_enumeration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\node\src\rm_cols.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\node\src\rm_cstr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\pricing\src\free_memory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\pricing\src\helper_pricing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\pricing\src\initialize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\pricing\src\price_constraints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\read_data\src\read_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\src\vrptw\src\vrptw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\common\solver_interface\src\solver_cplex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\common\solver_interface\src\solver_grb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\branching\bkf\src\bkf_get_k.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\branching\bkf\src\bkf_update.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\branching\bkf\src\helper_bkf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\branching\candidate_selector\src\place_holder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rounded_cap_cuts\chg_rc_getter\src\get_chg_rcc_rc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rounded_cap_cuts\coefficient_getter\src\recover_rccs_in_enum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rounded_cap_cuts\separation\src\generate_rcc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\chg_rc_getter\src\fill_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\chg_rc_getter\src\update_rc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\coefficient_getter\src\helper_limited_r1c_coeffs_getter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\coefficient_getter\src\recover_r1c_in_enum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\common\src\rank1cuts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\separation\src\helper_rank1_arc_based_memory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\separation\src\helper_rank1_node_based_memory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\separation\src\rank1_cuts_generator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\separation\src\rank1_cuts_selector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\separation\src\rank1_memory_finder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\rank1_cuts\separation\src\rank1_separation_controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\deluxing\src\deluxing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\doruk\Documents\GitHub\RouteOpt2\packages\application\cvrp\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{2B6BDD68-2190-3E71-8A81-A1981227AAD7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+^C:\USERS\DORUK\DOCUMENTS\GITHUB\ROUTEOPT2\PACKAGES\APPLICATION\CVRP\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp -BC:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/build --check-stamp-file C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

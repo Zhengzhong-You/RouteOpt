@@ -1,0 +1,1459 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineSystem.cmake:212 (message)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      The system is: Windows - 10.0.26200 - AMD64
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCCompilerId.c.in"
+    candidate_directories:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/"
+    found: "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeCCompilerId.c.in"
+    search_context:
+      ENV{PATH}:
+        - "C:/Users/doruk/.gemini/antigravity/bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\Antigravity\\bin"
+        - "C:\\gurobi1302\\win64\\bin"
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "D:\\arena\\RSCommon"
+        - "C:\\Program Files\\Microsoft\\jdk-21.0.4.7-hotspot\\bin"
+        - "%CPLEX_STUDIO_BINARIES2211%"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\Graphviz\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\doruk\\.dotnet\\tools"
+        - "C:\\src\\flutter\\flutter\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\PowerToys\\DSCModules\\"
+        - "C:\\Users\\doruk\\AppData\\Local\\GitHubDesktop\\bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\npm"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      .NET Framework için MSBuild sürüm 17.14.40+3e7442088
+      Oluşturma başlatıldı: 5.06.2026 14:14:05.
+      
+      1 düğümünde "C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\4.3.3\\CompilerIdC\\CompilerIdC.vcxproj" projesi (varsayılan hedefler).
+      PrepareForBuild:
+        "Debug\\" dizini oluşturuluyor.
+        Yapılandırılmış çıkış etkinleştirildi. Derleyici tanılamasının biçimlendirmesi hata hiyerarşisini yansıtır. Daha fazla ayrıntı için bkz. https://aka.ms/cpp/structured-output.
+        "Debug\\CompilerIdC.tlog\\" dizini oluşturuluyor.
+      InitializeBuildStatus:
+        "AlwaysCreate" belirtildiği için "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" oluşturuluyor.
+        "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" öğesine erişiliyor.
+      ClCompile:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TC /FC /errorReport:queue CMakeCCompilerId.c
+        CMakeCCompilerId.c
+      Link:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
+        CompilerIdC.vcxproj -> C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\4.3.3\\CompilerIdC\\CompilerIdC.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_C_COMPILER=C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" dosyası siliniyor.
+        "Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate" öğesine erişiliyor.
+      "C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\4.3.3\\CompilerIdC\\CompilerIdC.vcxproj" Projesini Oluşturma İşlemi Tamamlandı (varsayılan hedefler).
+      
+      Oluşturma başarılı oldu.
+          0 Uyarı
+          0 Hata
+      
+      Geçen Süre 00:00:01.83
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
+      
+      The C compiler identification is MSVC, found in:
+        C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/4.3.3/CompilerIdC/CompilerIdC.exe
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:103 (__resolve_linker_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/doruk/.gemini/antigravity/bin/"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/"
+      - "C:/gurobi1302/win64/bin/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "D:/arena/RSCommon/"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/Graphviz/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/doruk/.dotnet/tools/"
+      - "C:/src/flutter/flutter/bin/"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/"
+      - "C:/Users/doruk/AppData/Roaming/npm/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.com"
+    found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe"
+    search_context:
+      ENV{PATH}:
+        - "C:/Users/doruk/.gemini/antigravity/bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\Antigravity\\bin"
+        - "C:\\gurobi1302\\win64\\bin"
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "D:\\arena\\RSCommon"
+        - "C:\\Program Files\\Microsoft\\jdk-21.0.4.7-hotspot\\bin"
+        - "%CPLEX_STUDIO_BINARIES2211%"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\Graphviz\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\doruk\\.dotnet\\tools"
+        - "C:\\src\\flutter\\flutter\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\PowerToys\\DSCModules\\"
+        - "C:\\Users\\doruk\\AppData\\Local\\GitHubDesktop\\bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\npm"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:104 (__resolve_linker_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lld-link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/doruk/.gemini/antigravity/bin/"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/"
+      - "C:/gurobi1302/win64/bin/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "D:/arena/RSCommon/"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/Graphviz/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/doruk/.dotnet/tools/"
+      - "C:/src/flutter/flutter/bin/"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/"
+      - "C:/Users/doruk/AppData/Roaming/npm/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.com"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.exe"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link"
+      - "C:/Users/doruk/.gemini/antigravity/bin/lld-link.com"
+      - "C:/Users/doruk/.gemini/antigravity/bin/lld-link.exe"
+      - "C:/Users/doruk/.gemini/antigravity/bin/lld-link"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/lld-link.com"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/lld-link.exe"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/lld-link"
+      - "C:/gurobi1302/win64/bin/lld-link.com"
+      - "C:/gurobi1302/win64/bin/lld-link.exe"
+      - "C:/gurobi1302/win64/bin/lld-link"
+      - "C:/Python314/Scripts/lld-link.com"
+      - "C:/Python314/Scripts/lld-link.exe"
+      - "C:/Python314/Scripts/lld-link"
+      - "C:/Python314/lld-link.com"
+      - "C:/Python314/lld-link.exe"
+      - "C:/Python314/lld-link"
+      - "D:/arena/RSCommon/lld-link.com"
+      - "D:/arena/RSCommon/lld-link.exe"
+      - "D:/arena/RSCommon/lld-link"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/lld-link.com"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/lld-link.exe"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/lld-link"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/lld-link.com"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/lld-link.exe"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/lld-link"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/lld-link.com"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/lld-link.exe"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/lld-link"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/lld-link.com"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/lld-link.exe"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/lld-link"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/lld-link.com"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/lld-link.exe"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/lld-link"
+      - "C:/Windows/System32/lld-link.com"
+      - "C:/Windows/System32/lld-link.exe"
+      - "C:/Windows/System32/lld-link"
+      - "C:/Windows/lld-link.com"
+      - "C:/Windows/lld-link.exe"
+      - "C:/Windows/lld-link"
+      - "C:/Windows/System32/wbem/lld-link.com"
+      - "C:/Windows/System32/wbem/lld-link.exe"
+      - "C:/Windows/System32/wbem/lld-link"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link"
+      - "C:/Windows/System32/OpenSSH/lld-link.com"
+      - "C:/Windows/System32/OpenSSH/lld-link.exe"
+      - "C:/Windows/System32/OpenSSH/lld-link"
+      - "C:/Program Files/dotnet/lld-link.com"
+      - "C:/Program Files/dotnet/lld-link.exe"
+      - "C:/Program Files/dotnet/lld-link"
+      - "C:/Program Files/Git/cmd/lld-link.com"
+      - "C:/Program Files/Git/cmd/lld-link.exe"
+      - "C:/Program Files/Git/cmd/lld-link"
+      - "C:/Program Files/Graphviz/bin/lld-link.com"
+      - "C:/Program Files/Graphviz/bin/lld-link.exe"
+      - "C:/Program Files/Graphviz/bin/lld-link"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/lld-link.com"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/lld-link.exe"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/lld-link"
+      - "C:/Program Files/nodejs/lld-link.com"
+      - "C:/Program Files/nodejs/lld-link.exe"
+      - "C:/Program Files/nodejs/lld-link"
+      - "C:/ProgramData/chocolatey/bin/lld-link.com"
+      - "C:/ProgramData/chocolatey/bin/lld-link.exe"
+      - "C:/ProgramData/chocolatey/bin/lld-link"
+      - "C:/Program Files/CMake/bin/lld-link.com"
+      - "C:/Program Files/CMake/bin/lld-link.exe"
+      - "C:/Program Files/CMake/bin/lld-link"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/lld-link.com"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/lld-link.exe"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/lld-link"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/lld-link.com"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/lld-link.exe"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/lld-link"
+      - "C:/Users/doruk/.dotnet/tools/lld-link.com"
+      - "C:/Users/doruk/.dotnet/tools/lld-link.exe"
+      - "C:/Users/doruk/.dotnet/tools/lld-link"
+      - "C:/src/flutter/flutter/bin/lld-link.com"
+      - "C:/src/flutter/flutter/bin/lld-link.exe"
+      - "C:/src/flutter/flutter/bin/lld-link"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/lld-link.com"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/lld-link.exe"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/lld-link"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/lld-link.com"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/lld-link.exe"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/lld-link"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/lld-link.com"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/lld-link.exe"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/lld-link"
+      - "C:/Users/doruk/AppData/Roaming/npm/lld-link.com"
+      - "C:/Users/doruk/AppData/Roaming/npm/lld-link.exe"
+      - "C:/Users/doruk/AppData/Roaming/npm/lld-link"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:/Users/doruk/.gemini/antigravity/bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\Antigravity\\bin"
+        - "C:\\gurobi1302\\win64\\bin"
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "D:\\arena\\RSCommon"
+        - "C:\\Program Files\\Microsoft\\jdk-21.0.4.7-hotspot\\bin"
+        - "%CPLEX_STUDIO_BINARIES2211%"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\Graphviz\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\doruk\\.dotnet\\tools"
+        - "C:\\src\\flutter\\flutter\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\PowerToys\\DSCModules\\"
+        - "C:\\Users\\doruk\\AppData\\Local\\GitHubDesktop\\bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\npm"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_LINKER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/doruk/.gemini/antigravity/bin/"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/"
+      - "C:/gurobi1302/win64/bin/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "D:/arena/RSCommon/"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/Graphviz/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/doruk/.dotnet/tools/"
+      - "C:/src/flutter/flutter/bin/"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/"
+      - "C:/Users/doruk/AppData/Roaming/npm/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.com"
+    found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/link.exe"
+    search_context:
+      ENV{PATH}:
+        - "C:/Users/doruk/.gemini/antigravity/bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\Antigravity\\bin"
+        - "C:\\gurobi1302\\win64\\bin"
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "D:\\arena\\RSCommon"
+        - "C:\\Program Files\\Microsoft\\jdk-21.0.4.7-hotspot\\bin"
+        - "%CPLEX_STUDIO_BINARIES2211%"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\Graphviz\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\doruk\\.dotnet\\tools"
+        - "C:\\src\\flutter\\flutter\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\PowerToys\\DSCModules\\"
+        - "C:\\Users\\doruk\\AppData\\Local\\GitHubDesktop\\bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\npm"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_MT"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "mt"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/doruk/.gemini/antigravity/bin/"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/"
+      - "C:/gurobi1302/win64/bin/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "D:/arena/RSCommon/"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/Graphviz/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/doruk/.dotnet/tools/"
+      - "C:/src/flutter/flutter/bin/"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/"
+      - "C:/Users/doruk/AppData/Roaming/npm/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt.com"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt.exe"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/mt"
+      - "C:/Users/doruk/.gemini/antigravity/bin/mt.com"
+      - "C:/Users/doruk/.gemini/antigravity/bin/mt.exe"
+      - "C:/Users/doruk/.gemini/antigravity/bin/mt"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/mt.com"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/mt.exe"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/mt"
+      - "C:/gurobi1302/win64/bin/mt.com"
+      - "C:/gurobi1302/win64/bin/mt.exe"
+      - "C:/gurobi1302/win64/bin/mt"
+      - "C:/Python314/Scripts/mt.com"
+      - "C:/Python314/Scripts/mt.exe"
+      - "C:/Python314/Scripts/mt"
+      - "C:/Python314/mt.com"
+      - "C:/Python314/mt.exe"
+      - "C:/Python314/mt"
+      - "D:/arena/RSCommon/mt.com"
+      - "D:/arena/RSCommon/mt.exe"
+      - "D:/arena/RSCommon/mt"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/mt.com"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/mt.exe"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/mt"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/mt.com"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/mt.exe"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/mt"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/mt.com"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/mt.exe"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/mt"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/mt.com"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/mt.exe"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/mt"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/mt.com"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/mt.exe"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/mt"
+      - "C:/Windows/System32/mt.com"
+      - "C:/Windows/System32/mt.exe"
+      - "C:/Windows/System32/mt"
+      - "C:/Windows/mt.com"
+      - "C:/Windows/mt.exe"
+      - "C:/Windows/mt"
+      - "C:/Windows/System32/wbem/mt.com"
+      - "C:/Windows/System32/wbem/mt.exe"
+      - "C:/Windows/System32/wbem/mt"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/mt"
+      - "C:/Windows/System32/OpenSSH/mt.com"
+      - "C:/Windows/System32/OpenSSH/mt.exe"
+      - "C:/Windows/System32/OpenSSH/mt"
+      - "C:/Program Files/dotnet/mt.com"
+      - "C:/Program Files/dotnet/mt.exe"
+      - "C:/Program Files/dotnet/mt"
+      - "C:/Program Files/Git/cmd/mt.com"
+      - "C:/Program Files/Git/cmd/mt.exe"
+      - "C:/Program Files/Git/cmd/mt"
+      - "C:/Program Files/Graphviz/bin/mt.com"
+      - "C:/Program Files/Graphviz/bin/mt.exe"
+      - "C:/Program Files/Graphviz/bin/mt"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/mt.com"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/mt.exe"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/mt"
+      - "C:/Program Files/nodejs/mt.com"
+      - "C:/Program Files/nodejs/mt.exe"
+      - "C:/Program Files/nodejs/mt"
+      - "C:/ProgramData/chocolatey/bin/mt.com"
+      - "C:/ProgramData/chocolatey/bin/mt.exe"
+      - "C:/ProgramData/chocolatey/bin/mt"
+      - "C:/Program Files/CMake/bin/mt.com"
+      - "C:/Program Files/CMake/bin/mt.exe"
+      - "C:/Program Files/CMake/bin/mt"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/mt.com"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/mt.exe"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/mt"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/mt.com"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/mt.exe"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/mt"
+      - "C:/Users/doruk/.dotnet/tools/mt.com"
+      - "C:/Users/doruk/.dotnet/tools/mt.exe"
+      - "C:/Users/doruk/.dotnet/tools/mt"
+      - "C:/src/flutter/flutter/bin/mt.com"
+      - "C:/src/flutter/flutter/bin/mt.exe"
+      - "C:/src/flutter/flutter/bin/mt"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/mt.com"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/mt.exe"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/mt"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/mt.com"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/mt.exe"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/mt"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/mt.com"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/mt.exe"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/mt"
+      - "C:/Users/doruk/AppData/Roaming/npm/mt.com"
+      - "C:/Users/doruk/AppData/Roaming/npm/mt.exe"
+      - "C:/Users/doruk/AppData/Roaming/npm/mt"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:/Users/doruk/.gemini/antigravity/bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\Antigravity\\bin"
+        - "C:\\gurobi1302\\win64\\bin"
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "D:\\arena\\RSCommon"
+        - "C:\\Program Files\\Microsoft\\jdk-21.0.4.7-hotspot\\bin"
+        - "%CPLEX_STUDIO_BINARIES2211%"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\Graphviz\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\doruk\\.dotnet\\tools"
+        - "C:\\src\\flutter\\flutter\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\PowerToys\\DSCModules\\"
+        - "C:\\Users\\doruk\\AppData\\Local\\GitHubDesktop\\bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\npm"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:243 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_AR"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lib"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/doruk/.gemini/antigravity/bin/"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/"
+      - "C:/gurobi1302/win64/bin/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "D:/arena/RSCommon/"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/Graphviz/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/doruk/.dotnet/tools/"
+      - "C:/src/flutter/flutter/bin/"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/"
+      - "C:/Users/doruk/AppData/Roaming/npm/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lib.com"
+    found: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lib.exe"
+    search_context:
+      ENV{PATH}:
+        - "C:/Users/doruk/.gemini/antigravity/bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\Antigravity\\bin"
+        - "C:\\gurobi1302\\win64\\bin"
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "D:\\arena\\RSCommon"
+        - "C:\\Program Files\\Microsoft\\jdk-21.0.4.7-hotspot\\bin"
+        - "%CPLEX_STUDIO_BINARIES2211%"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\Graphviz\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\doruk\\.dotnet\\tools"
+        - "C:\\src\\flutter\\flutter\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\PowerToys\\DSCModules\\"
+        - "C:\\Users\\doruk\\AppData\\Local\\GitHubDesktop\\bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\npm"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:468 (find_file)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:506 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCXXCompilerId.cpp.in"
+    candidate_directories:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/"
+    found: "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeCXXCompilerId.cpp.in"
+    search_context:
+      ENV{PATH}:
+        - "C:/Users/doruk/.gemini/antigravity/bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\Antigravity\\bin"
+        - "C:\\gurobi1302\\win64\\bin"
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "D:\\arena\\RSCommon"
+        - "C:\\Program Files\\Microsoft\\jdk-21.0.4.7-hotspot\\bin"
+        - "%CPLEX_STUDIO_BINARIES2211%"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\Graphviz\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\doruk\\.dotnet\\tools"
+        - "C:\\src\\flutter\\flutter\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\PowerToys\\DSCModules\\"
+        - "C:\\Users\\doruk\\AppData\\Local\\GitHubDesktop\\bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\npm"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:125 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      .NET Framework için MSBuild sürüm 17.14.40+3e7442088
+      Oluşturma başlatıldı: 5.06.2026 14:14:08.
+      
+      1 düğümünde "C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\4.3.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" projesi (varsayılan hedefler).
+      PrepareForBuild:
+        "Debug\\" dizini oluşturuluyor.
+        Yapılandırılmış çıkış etkinleştirildi. Derleyici tanılamasının biçimlendirmesi hata hiyerarşisini yansıtır. Daha fazla ayrıntı için bkz. https://aka.ms/cpp/structured-output.
+        "Debug\\CompilerIdCXX.tlog\\" dizini oluşturuluyor.
+      InitializeBuildStatus:
+        "AlwaysCreate" belirtildiği için "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" oluşturuluyor.
+        "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" öğesine erişiliyor.
+      ClCompile:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TP /FC /errorReport:queue CMakeCXXCompilerId.cpp
+        CMakeCXXCompilerId.cpp
+      Link:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
+        CompilerIdCXX.vcxproj -> C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\4.3.3\\CompilerIdCXX\\CompilerIdCXX.exe
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_CXX_COMPILER=C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" dosyası siliniyor.
+        "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate" öğesine erişiliyor.
+      "C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\4.3.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" Projesini Oluşturma İşlemi Tamamlandı (varsayılan hedefler).
+      
+      Oluşturma başarılı oldu.
+          0 Uyarı
+          0 Hata
+      
+      Geçen Süre 00:00:01.75
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+      
+      The CXX compiler identification is MSVC, found in:
+        C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/4.3.3/CompilerIdCXX/CompilerIdCXX.exe
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:37 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:65 (__resolve_tool_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeFindBinUtils.cmake:104 (__resolve_linker_path)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCXXCompiler.cmake:206 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "_CMAKE_TOOL_WITH_PATH"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "lld-link"
+    candidate_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/"
+      - "C:/Users/doruk/.gemini/antigravity/bin/"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/"
+      - "C:/gurobi1302/win64/bin/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "D:/arena/RSCommon/"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/Graphviz/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/doruk/.dotnet/tools/"
+      - "C:/src/flutter/flutter/bin/"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/"
+      - "C:/Users/doruk/AppData/Roaming/npm/"
+    searched_directories:
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.com"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link.exe"
+      - "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/lld-link"
+      - "C:/Users/doruk/.gemini/antigravity/bin/lld-link.com"
+      - "C:/Users/doruk/.gemini/antigravity/bin/lld-link.exe"
+      - "C:/Users/doruk/.gemini/antigravity/bin/lld-link"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/lld-link.com"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/lld-link.exe"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/lld-link"
+      - "C:/gurobi1302/win64/bin/lld-link.com"
+      - "C:/gurobi1302/win64/bin/lld-link.exe"
+      - "C:/gurobi1302/win64/bin/lld-link"
+      - "C:/Python314/Scripts/lld-link.com"
+      - "C:/Python314/Scripts/lld-link.exe"
+      - "C:/Python314/Scripts/lld-link"
+      - "C:/Python314/lld-link.com"
+      - "C:/Python314/lld-link.exe"
+      - "C:/Python314/lld-link"
+      - "D:/arena/RSCommon/lld-link.com"
+      - "D:/arena/RSCommon/lld-link.exe"
+      - "D:/arena/RSCommon/lld-link"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/lld-link.com"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/lld-link.exe"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/lld-link"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/lld-link.com"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/lld-link.exe"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/lld-link"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/lld-link.com"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/lld-link.exe"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/lld-link"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/lld-link.com"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/lld-link.exe"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/lld-link"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/lld-link.com"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/lld-link.exe"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/lld-link"
+      - "C:/Windows/System32/lld-link.com"
+      - "C:/Windows/System32/lld-link.exe"
+      - "C:/Windows/System32/lld-link"
+      - "C:/Windows/lld-link.com"
+      - "C:/Windows/lld-link.exe"
+      - "C:/Windows/lld-link"
+      - "C:/Windows/System32/wbem/lld-link.com"
+      - "C:/Windows/System32/wbem/lld-link.exe"
+      - "C:/Windows/System32/wbem/lld-link"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/lld-link"
+      - "C:/Windows/System32/OpenSSH/lld-link.com"
+      - "C:/Windows/System32/OpenSSH/lld-link.exe"
+      - "C:/Windows/System32/OpenSSH/lld-link"
+      - "C:/Program Files/dotnet/lld-link.com"
+      - "C:/Program Files/dotnet/lld-link.exe"
+      - "C:/Program Files/dotnet/lld-link"
+      - "C:/Program Files/Git/cmd/lld-link.com"
+      - "C:/Program Files/Git/cmd/lld-link.exe"
+      - "C:/Program Files/Git/cmd/lld-link"
+      - "C:/Program Files/Graphviz/bin/lld-link.com"
+      - "C:/Program Files/Graphviz/bin/lld-link.exe"
+      - "C:/Program Files/Graphviz/bin/lld-link"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/lld-link.com"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/lld-link.exe"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/lld-link"
+      - "C:/Program Files/nodejs/lld-link.com"
+      - "C:/Program Files/nodejs/lld-link.exe"
+      - "C:/Program Files/nodejs/lld-link"
+      - "C:/ProgramData/chocolatey/bin/lld-link.com"
+      - "C:/ProgramData/chocolatey/bin/lld-link.exe"
+      - "C:/ProgramData/chocolatey/bin/lld-link"
+      - "C:/Program Files/CMake/bin/lld-link.com"
+      - "C:/Program Files/CMake/bin/lld-link.exe"
+      - "C:/Program Files/CMake/bin/lld-link"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/lld-link.com"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/lld-link.exe"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/lld-link"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/lld-link.com"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/lld-link.exe"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/lld-link"
+      - "C:/Users/doruk/.dotnet/tools/lld-link.com"
+      - "C:/Users/doruk/.dotnet/tools/lld-link.exe"
+      - "C:/Users/doruk/.dotnet/tools/lld-link"
+      - "C:/src/flutter/flutter/bin/lld-link.com"
+      - "C:/src/flutter/flutter/bin/lld-link.exe"
+      - "C:/src/flutter/flutter/bin/lld-link"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/lld-link.com"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/lld-link.exe"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/lld-link"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/lld-link.com"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/lld-link.exe"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/lld-link"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/lld-link.com"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/lld-link.exe"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/lld-link"
+      - "C:/Users/doruk/AppData/Roaming/npm/lld-link.com"
+      - "C:/Users/doruk/AppData/Roaming/npm/lld-link.exe"
+      - "C:/Users/doruk/AppData/Roaming/npm/lld-link"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:/Users/doruk/.gemini/antigravity/bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\Antigravity\\bin"
+        - "C:\\gurobi1302\\win64\\bin"
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "D:\\arena\\RSCommon"
+        - "C:\\Program Files\\Microsoft\\jdk-21.0.4.7-hotspot\\bin"
+        - "%CPLEX_STUDIO_BINARIES2211%"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\Graphviz\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\doruk\\.dotnet\\tools"
+        - "C:\\src\\flutter\\flutter\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\PowerToys\\DSCModules\\"
+        - "C:\\Users\\doruk\\AppData\\Local\\GitHubDesktop\\bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\npm"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineRCCompiler.cmake:40 (find_program)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Platform/Windows-MSVC.cmake:592 (enable_language)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Platform/Windows-MSVC.cmake:565 (__windows_compiler_msvc_enable_rc)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Platform/Windows-MSVC-C.cmake:5 (__windows_compiler_msvc)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeCInformation.cmake:48 (include)"
+      - "CMakeLists.txt:2 (project)"
+    mode: "program"
+    variable: "CMAKE_RC_COMPILER"
+    description: "RC compiler"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "rc"
+    candidate_directories:
+      - "C:/Users/doruk/.gemini/antigravity/bin/"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/"
+      - "C:/gurobi1302/win64/bin/"
+      - "C:/Python314/Scripts/"
+      - "C:/Python314/"
+      - "D:/arena/RSCommon/"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/"
+      - "C:/Windows/System32/"
+      - "C:/Windows/"
+      - "C:/Windows/System32/wbem/"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/"
+      - "C:/Windows/System32/OpenSSH/"
+      - "C:/Program Files/dotnet/"
+      - "C:/Program Files/Git/cmd/"
+      - "C:/Program Files/Graphviz/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/nodejs/"
+      - "C:/ProgramData/chocolatey/bin/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/"
+      - "C:/Users/doruk/.dotnet/tools/"
+      - "C:/src/flutter/flutter/bin/"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/"
+      - "C:/Users/doruk/AppData/Roaming/npm/"
+      - "C:/Program Files/bin/"
+      - "C:/Program Files/sbin/"
+      - "C:/Program Files/"
+      - "C:/Program Files (x86)/bin/"
+      - "C:/Program Files (x86)/sbin/"
+      - "C:/Program Files (x86)/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files/CMake/sbin/"
+      - "C:/Program Files/CMake/"
+      - "C:/Program Files (x86)/hgscvrp/bin/"
+      - "C:/Program Files (x86)/hgscvrp/sbin/"
+      - "C:/Program Files (x86)/hgscvrp/"
+    searched_directories:
+      - "C:/Users/doruk/.gemini/antigravity/bin/rc.com"
+      - "C:/Users/doruk/.gemini/antigravity/bin/rc.exe"
+      - "C:/Users/doruk/.gemini/antigravity/bin/rc"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/rc.com"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/rc.exe"
+      - "C:/Users/doruk/AppData/Roaming/Antigravity/bin/rc"
+      - "C:/gurobi1302/win64/bin/rc.com"
+      - "C:/gurobi1302/win64/bin/rc.exe"
+      - "C:/gurobi1302/win64/bin/rc"
+      - "C:/Python314/Scripts/rc.com"
+      - "C:/Python314/Scripts/rc.exe"
+      - "C:/Python314/Scripts/rc"
+      - "C:/Python314/rc.com"
+      - "C:/Python314/rc.exe"
+      - "C:/Python314/rc"
+      - "D:/arena/RSCommon/rc.com"
+      - "D:/arena/RSCommon/rc.exe"
+      - "D:/arena/RSCommon/rc"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/rc.com"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/rc.exe"
+      - "C:/Program Files/Microsoft/jdk-21.0.4.7-hotspot/bin/rc"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/rc.com"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/rc.exe"
+      - "C:/Users/doruk/Documents/GitHub/RouteOpt2/%CPLEX_STUDIO_BINARIES2211%/rc"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/rc.com"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/rc.exe"
+      - "C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common/rc"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/rc.com"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/rc.exe"
+      - "C:/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler/rc"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/rc.com"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/rc.exe"
+      - "C:/Program Files (x86)/Common Files/Oracle/Java/javapath/rc"
+      - "C:/Windows/System32/rc.com"
+      - "C:/Windows/System32/rc.exe"
+      - "C:/Windows/System32/rc"
+      - "C:/Windows/rc.com"
+      - "C:/Windows/rc.exe"
+      - "C:/Windows/rc"
+      - "C:/Windows/System32/wbem/rc.com"
+      - "C:/Windows/System32/wbem/rc.exe"
+      - "C:/Windows/System32/wbem/rc"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc.com"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc.exe"
+      - "C:/Windows/System32/WindowsPowerShell/v1.0/rc"
+      - "C:/Windows/System32/OpenSSH/rc.com"
+      - "C:/Windows/System32/OpenSSH/rc.exe"
+      - "C:/Windows/System32/OpenSSH/rc"
+      - "C:/Program Files/dotnet/rc.com"
+      - "C:/Program Files/dotnet/rc.exe"
+      - "C:/Program Files/dotnet/rc"
+      - "C:/Program Files/Git/cmd/rc.com"
+      - "C:/Program Files/Git/cmd/rc.exe"
+      - "C:/Program Files/Git/cmd/rc"
+      - "C:/Program Files/Graphviz/bin/rc.com"
+      - "C:/Program Files/Graphviz/bin/rc.exe"
+      - "C:/Program Files/Graphviz/bin/rc"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/rc.com"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/rc.exe"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/rc"
+      - "C:/Program Files/nodejs/rc.com"
+      - "C:/Program Files/nodejs/rc.exe"
+      - "C:/Program Files/nodejs/rc"
+      - "C:/ProgramData/chocolatey/bin/rc.com"
+      - "C:/ProgramData/chocolatey/bin/rc.exe"
+      - "C:/ProgramData/chocolatey/bin/rc"
+      - "C:/Program Files/CMake/bin/rc.com"
+      - "C:/Program Files/CMake/bin/rc.exe"
+      - "C:/Program Files/CMake/bin/rc"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/rc.com"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/rc.exe"
+      - "C:/Users/doruk/AppData/Local/Microsoft/WindowsApps/rc"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/rc.com"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/rc.exe"
+      - "C:/Users/doruk/AppData/Local/Programs/Microsoft VS Code/bin/rc"
+      - "C:/Users/doruk/.dotnet/tools/rc.com"
+      - "C:/Users/doruk/.dotnet/tools/rc.exe"
+      - "C:/Users/doruk/.dotnet/tools/rc"
+      - "C:/src/flutter/flutter/bin/rc.com"
+      - "C:/src/flutter/flutter/bin/rc.exe"
+      - "C:/src/flutter/flutter/bin/rc"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/rc.com"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/rc.exe"
+      - "C:/Users/doruk/AppData/Local/Programs/cursor/resources/app/bin/rc"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/rc.com"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/rc.exe"
+      - "C:/Users/doruk/AppData/Local/PowerToys/DSCModules/rc"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/rc.com"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/rc.exe"
+      - "C:/Users/doruk/AppData/Local/GitHubDesktop/bin/rc"
+      - "C:/Users/doruk/AppData/Roaming/npm/rc.com"
+      - "C:/Users/doruk/AppData/Roaming/npm/rc.exe"
+      - "C:/Users/doruk/AppData/Roaming/npm/rc"
+      - "C:/Program Files/bin/rc.com"
+      - "C:/Program Files/bin/rc.exe"
+      - "C:/Program Files/bin/rc"
+      - "C:/Program Files/sbin/rc.com"
+      - "C:/Program Files/sbin/rc.exe"
+      - "C:/Program Files/sbin/rc"
+      - "C:/Program Files/rc.com"
+      - "C:/Program Files/rc.exe"
+      - "C:/Program Files/rc"
+      - "C:/Program Files (x86)/bin/rc.com"
+      - "C:/Program Files (x86)/bin/rc.exe"
+      - "C:/Program Files (x86)/bin/rc"
+      - "C:/Program Files (x86)/sbin/rc.com"
+      - "C:/Program Files (x86)/sbin/rc.exe"
+      - "C:/Program Files (x86)/sbin/rc"
+      - "C:/Program Files (x86)/rc.com"
+      - "C:/Program Files (x86)/rc.exe"
+      - "C:/Program Files (x86)/rc"
+      - "C:/Program Files/CMake/bin/rc.com"
+      - "C:/Program Files/CMake/bin/rc.exe"
+      - "C:/Program Files/CMake/bin/rc"
+      - "C:/Program Files/CMake/sbin/rc.com"
+      - "C:/Program Files/CMake/sbin/rc.exe"
+      - "C:/Program Files/CMake/sbin/rc"
+      - "C:/Program Files/CMake/rc.com"
+      - "C:/Program Files/CMake/rc.exe"
+      - "C:/Program Files/CMake/rc"
+      - "C:/Program Files (x86)/hgscvrp/bin/rc.com"
+      - "C:/Program Files (x86)/hgscvrp/bin/rc.exe"
+      - "C:/Program Files (x86)/hgscvrp/bin/rc"
+      - "C:/Program Files (x86)/hgscvrp/sbin/rc.com"
+      - "C:/Program Files (x86)/hgscvrp/sbin/rc.exe"
+      - "C:/Program Files (x86)/hgscvrp/sbin/rc"
+      - "C:/Program Files (x86)/hgscvrp/rc.com"
+      - "C:/Program Files (x86)/hgscvrp/rc.exe"
+      - "C:/Program Files (x86)/hgscvrp/rc"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "C:/Users/doruk/.gemini/antigravity/bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\Antigravity\\bin"
+        - "C:\\gurobi1302\\win64\\bin"
+        - "C:\\Python314\\Scripts\\"
+        - "C:\\Python314\\"
+        - "D:\\arena\\RSCommon"
+        - "C:\\Program Files\\Microsoft\\jdk-21.0.4.7-hotspot\\bin"
+        - "%CPLEX_STUDIO_BINARIES2211%"
+        - "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common"
+        - "C:\\Program Files (x86)\\Common Files\\Intel\\Shared Libraries\\redist\\intel64\\compiler"
+        - "C:\\Program Files (x86)\\Common Files\\Oracle\\Java\\javapath"
+        - "C:\\WINDOWS\\system32"
+        - "C:\\WINDOWS"
+        - "C:\\WINDOWS\\System32\\Wbem"
+        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\dotnet\\"
+        - "C:\\Program Files\\Git\\cmd"
+        - "C:\\Program Files\\Graphviz\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\Program Files\\nodejs\\"
+        - "C:\\ProgramData\\chocolatey\\bin"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
+        - "C:\\Users\\doruk\\.dotnet\\tools"
+        - "C:\\src\\flutter\\flutter\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin"
+        - "C:\\Users\\doruk\\AppData\\Local\\PowerToys\\DSCModules\\"
+        - "C:\\Users\\doruk\\AppData\\Local\\GitHubDesktop\\bin"
+        - "C:\\Users\\doruk\\AppData\\Roaming\\npm"
+      CMAKE_INSTALL_PREFIX: "C:/Program Files (x86)/hgscvrp"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "C:/Program Files"
+        - "C:/Program Files (x86)"
+        - "C:/Program Files/CMake"
+        - "C:/Program Files (x86)/hgscvrp"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/CMakeScratch/TryCompile-9jdpp7"
+      binary: "C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/CMakeScratch/TryCompile-9jdpp7"
+    cmakeVariables:
+      CMAKE_CXX_STDLIB_MODULES_JSON: ""
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS /W3"
+      CMAKE_C_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/CMakeScratch/TryCompile-9jdpp7'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_c6857.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        .NET Framework için MSBuild sürüm 17.14.40+3e7442088
+        Oluşturma başlatıldı: 5.06.2026 14:14:10.
+        
+        1 düğümünde "C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\CMakeScratch\\TryCompile-9jdpp7\\cmTC_c6857.vcxproj" projesi (varsayılan hedefler).
+        PrepareForBuild:
+          Yapılandırılmış çıkış etkinleştirildi. Derleyici tanılamasının biçimlendirmesi hata hiyerarşisini yansıtır. Daha fazla ayrıntı için bkz. https://aka.ms/cpp/structured-output.
+          "C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\CMakeScratch\\TryCompile-9jdpp7\\Debug\\" dizini oluşturuluyor.
+          "cmTC_c6857.dir\\Debug\\cmTC_c6857.tlog\\" dizini oluşturuluyor.
+        InitializeBuildStatus:
+          "AlwaysCreate" belirtildiği için "cmTC_c6857.dir\\Debug\\cmTC_c6857.tlog\\unsuccessfulbuild" oluşturuluyor.
+          "cmTC_c6857.dir\\Debug\\cmTC_c6857.tlog\\unsuccessfulbuild" öğesine erişiliyor.
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_c6857.dir\\Debug\\\\" /Fd"cmTC_c6857.dir\\Debug\\vc143.pdb" /external:W3 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.3\\Modules\\CMakeCCompilerABI.c"
+          x64 için Microsoft (R) C/C++ İyileştirmeli Derleyicisi Sürüm 19.44.35227
+          Telif Hakkı (C) Microsoft Corporation. Tüm hakları saklıdır.
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_c6857.dir\\Debug\\\\" /Fd"cmTC_c6857.dir\\Debug\\vc143.pdb" /external:W3 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.3\\Modules\\CMakeCCompilerABI.c"
+          CMakeCCompilerABI.c
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\CMakeScratch\\TryCompile-9jdpp7\\Debug\\cmTC_c6857.exe" /INCREMENTAL /ILK:"cmTC_c6857.dir\\Debug\\cmTC_c6857.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/CMakeScratch/TryCompile-9jdpp7/Debug/cmTC_c6857.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/CMakeScratch/TryCompile-9jdpp7/Debug/cmTC_c6857.lib" /MACHINE:X64  /machine:x64 cmTC_c6857.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_c6857.vcxproj -> C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\CMakeScratch\\TryCompile-9jdpp7\\Debug\\cmTC_c6857.exe
+        FinalizeBuildStatus:
+          "cmTC_c6857.dir\\Debug\\cmTC_c6857.tlog\\unsuccessfulbuild" dosyası siliniyor.
+          "cmTC_c6857.dir\\Debug\\cmTC_c6857.tlog\\cmTC_c6857.lastbuildstate" öğesine erişiliyor.
+        "C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\CMakeScratch\\TryCompile-9jdpp7\\cmTC_c6857.vcxproj" Projesini Oluşturma İşlemi Tamamlandı (varsayılan hedefler).
+        
+        Oluşturma başarılı oldu.
+            0 Uyarı
+            0 Hata
+        
+        Geçen Süre 00:00:01.78
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:253 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed C implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?))("|,| |$)]
+        linker tool for 'C': C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: []
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Internal/CMakeDetermineLinkerId.cmake:38 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:299 (cmake_determine_linker_id)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Running the C compiler's linker: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe" "-v"
+      Microsoft (R) Incremental Linker Version 14.44.35227.0
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:83 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/CMakeScratch/TryCompile-245er3"
+      binary: "C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/CMakeScratch/TryCompile-245er3"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /W3 /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/MDd /Zi /Ob0 /Od /RTC1"
+      CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
+      CMAKE_CXX_STDLIB_MODULES_JSON: ""
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/CMakeScratch/TryCompile-245er3'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_d3e7d.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        .NET Framework için MSBuild sürüm 17.14.40+3e7442088
+        Oluşturma başlatıldı: 5.06.2026 14:14:13.
+        
+        1 düğümünde "C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\CMakeScratch\\TryCompile-245er3\\cmTC_d3e7d.vcxproj" projesi (varsayılan hedefler).
+        PrepareForBuild:
+          Yapılandırılmış çıkış etkinleştirildi. Derleyici tanılamasının biçimlendirmesi hata hiyerarşisini yansıtır. Daha fazla ayrıntı için bkz. https://aka.ms/cpp/structured-output.
+          "C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\CMakeScratch\\TryCompile-245er3\\Debug\\" dizini oluşturuluyor.
+          "cmTC_d3e7d.dir\\Debug\\cmTC_d3e7d.tlog\\" dizini oluşturuluyor.
+        InitializeBuildStatus:
+          "AlwaysCreate" belirtildiği için "cmTC_d3e7d.dir\\Debug\\cmTC_d3e7d.tlog\\unsuccessfulbuild" oluşturuluyor.
+          "cmTC_d3e7d.dir\\Debug\\cmTC_d3e7d.tlog\\unsuccessfulbuild" öğesine erişiliyor.
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /Fo"cmTC_d3e7d.dir\\Debug\\\\" /Fd"cmTC_d3e7d.dir\\Debug\\vc143.pdb" /external:W3 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.3\\Modules\\CMakeCXXCompilerABI.cpp"
+          x64 için Microsoft (R) C/C++ İyileştirmeli Derleyicisi Sürüm 19.44.35227
+          Telif Hakkı (C) Microsoft Corporation. Tüm hakları saklıdır.
+          cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GR /Fo"cmTC_d3e7d.dir\\Debug\\\\" /Fd"cmTC_d3e7d.dir\\Debug\\vc143.pdb" /external:W3 /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.3\\Modules\\CMakeCXXCompilerABI.cpp"
+          CMakeCXXCompilerABI.cpp
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\CMakeScratch\\TryCompile-245er3\\Debug\\cmTC_d3e7d.exe" /INCREMENTAL /ILK:"cmTC_d3e7d.dir\\Debug\\cmTC_d3e7d.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/CMakeScratch/TryCompile-245er3/Debug/cmTC_d3e7d.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/CMakeScratch/TryCompile-245er3/Debug/cmTC_d3e7d.lib" /MACHINE:X64  /machine:x64 cmTC_d3e7d.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_d3e7d.vcxproj -> C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\CMakeScratch\\TryCompile-245er3\\Debug\\cmTC_d3e7d.exe
+        FinalizeBuildStatus:
+          "cmTC_d3e7d.dir\\Debug\\cmTC_d3e7d.tlog\\unsuccessfulbuild" dosyası siliniyor.
+          "cmTC_d3e7d.dir\\Debug\\cmTC_d3e7d.tlog\\cmTC_d3e7d.lastbuildstate" öğesine erişiliyor.
+        "C:\\Users\\doruk\\Documents\\GitHub\\RouteOpt2\\packages\\application\\cvrp\\lib\\hgs\\build\\CMakeFiles\\CMakeScratch\\TryCompile-245er3\\cmTC_d3e7d.vcxproj" Projesini Oluşturma İşlemi Tamamlandı (varsayılan hedefler).
+        
+        Oluşturma başarılı oldu.
+            0 Uyarı
+            0 Hata
+        
+        Geçen Süre 00:00:01.93
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:253 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|link\\.exe|lld-link(\\.exe)?))("|,| |$)]
+        linker tool for 'CXX': C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: []
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/Internal/CMakeDetermineLinkerId.cmake:38 (message)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeDetermineCompilerABI.cmake:299 (cmake_determine_linker_id)"
+      - "C:/Program Files/CMake/share/cmake-4.3/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      Running the CXX compiler's linker: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe" "-v"
+      Microsoft (R) Incremental Linker Version 14.44.35227.0
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+...

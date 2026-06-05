@@ -214,7 +214,7 @@ def cmake_configure(src_dir, build_dir, extra_flags=""):
 def cmake_build(build_dir, target=None, jobs=None):
     j = jobs or cpu_jobs()
     tgt = f' --target {target}' if target else ''
-    run_cmd(f'cmake --build "{build_dir}"{tgt} -j {j}')
+    run_cmd(f'cmake --build "{build_dir}" --config Release{tgt} -j {j}')
 
 
 def build_xgboost(xgb_dir):

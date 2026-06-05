@@ -80,6 +80,30 @@ namespace RouteOpt::Branching::BBT {
 
             // If the node remains active (not terminated), proceed with branching.
             if (!isTerminate(node)) {
+                // ROOT_NODE_ONLY_HACK: Force stop after completing root node pricing/cutting
+                updateBounds();
+                lb = std::min(valueExtractor(node), lb);
+
+                std::cout << "<Solution>" << std::endl;
+                int num_col;
+                node->refSolver().getNumCol(&num_col);
+                std::vector<double> X(num_col);
+                node->refSolver().getX(0, num_col, X.data());
+                auto& cols = node->getCols();
+                for(int i=0; i<num_col; ++i) {
+                    if (X[i] > 0.001 && i < cols.size()) {
+                        for(int j=0; j<cols[i].col_seq.size()-1; ++j) {
+                            std::cout << cols[i].col_seq[j] << "-";
+                        }
+                        std::cout << cols[i].col_seq.back() << std::endl;
+                    }
+                }
+                std::cout << "<LB= " << lb << ">" << std::endl;
+
+                delete node;
+                deleteTree();
+                break;
+                
                 // For non-root nodes, update the r_star value via LP testing if BKF controllers are available.
                 if (tree_level != 0) {
                     if (!bkf_controllers.empty()) {

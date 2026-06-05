@@ -1,0 +1,10 @@
+^C:\USERS\DORUK\DOCUMENTS\GITHUB\ROUTEOPT2\PACKAGES\APPLICATION\CVRP\LIB\HGS\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs -BC:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build --check-stamp-file C:/Users/doruk/Documents/GitHub/RouteOpt2/packages/application/cvrp/lib/hgs/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

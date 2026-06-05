@@ -245,7 +245,7 @@ namespace RouteOpt::Application::CVRP {
 
     void CVRPSolver::callLabeling(BbNode *node, double labeling_time_limit, double &time_4_pure_pricing) {
         constexpr bool if_open_heur = true;
-        constexpr bool if_open_exact = true;
+        constexpr bool if_open_exact = false; // DISABLED FOR HEURISTIC INITIALIZATION
         constexpr bool if_update_node_val = true;
         constexpr bool if_possible_terminate_early = false;
         constexpr bool if_fix_row = false;
