@@ -93,11 +93,11 @@ namespace RouteOpt::Application::CVRP {
             SAFE_SOLVER(solver.reoptimize(SOLVER_PRIMAL_SIMPLEX))
         }
 
-        SAFE_SOLVER(solver.getNumCol(&num_col)) //need retrieve again
-        std::vector<int> solver_ind(num_col);
         int len = 0, keep;
         int num_row;
         SAFE_SOLVER(solver.getNumRow(&num_row))
+        // solver_ind holds the indices of the rows to delete (branching rows and R1C1 rows): at most num_row of them
+        std::vector<int> solver_ind(num_row);
         std::vector<int> local_cstr_index(num_row);
         std::vector<int> deleted_cstrs;
         deleted_cstrs.reserve(num_row);

@@ -76,7 +76,8 @@ namespace RouteOpt::Rank1Cuts::CoefficientGetter {
             std::vector<Eigen::Triplet<int> > tmp_triplets(num_col);
             int cnt = 0;
             if (rhs > 0.1) tmp_triplets[cnt++] = {row, 0, rhs};
-            for (int i = 0; i < num_col; ++i) {
+            // column 0 is the artificial column, whose coefficient is the rhs above: at most num_col entries per row
+            for (int i = 1; i < num_col; ++i) {
                 auto tmp = static_cast<int>(ai_col[i] / denominator);
                 if (tmp) tmp_triplets[cnt++] = {row, i, tmp};
             }
