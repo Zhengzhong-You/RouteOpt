@@ -10,6 +10,7 @@
 #include <list>
 #include "cvrp_macro.hpp"
 #include "label.hpp"
+#include "label_snapshot.hpp"
 #include "rank1_rc_controller.hpp"
 #include "rank1_data_shared.hpp"
 #include "bucket.hpp"
@@ -365,7 +366,7 @@ namespace RouteOpt::Application::CVRP {
         size_t mem4_pricing{};
 
         StatCount aver_route_length{};
-        std::unordered_map<size_t, int> tell_which_bin4_arc_elimination_in_forward_sense{},
+        std::vector<int> tell_which_bin4_arc_elimination_in_forward_sense{},
                 tell_which_bin4_arc_elimination_in_backward_sense{};
         size_t max_num_forward_graph_arc{}, max_num_backward_graph_arc{};
         double NumExistedLabels{};
@@ -455,7 +456,7 @@ namespace RouteOpt::Application::CVRP {
 
         template<bool dir, bool if_symmetry>
         void extendKernel4Enumeration(int i, int b, Label *ki,
-                                      std::vector<Label *> **copy_bucket,
+                                      const LabelSnapshot &copy_bucket,
                                       std::unordered_map<routeOptLong, std::tuple<Label *, Label *, double> > &
                                       Tags,
                                       int &num_routes_now, ENUMERATION_STATE &status);
@@ -463,7 +464,7 @@ namespace RouteOpt::Application::CVRP {
         template<bool dir, bool if_symmetry>
         ENUMERATION_STATE enumerateHalfwardRoutes(
             std::unordered_map<routeOptLong, std::tuple<Label *, Label *, double> > &Tags,
-            std::vector<Label *> **copy_bucket,
+            const LabelSnapshot &copy_bucket,
             int &num_routes_now);
 
         template<bool if_symmetry>
@@ -528,7 +529,7 @@ namespace RouteOpt::Application::CVRP {
         bool determineIfArcElimination(double ub, double opt_gap, double &last_gap);
 
         template<bool dir, bool if_symmetry>
-        void concatenatePhaseInArcElimination();
+        void concatenatePhaseInArcElimination(const LabelSnapshot *partners = nullptr);
 
         void freeMemory() const;
 
@@ -583,12 +584,12 @@ namespace RouteOpt::Application::CVRP {
             if_res_updated,
             PRICING_LEVEL pricing_level>
         void updateLabel(const Resource &res, Label *ki, int i, int j, int &bj,
-                         bool &if_suc);
+                         bool &if_suc, const LabelSnapshot *partners = nullptr);
 
-        template<bool dir, bool if_symmetry, bool if_std_optgap>
+        template<bool dir, bool if_symmetry, bool if_std_optgap, bool if_use_snapshot = false>
         void concatenateOneLabelWithOtherLabels(Label *ki, int j, int arr_bj, double tmp_rc,
                                                 const Resource &tmp_res,
-                                                int &if_state);
+                                                int &if_state, const LabelSnapshot *partners = nullptr);
 
 
         template<bool dir>
@@ -611,13 +612,14 @@ namespace RouteOpt::Application::CVRP {
         PRICING_STATE extendKernel4Exact(Label *ki,
                                          int i,
                                          Resource res,
-                                         const std::vector<T> &arc);
+                                         const std::vector<T> &arc, const LabelSnapshot *partners = nullptr);
 
         template<bool dir>
         void sortLabelsInBinByRC(int i, int b);
 
+        // Symmetric last-half passes require a frozen partner snapshot.
         template<bool dir, bool if_last_half, bool if_complete, bool if_symmetry, PRICING_LEVEL heuristic_level>
-        void runLabeling(double time_limit);
+        void runLabeling(double time_limit, const LabelSnapshot *partners = nullptr);
 
         template<bool dir, bool if_symmetry, bool if_reset_label_point, bool if_clear_all, bool if_clear_concatenate>
         void initializeLabels();

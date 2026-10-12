@@ -21,7 +21,7 @@ namespace RouteOpt::Application::CVRP {
      * Applies dominance rules and handles time limits
      */
     template<bool dir, bool if_last_half, bool if_complete, bool if_symmetry, PRICING_LEVEL pricing_level>
-    void CVRP_Pricing::runLabeling(double time_limit) {
+    void CVRP_Pricing::runLabeling(double time_limit, const LabelSnapshot *partners) {
         if_stop_arc_elimination = pricing_level != PRICING_LEVEL::EXACT;
         if_exact_labeling_cg = pricing_level == PRICING_LEVEL::EXACT;
         if_exact_labeling_finished = pricing_level == PRICING_LEVEL::EXACT;
@@ -74,7 +74,7 @@ namespace RouteOpt::Application::CVRP {
                             ki->res,
                             dir
                                 ? all_forward_buckets[i][b].bucket_arcs
-                                : all_backward_buckets[i][b].bucket_arcs);
+                                : all_backward_buckets[i][b].bucket_arcs, partners);
 
                         if (sig == PRICING_STATE::OUT_OF_MEMORY) {
                             goto populateBin;
@@ -84,7 +84,7 @@ namespace RouteOpt::Application::CVRP {
                             dir, if_last_half, if_complete, if_symmetry, pricing_level>(ki, i, ki->res,
                             dir
                                 ? all_forward_buckets[i][b].jump_arcs
-                                : all_backward_buckets[i][b].jump_arcs);
+                                : all_backward_buckets[i][b].jump_arcs, partners);
 
                         if (sig == PRICING_STATE::OUT_OF_MEMORY) {
                             goto populateBin;

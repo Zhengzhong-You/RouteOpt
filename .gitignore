@@ -4,6 +4,16 @@
 .idea
 .gitignore.swp
 
+# Local experiment outputs
+/runs/
+/logs/runs/
+
+# CVRP build outputs
+/packages/application/cvrp/bin/
+/packages/application/cvrp/build/
+/packages/application/cvrp/lib/hgs/build/
+/packages/application/cvrp/lib/hgs/lib/
+
 # External package build outputs
 /packages/external/**/obj/
 /packages/external/**/dep/

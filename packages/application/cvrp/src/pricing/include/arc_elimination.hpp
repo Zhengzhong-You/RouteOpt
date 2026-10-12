@@ -15,7 +15,7 @@ namespace RouteOpt::Application::CVRP {
      * Tests label concatenation to determine arc necessity
      */
     template<bool dir, bool if_symmetry>
-    void CVRP_Pricing::concatenatePhaseInArcElimination() {
+    void CVRP_Pricing::concatenatePhaseInArcElimination(const LabelSnapshot *partners) {
         int bj;
         bool if_suc;
 
@@ -31,7 +31,7 @@ namespace RouteOpt::Application::CVRP {
                 auto &tmp_Resource = all_label[idx_glo].res;
                 tmp_Resource = pr.second; //do not change here! since res will not be updated later
                 updateLabel<dir, true, false, if_symmetry, true, true, PRICING_LEVEL::EXACT>(
-                    tmp_Resource, ki, i, j, bj, if_suc);
+                    tmp_Resource, ki, i, j, bj, if_suc, partners);
                 if (!if_suc) continue;
 
                 doDominance<dir, PRICING_LEVEL::EXACT>(ki, j, bj, if_suc);
@@ -64,6 +64,7 @@ namespace RouteOpt::Application::CVRP {
         if_short_memory = false;
 
         if constexpr (!if_symmetry) {
+            // Each pass reads the other direction's buckets, which it does not mutate.
             concatenatePhaseInArcElimination<true, false>();
             if (!if_arc_elimination_succeed) goto QUIT;
             runLabeling<true, true, false, false, PRICING_LEVEL::EXACT>(arc_elimination_time);
@@ -73,9 +74,11 @@ namespace RouteOpt::Application::CVRP {
             runLabeling<false, true, false, false, PRICING_LEVEL::EXACT>(arc_elimination_time);
             if (!if_exact_labeling_finished) goto QUIT;
         } else {
-            concatenatePhaseInArcElimination<true, true>();
+            // Last-half extensions mutate the same buckets used for partner lookup.
+            const LabelSnapshot partners(label_array_in_forward_sense, dim, num_buckets_per_vertex);
+            concatenatePhaseInArcElimination<true, true>(&partners);
             if (!if_arc_elimination_succeed) goto QUIT;
-            runLabeling<true, true, false, true, PRICING_LEVEL::EXACT>(arc_elimination_time);
+            runLabeling<true, true, false, true, PRICING_LEVEL::EXACT>(arc_elimination_time, &partners);
             if (!if_exact_labeling_finished) goto QUIT;
         }
     QUIT:

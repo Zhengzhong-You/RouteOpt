@@ -22,17 +22,14 @@ namespace RouteOpt::Application::CVRP {
         }
         size_t size = dim * dim * num_buckets_per_vertex;
         int dim_sq = dim * dim;
-        if constexpr (dir) tell_which_bin4_arc_elimination_in_forward_sense.reserve(size);
-        else tell_which_bin4_arc_elimination_in_backward_sense.reserve(size);
-        std::unordered_map<int, int> map_bj_B;
-        std::vector<std::pair<int, int> > vec_bj_B(num_buckets_per_vertex);
-        map_bj_B.reserve(num_buckets_per_vertex + 1);
+        if constexpr (dir) tell_which_bin4_arc_elimination_in_forward_sense.resize(size);
+        else tell_which_bin4_arc_elimination_in_backward_sense.resize(size);
+        std::vector<int> map_bj_B(num_buckets_per_vertex + 1);
         Resource tmp_Resource, res_tuple;
-        for (int b = 0; b <= num_buckets_per_vertex; ++b) map_bj_B[b] = dir ? -1 : num_buckets_per_vertex;
         for (int i = 0; i < dim; ++i) {
             for (int j = 0; j < dim; ++j) {
                 int base = i * dim + j;
-                for (auto &key_value: map_bj_B) key_value.second = dir ? -1 : num_buckets_per_vertex;
+                std::fill(map_bj_B.begin(), map_bj_B.end(), dir ? -1 : num_buckets_per_vertex);
                 for (int b = dir ? 0 : num_buckets_per_vertex - 1; dir ? b < num_buckets_per_vertex : b >= 0;
                      dir ? ++b : --b) {
                     res_tuple = dir ? Resource{} : resource;

@@ -305,25 +305,10 @@ namespace RouteOpt::Application::CVRP {
         std::unordered_map<routeOptLong, std::tuple<Label *, Label *, double> > Tags;
         Tags.reserve(MaxNumRouteInEnumeration);
 
-        auto copy_Forward_bucket = new std::vector<Label *> *[dim];
-        for (int i = 0; i < dim; ++i) {
-            copy_Forward_bucket[i] = new std::vector<Label *>[num_buckets_per_vertex];
-            for (int b = 0; b < num_buckets_per_vertex; ++b) {
-                copy_Forward_bucket[i][b].assign(label_array_in_forward_sense[i][b].begin(),
-                                                 label_array_in_forward_sense[i][b].end());
-            }
-        }
-
-        std::vector<Label *> **copy_Backward_bucket{};
+        LabelSnapshot copy_Forward_bucket(label_array_in_forward_sense, dim, num_buckets_per_vertex);
+        LabelSnapshot copy_Backward_bucket;
         if constexpr (!if_symmetry) {
-            copy_Backward_bucket = new std::vector<Label *> *[dim];
-            for (int i = 0; i < dim; ++i) {
-                copy_Backward_bucket[i] = new std::vector<Label *>[num_buckets_per_vertex];
-                for (int b = 0; b < num_buckets_per_vertex; ++b) {
-                    copy_Backward_bucket[i][b].assign(label_array_in_backward_sense[i][b].begin(),
-                                                      label_array_in_backward_sense[i][b].end());
-                }
-            }
+            copy_Backward_bucket = LabelSnapshot(label_array_in_backward_sense, dim, num_buckets_per_vertex);
         }
 
 
@@ -335,6 +320,8 @@ namespace RouteOpt::Application::CVRP {
             }
         });
         printTimeMessage("labeling 1", eps);
+        if constexpr (if_symmetry) copy_Forward_bucket = {};
+        else copy_Backward_bucket = {};
 
         if (status != ENUMERATION_STATE::NORMAL) {
             return false;
@@ -348,6 +335,7 @@ namespace RouteOpt::Application::CVRP {
                     num_routes_now);
             });
             printTimeMessage("labeling 2", eps);
+            copy_Forward_bucket = {};
 
             if (status != ENUMERATION_STATE::NORMAL) {
                 return false;
@@ -426,7 +414,7 @@ namespace RouteOpt::Application::CVRP {
     template<bool dir, bool if_symmetry>
     ENUMERATION_STATE CVRP_Pricing::enumerateHalfwardRoutes(
         std::unordered_map<routeOptLong, std::tuple<Label *, Label *, double> > &Tags,
-        std::vector<Label *> **copy_bucket,
+        const LabelSnapshot &copy_bucket,
         int &num_routes_now) {
         ENUMERATION_STATE status = ENUMERATION_STATE::NORMAL;
         (dir ? num_forward_labels_in_enu : num_backward_labels_in_enu) = 0;
@@ -483,10 +471,6 @@ namespace RouteOpt::Application::CVRP {
             }
         }
     outside:
-        for (int i = 0; i < dim; ++i) {
-            delete[]copy_bucket[i];
-        }
-        delete[] copy_bucket;
         std::cout << "#labels= " << static_cast<int>(dir ? num_forward_labels_in_enu : num_backward_labels_in_enu) <<
                 " #routes= " <<
                 num_routes_now << std::endl;
@@ -495,7 +479,7 @@ namespace RouteOpt::Application::CVRP {
 
     template<bool dir, bool if_symmetry>
     void CVRP_Pricing::extendKernel4Enumeration(int i, int b, Label *ki,
-                                                std::vector<Label *> **copy_bucket,
+                                                const LabelSnapshot &copy_bucket,
                                                 std::unordered_map<routeOptLong, std::tuple<Label *, Label *, double> >
                                                 &
                                                 Tags,
@@ -553,7 +537,7 @@ namespace RouteOpt::Application::CVRP {
                 if (tmp_rc + (if_dif ? rc2_bin_in_backward_sense[j][arr_bj] : rc2_bin_in_forward_sense[j][arr_bj])
                     > opt_gap)
                     continue;
-                for (auto &kkj: copy_bucket[j][arr_bj]) {
+                for (auto &kkj: copy_bucket.bucket(j, arr_bj)) {
                     double path_rc = tmp_rc + kkj->rc;
 
                     if (path_rc > opt_gap) break;

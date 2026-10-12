@@ -191,8 +191,9 @@ namespace RouteOpt::Application::CVRP {
         int ccnt_cnt = 0;
         size_t nzcnt = 0;
         std::vector<size_t> solver_beg(ccnt + 1);
-        std::vector<int> solver_ind(num_row * ccnt);
-        std::vector<double> solver_val(num_row * ccnt);
+        const auto max_nz = mat.nonZeros();
+        std::vector<int> solver_ind(max_nz);
+        std::vector<double> solver_val(max_nz);
         std::vector<double> solver_obj(ccnt);
         for (int i = 0; i < ccnt; ++i) {
             if (rc(i) < RC_TOLERANCE) {

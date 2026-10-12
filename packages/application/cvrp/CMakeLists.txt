@@ -107,3 +107,7 @@ get_target_property(CVRP_LINK_LIBRARIES ${PROJECT_NAME} LINK_LIBRARIES)
 target_link_libraries(column_management_test PRIVATE ${CVRP_LINK_LIBRARIES})
 target_compile_definitions(column_management_test PRIVATE
         $<TARGET_PROPERTY:cvrp,COMPILE_DEFINITIONS>)
+
+add_executable(label_snapshot_test EXCLUDE_FROM_ALL tests/label_snapshot_test.cpp)
+target_include_directories(label_snapshot_test PRIVATE $<TARGET_PROPERTY:cvrp,INCLUDE_DIRECTORIES>)
+target_compile_definitions(label_snapshot_test PRIVATE $<TARGET_PROPERTY:cvrp,COMPILE_DEFINITIONS>)

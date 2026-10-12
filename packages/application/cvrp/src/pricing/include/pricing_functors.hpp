@@ -7,6 +7,7 @@
 
 #ifndef ROUTE_OPT_PRICING_FUNCTORS_HPP
 #define ROUTE_OPT_PRICING_FUNCTORS_HPP
+#include <ranges>
 #include "cvrp_pricing_controller.hpp"
 
 namespace RouteOpt::Application::CVRP {
@@ -173,10 +174,10 @@ namespace RouteOpt::Application::CVRP {
         }
     }
 
-    template<bool dir, bool if_symmetry, bool if_std_optgap>
+    template<bool dir, bool if_symmetry, bool if_std_optgap, bool if_use_snapshot>
     void CVRP_Pricing::concatenateOneLabelWithOtherLabels(Label *ki, int j, int arr_bj, double tmp_rc,
                                                           const Resource &tmp_res,
-                                                          int &if_state) {
+                                                          int &if_state, const LabelSnapshot *partners) {
         double path_rc;
         double &which_rc = if_std_optgap ? opt_gap : rc_std;
         auto ptr_rc_till_this_bin = &rc2_till_this_bin_in_forward_sense[j][arr_bj];
@@ -193,10 +194,15 @@ namespace RouteOpt::Application::CVRP {
         if_state = static_cast<int>(CONCATENATE_STATE::FAIL);
         if (*ptr_rc_bin + tmp_rc < which_rc) {
             //most_negative_rc_in_this_bin
-            auto &label_arr =
-                    ((!dir && !if_symmetry) || (dir && if_symmetry))
+            auto label_arr = [&]() {
+                if constexpr (if_use_snapshot) {
+                    return partners->bucket(j, arr_bj);
+                } else {
+                    return std::ranges::subrange(((!dir && !if_symmetry) || (dir && if_symmetry))
                         ? label_array_in_forward_sense[j][arr_bj]
-                        : label_array_in_backward_sense[j][arr_bj];
+                        : label_array_in_backward_sense[j][arr_bj]);
+                }
+            }();
             for (auto &kj: label_arr) {
                 path_rc = kj->rc + tmp_rc;
                 if (path_rc > which_rc) break;
@@ -230,7 +236,7 @@ namespace RouteOpt::Application::CVRP {
     template<bool dir, bool if_last_half, bool if_complete, bool if_symmetry, bool if_std_optgap, bool if_res_updated,
         PRICING_LEVEL pricing_level>
     void CVRP_Pricing::updateLabel(const Resource &res, Label *ki, int i, int j, int &bj,
-                                   bool &if_suc) {
+                                   bool &if_suc, const LabelSnapshot *partners) {
         if_suc = false;
         if (ki->pi[j]) return;
         auto new_label = all_label + idx_glo;
@@ -270,12 +276,12 @@ namespace RouteOpt::Application::CVRP {
                 constexpr bool if_dif = dir ^ if_symmetry;
                 for (; if_dif ? concate_bj < num_buckets_per_vertex : concate_bj >= 0;
                        if_dif ? ++concate_bj : --concate_bj) {
-                    concatenateOneLabelWithOtherLabels<dir, if_symmetry, true>(ki,
+                    concatenateOneLabelWithOtherLabels<dir, if_symmetry, true, if_symmetry>(ki,
                                                                                j,
                                                                                concate_bj,
                                                                                tmp_rc,
                                                                                tmp_res,
-                                                                               if_state);
+                                                                               if_state, partners);
                     if (if_state == static_cast<int>(CONCATENATE_STATE::TOTALLY_FAIL)) break;
                     if (if_state >= 0) goto outside;
                 }
@@ -308,7 +314,7 @@ namespace RouteOpt::Application::CVRP {
     PRICING_STATE CVRP_Pricing::extendKernel4Exact(Label *ki,
                                                    int i,
                                                    Resource res,
-                                                   const std::vector<T> &arc) {
+                                                   const std::vector<T> &arc, const LabelSnapshot *partners) {
         auto state = PRICING_STATE::NORMAL;
         int bj;
         bool if_suc;
@@ -324,7 +330,7 @@ namespace RouteOpt::Application::CVRP {
 
             updateLabel<dir, if_last_half, if_complete, if_symmetry, false, false, pricing_level>(
                 res, ki, i, j, bj,
-                if_suc);
+                if_suc, partners);
 
             if (!if_suc) continue;
 
