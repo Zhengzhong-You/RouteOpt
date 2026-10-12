@@ -48,7 +48,7 @@ namespace RouteOpt::Application::CVRP {
         double threshold = std::max(rc_copy[n], TOLERANCE);
         for (int i = beg; i < num_col; ++i)
             if (rc[i] > threshold && cols[i].forward_concatenate_pos >= -1) {
-                //only route-defined col can be deleted by this func
+                // Keep tagged singleton and artificial columns during heuristic cleanup.
                 col_idx.emplace_back(i);
             }
         rmLPCols(col_idx);

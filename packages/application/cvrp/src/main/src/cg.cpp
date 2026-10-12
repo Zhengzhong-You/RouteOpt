@@ -57,7 +57,7 @@ namespace RouteOpt::Application::CVRP {
         for (int i = 0; i < X.size(); ++i) {
             auto val = X[i];
             if (val < TOLERANCE) continue;
-            if ((cols[i].forward_concatenate_pos < -1) || (std::abs(val - 1) > TOLERANCE)) {
+            if ((cols[i].getForwardConcatenatePos() < -1) || (std::abs(val - 1) > TOLERANCE)) {
                 is_integer = false;
                 break;
             }
@@ -79,7 +79,7 @@ namespace RouteOpt::Application::CVRP {
     void updateAverageRouteLength(CVRP_Pricing &pricing_controller, BbNode *node) {
         double len = 0;
         for (const auto &col: node->getCols()) {
-            if (col.forward_concatenate_pos >= -1) {
+            if (col.getForwardConcatenatePos() >= -1) {
                 len += static_cast<double>(col.col_seq.size());
             }
         }

@@ -34,11 +34,12 @@ namespace RouteOpt::Rank1Cuts::CoefficientGetter {
 
         for (int col_idx = 0; col_idx < seq_info.size(); ++col_idx) {
             const auto &seq = seq_info[col_idx];
+            const auto forward_pos = seq.getForwardConcatenatePos();
             std::fill(state.begin(), state.end(), 0);
             valid_sparse_num = 0;
             cnt.clear();
             int old = 0;
-            for (int i = 0; i <= seq.forward_concatenate_pos; ++i) {
+            for (int i = 0; i <= forward_pos; ++i) {
                 int n = seq.col_seq[i];
                 getCoefficientExtendR1C(state, sparse_rep, cnt, valid_sparse_num, old, n);
                 old = n;
@@ -47,7 +48,7 @@ namespace RouteOpt::Rank1Cuts::CoefficientGetter {
             valid_sparse_num_back = 0;
             int beg_from = old;
             old = 0;
-            for (int i = static_cast<int>(seq.col_seq.size()) - 1; i > seq.forward_concatenate_pos; --i) {
+            for (int i = static_cast<int>(seq.col_seq.size()) - 1; i > forward_pos; --i) {
                 int n = seq.col_seq[i];
                 getCoefficientExtendR1C(state_back, sparse_rep_back, cnt, valid_sparse_num_back, old, n);
                 old = n;

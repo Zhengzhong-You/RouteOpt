@@ -354,7 +354,7 @@ namespace RouteOpt::Application::CVRP {
                 auto &s = sol[i];
                 const auto &sol_ = sols[i];
                 s.col_seq = sol_.col_seq;
-                s.forward_concatenate_pos = sol_.forward_concatenate_pos;
+                s.forward_concatenate_pos = sol_.getForwardConcatenatePos();
                 s.frac_x = x[i];
             }
             rank1_separation_controller.updateInfo(limited_memory_type, pricing_hard_level, if_collect_sol, sol,

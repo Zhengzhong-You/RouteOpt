@@ -14,7 +14,7 @@ namespace RouteOpt::Application::CVRP {
             for (std::size_t i = 0; i < x.size(); ++i) {
                 const auto val = x[i];
                 if (val < TOLERANCE) continue;
-                if (cols[i].forward_concatenate_pos < -1 || std::abs(val - 1) > TOLERANCE) {
+                if (cols[i].getForwardConcatenatePos() < -1 || std::abs(val - 1) > TOLERANCE) {
                     return false;
                 }
             }
@@ -103,7 +103,7 @@ namespace RouteOpt::Application::CVRP {
 
             for (int i = 0; i < static_cast<int>(x.size()); ++i) {
                 if (x[i] <= SOL_X_TOLERANCE) continue;
-                if (std::abs(x[i] - 1.0) <= TOLERANCE && cols[i].forward_concatenate_pos >= -1) {
+                if (std::abs(x[i] - 1.0) <= TOLERANCE && cols[i].getForwardConcatenatePos() >= -1) {
                     repaired_routes.emplace_back(cols[i]);
                 } else {
                     fractional_routes.emplace_back(FractionalRoute{x[i], cols[i]});

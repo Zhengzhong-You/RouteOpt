@@ -98,3 +98,12 @@ target_link_libraries(${PROJECT_NAME}
         ${HGS_LIBRARIES}
         ZLIB::ZLIB
 )
+
+set(COLUMN_MANAGEMENT_TEST_SOURCES ${CVRP_SOURCES})
+list(REMOVE_ITEM COLUMN_MANAGEMENT_TEST_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+add_executable(column_management_test EXCLUDE_FROM_ALL
+        tests/column_management_test.cpp ${COLUMN_MANAGEMENT_TEST_SOURCES})
+get_target_property(CVRP_LINK_LIBRARIES ${PROJECT_NAME} LINK_LIBRARIES)
+target_link_libraries(column_management_test PRIVATE ${CVRP_LINK_LIBRARIES})
+target_compile_definitions(column_management_test PRIVATE
+        $<TARGET_PROPERTY:cvrp,COMPILE_DEFINITIONS>)

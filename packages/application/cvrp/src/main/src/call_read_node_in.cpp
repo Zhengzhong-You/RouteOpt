@@ -129,7 +129,7 @@ namespace RouteOpt::Application::CVRP {
                 solver_beg.emplace_back(static_cast<int>(solver_ind.size()));
                 auto &col = cols.back();
                 col.col_seq.emplace_back(i);
-                col.forward_concatenate_pos = 0;
+                col.forward_concatenate_pos = SINGLETON_COLUMN_IDX;
                 solver_ind.emplace_back(i - 1);
                 solver_val.emplace_back(1);
                 solver_ind.emplace_back(row_vehicle);
@@ -193,6 +193,10 @@ namespace RouteOpt::Application::CVRP {
                                                               pricing_controller.refMaxGap2TryEnumeration(),
                                                               history,
                                                               bkf_data_shared);
+        for (int i = 1; i < node->getCols().size(); ++i) {
+            auto &col = node->refCols()[i];
+            if (col.col_seq.size() == 1) col.forward_concatenate_pos = SINGLETON_COLUMN_IDX;
+        }
         InNodeNameSpace::buildLP(dim, num_vehicle,
                                  node->getIfInEnumState(),
                                  cost,

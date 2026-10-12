@@ -127,8 +127,8 @@ namespace RouteOpt::Application::CVRP {
                     oss.write(reinterpret_cast<const char *>(&j), sizeof(j));
                 }
                 // Write the forward concatenate position
-                oss.write(reinterpret_cast<const char *>(&col.forward_concatenate_pos),
-                          sizeof(col.forward_concatenate_pos));
+                const auto forward_pos = col.getForwardConcatenatePos();
+                oss.write(reinterpret_cast<const char *>(&forward_pos), sizeof(forward_pos));
                 oss.write(reinterpret_cast<const char *>(&obj[i]), sizeof(obj[i]));
             }
             writeCompressedData(outFile, oss.str());

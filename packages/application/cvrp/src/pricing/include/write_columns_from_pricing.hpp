@@ -128,6 +128,7 @@ namespace RouteOpt::Application::CVRP {
                     p = p->p_label;
                 }
             }
+            if (col.size() == 1) new_cols[col_idx].forward_concatenate_pos = SINGLETON_COLUMN_IDX;
             if constexpr (CHECK_PRICING_LABELS)seq_rc[col] = std::get<2>(i);
 
             ++col_idx;

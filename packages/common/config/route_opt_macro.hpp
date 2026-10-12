@@ -60,6 +60,8 @@ namespace RouteOpt {
         }
     };
 
+    constexpr int SINGLETON_COLUMN_IDX = -3;
+
     /**
      * @brief Structure representing sequence information.
      *
@@ -73,10 +75,14 @@ namespace RouteOpt {
          * For example, if the route is [0, 2, 3, 4], and forward partial label is [0, 2], then forward_concatenate_pos = 1.
          */
         int forward_concatenate_pos{};
+        // The singleton tag protects column management; route calculations still use position 0.
+        [[nodiscard]] int getForwardConcatenatePos() const {
+            return forward_concatenate_pos == SINGLETON_COLUMN_IDX ? 0 : forward_concatenate_pos;
+        }
         // Equality operator comparing both the sequence and the concatenation position.
         bool operator==(const SequenceInfo &other) const {
             return (col_seq == other.col_seq) &&
-                   (forward_concatenate_pos == other.forward_concatenate_pos);
+                   (getForwardConcatenatePos() == other.getForwardConcatenatePos());
         }
     };
 
