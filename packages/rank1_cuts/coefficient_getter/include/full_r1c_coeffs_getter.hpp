@@ -73,14 +73,12 @@ namespace RouteOpt::Rank1Cuts::CoefficientGetter {
                 }
                 ++count;
             }
-            std::vector<Eigen::Triplet<int> > tmp_triplets(num_col);
-            int cnt = 0;
-            if (rhs > 0.1) tmp_triplets[cnt++] = {row, 0, rhs};
-            for (int i = 0; i < num_col; ++i) {
+            // Column 0 is artificial; its coefficient is the cut rhs.
+            if (rhs > 0.1) triplets.emplace_back(row, 0, rhs);
+            for (int i = 1; i < num_col; ++i) {
                 auto tmp = static_cast<int>(ai_col[i] / denominator);
-                if (tmp) tmp_triplets[cnt++] = {row, i, tmp};
+                if (tmp) triplets.emplace_back(row, i, tmp);
             }
-            triplets.insert(triplets.end(), tmp_triplets.begin(), tmp_triplets.begin() + cnt);
         }
         mat.resize(cuts.size(), num_col);
         mat.setZero();

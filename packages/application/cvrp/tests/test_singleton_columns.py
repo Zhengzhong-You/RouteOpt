@@ -1,8 +1,9 @@
-"""Issue #23: run after building cvrp; requires a working solver license.
+"""Column lifecycle regressions (#23 and #25); requires a built cvrp and solver license.
 
 Run: python3 tests/test_singleton_columns.py
 Set ROUTEOPT_TEST_BINARY to test a different build.
-Fixture: https://github.com/Zhengzhong-You/RouteOpt/issues/23
+Fixtures: https://github.com/Zhengzhong-You/RouteOpt/issues/23
+          https://github.com/Zhengzhong-You/RouteOpt/pull/25
 """
 
 import math
@@ -18,11 +19,11 @@ BINARY = Path(os.environ.get("ROUTEOPT_TEST_BINARY", APP / "bin/cvrp")).resolve(
 
 
 class SingletonColumnsTest(unittest.TestCase):
-    def check_solution(self, instance, expected, *arguments):
+    def check_solution(self, instance, expected, *arguments, timeout=180):
         run = subprocess.run(
             [str(BINARY), str(instance), *arguments],
             cwd=APP, env={**os.environ, "OMP_NUM_THREADS": "1"},
-            capture_output=True, text=True, timeout=180,
+            capture_output=True, text=True, timeout=timeout,
         )
         self.assertEqual(run.returncode, 0, run.stdout[-3000:] + run.stderr)
         output = run.stdout
@@ -69,6 +70,10 @@ class SingletonColumnsTest(unittest.TestCase):
 
     def test_existing_small_instance(self):
         self.check_solution(APP / "instance/P-n20-k2.vrp", 216)
+
+    def test_enumeration_cut_buffers(self):
+        self.check_solution(APP / "tests/data/XML20_3253_21.vrp", 4074,
+                            "-u", "4075", timeout=900)
 
 
 if __name__ == "__main__":

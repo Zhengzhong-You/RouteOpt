@@ -93,9 +93,7 @@ namespace RouteOpt::Application::CVRP {
             SAFE_SOLVER(solver.reoptimize(SOLVER_PRIMAL_SIMPLEX))
         }
 
-        SAFE_SOLVER(solver.getNumCol(&num_col)) //need retrieve again
-        std::vector<int> solver_ind(num_col);
-        int len = 0, keep;
+        int keep;
         int num_row;
         SAFE_SOLVER(solver.getNumRow(&num_row))
         std::vector<int> local_cstr_index(num_row);
@@ -105,14 +103,12 @@ namespace RouteOpt::Application::CVRP {
         for (auto &brc: brcs) {
             if (brc.idx_brc == INVALID_BRC_INDEX) continue;
             keep = brc.idx_brc;
-            solver_ind[len++] = keep;
             local_cstr_index[keep] = INVALID_ROW_INDEX;
             deleted_cstrs.emplace_back(keep);
         }
         for (auto &r1c: r1cs) {
             if (r1c.info_r1c.first.size() == 1) {
                 keep = r1c.idx_r1c;
-                solver_ind[len++] = keep;
                 local_cstr_index[keep] = INVALID_ROW_INDEX;
                 deleted_cstrs.emplace_back(keep);
             }
@@ -143,7 +139,7 @@ namespace RouteOpt::Application::CVRP {
 
         for (auto &brc: brcs) brc.idx_brc = INVALID_BRC_INDEX;
 
-        SAFE_SOLVER(solver.delConstraints(len, solver_ind.data()))
+        SAFE_SOLVER(solver.delConstraints(static_cast<int>(deleted_cstrs.size()), deleted_cstrs.data()))
         SAFE_SOLVER(solver.reoptimize())
     }
 

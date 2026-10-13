@@ -161,6 +161,64 @@ void testRouteInterpretation() {
             "Singleton tag changed limited-memory Rank-1 coefficients");
 }
 
+void testFullMemoryCoefficients(Solver &environment) {
+    BbNode node;
+    BbNode::buildModel(1, 4, &environment, &node);
+    addColumn(node, {{1, 2, 3}, 2}, 10);
+    Rank1Cuts::Rank1CutsDataShared data(4);
+    Rank1Cuts::CoefficientGetter::Rank1CoefficientGetter getter(data);
+    Rank1Cuts::R1c cut, singleton_cut;
+    cut.info_r1c = {{1, 2, 3}, 0};
+    singleton_cut.info_r1c = {{1}, 0};
+    for (bool sparse: {false, true}) {
+        if (sparse) addColumn(node, {{3}, SINGLETON_COLUMN_IDX}, 100);
+        Eigen::SparseMatrix<double> actual, reference;
+        getter.getR1CCoeffs(node.getCols(), {cut, singleton_cut}, &node.refSolver(), false, actual);
+        getter.getR1CCoeffs(node.getCols(), {cut, singleton_cut}, nullptr, false, reference);
+        require(actual.coeff(0, 0) == 1 && actual.coeff(1, 0) == 0,
+                "Artificial column must have exactly the cut rhs coefficient");
+        require((Eigen::MatrixXd(actual) - Eigen::MatrixXd(reference)).isZero(),
+                "Solver and route-based full-memory coefficients differ");
+    }
+}
+
+void testEnumerationRowDeletion(Solver &environment, bool with_branch) {
+    BbNode node;
+    BbNode::buildModel(1, 4, &environment, &node);
+    addColumn(node, {{1, 2, 3}, 2}, 10);
+    if (with_branch) {
+        int begin = 0;
+        int indices[]{0, 1};
+        double values[]{1, 1}, rhs = 1;
+        char sense = SOLVER_EQUAL;
+        SAFE_SOLVER(node.refSolver().addConstraints(1, 2, &begin, indices, values, &sense, &rhs, nullptr))
+        node.refBrCs().push_back({{1, 2}, 4, true});
+    }
+    // More cut rows than columns, as after enumeration removes non-elementary routes.
+    for (int customer = 1; customer <= 3; ++customer) {
+        int begin = 0;
+        double rhs = 0;
+        char sense = SOLVER_LESS_EQUAL;
+        SAFE_SOLVER(node.refSolver().addConstraints(1, 0, &begin, nullptr, nullptr, &sense, &rhs, nullptr))
+        Rank1Cuts::R1c cut;
+        cut.info_r1c = {{customer}, 0};
+        cut.idx_r1c = 3 + customer + static_cast<int>(with_branch);
+        node.refR1Cs().push_back(cut);
+    }
+    std::reverse(node.refR1Cs().begin(), node.refR1Cs().end());
+    SAFE_SOLVER(node.refSolver().updateModel())
+    Rank1Cuts::Rank1CutsDataShared data(4);
+    Rank1Cuts::CoefficientGetter::Rank1CoefficientGetter getter(data);
+    node.preprocessEnumeration(nullptr, getter, std::vector<routeOptLong>(4), {}, 0);
+    int rows, columns;
+    SAFE_SOLVER(node.refSolver().getNumRow(&rows))
+    SAFE_SOLVER(node.refSolver().getNumCol(&columns))
+    require(rows == 4 && columns == 2 && node.refR1Cs().empty(),
+            "Enumeration did not delete precisely the obsolete cut rows");
+    if (with_branch) require(node.refBrCs().front().idx_brc == INVALID_BRC_INDEX,
+                             "Deleted branch row still has an LP index");
+}
+
 int main() {
     try {
         static_assert(SINGLETON_COLUMN_IDX == STAB_ARTI_COLUMN_IDX - 1);
@@ -174,8 +232,11 @@ int main() {
         testBranching(environment, false);
         testBranching(environment, true);
         testCheckpoint(environment);
+        testFullMemoryCoefficients(environment);
+        testEnumerationRowDeletion(environment, false);
+        testEnumerationRowDeletion(environment, true);
         environment.freeEnv();
-        std::cout << "PASS: singleton tag, heuristic cleanup, fixing, branching, integrality, Rank-1 coefficients, checkpoint\n";
+        std::cout << "PASS: singleton tag, heuristic cleanup, fixing, branching, integrality, Rank-1 coefficients, checkpoint, enumeration cut buffers\n";
     } catch (const std::exception &error) {
         std::cerr << error.what() << '\n';
         return 1;
