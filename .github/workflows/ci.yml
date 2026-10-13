@@ -1,0 +1,182 @@
+name: ci
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+# Different commits must not run licensed tests at the same time.
+concurrency:
+  group: routeopt-ci-wls
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Test CI helper
+        run: python .github/scripts/test_ci_runtime.py
+
+      - name: Set up MSVC
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Linux build tools
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build zlib1g-dev
+
+      - name: Install Windows build tools
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install -y ninja
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $vcpkgRoot = "C:\vcpkg"
+          if (-not (Test-Path $vcpkgRoot)) {
+            git clone https://github.com/microsoft/vcpkg $vcpkgRoot
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          & "$vcpkgRoot\bootstrap-vcpkg.bat"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & "$vcpkgRoot\vcpkg.exe" install zlib:x64-windows
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          "CMAKE_TOOLCHAIN_FILE=$vcpkgRoot\scripts\buildsystems\vcpkg.cmake" >> $env:GITHUB_ENV
+
+      - name: Install Gurobi SDK (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          curl --fail --location --retry 3 https://packages.gurobi.com/13.0/gurobi13.0.0_linux64.tar.gz -o "$RUNNER_TEMP/gurobi.tar.gz"
+          mkdir -p "$RUNNER_TEMP/gurobi"
+          tar -xzf "$RUNNER_TEMP/gurobi.tar.gz" -C "$RUNNER_TEMP/gurobi"
+          echo "GUROBI_ROOT=$RUNNER_TEMP/gurobi/gurobi1300/linux64" >> "$GITHUB_ENV"
+
+      - name: Install Gurobi SDK (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          curl --fail --location --retry 3 https://packages.gurobi.com/13.0/gurobi13.0.0_macos_universal2.pkg -o "$RUNNER_TEMP/gurobi.pkg"
+          sudo /usr/sbin/installer -pkg "$RUNNER_TEMP/gurobi.pkg" -target /
+          echo "GUROBI_ROOT=/Library/gurobi1300/macos_universal2" >> "$GITHUB_ENV"
+
+      - name: Install Gurobi SDK (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          GUROBI_MSI_URL: ${{ secrets.GUROBI_MSI_URL }}
+        run: |
+          if (-not $env:GUROBI_MSI_URL) { throw "Missing GUROBI_MSI_URL secret." }
+          $msi = Join-Path $env:RUNNER_TEMP "gurobi.msi"
+          Invoke-WebRequest -Uri $env:GUROBI_MSI_URL -OutFile $msi
+          if ((Get-Item $msi).Length -lt 1000000) { throw "Downloaded MSI is too small." }
+          $extractRoot = Join-Path $env:RUNNER_TEMP "gurobi"
+          $logPath = Join-Path $env:RUNNER_TEMP "msiexec.log"
+          $proc = Start-Process msiexec -ArgumentList "/a `"$msi`" /qn TARGETDIR=`"$extractRoot`" /l*v `"$logPath`"" -Wait -PassThru
+          if ($proc.ExitCode -ne 0) {
+            if (Test-Path $logPath) { Get-Content $logPath -Tail 100 }
+            throw "MSI extraction failed: $($proc.ExitCode)"
+          }
+          $platform = Get-ChildItem $extractRoot -Recurse -Directory -Filter "win64" |
+            Where-Object { Test-Path (Join-Path $_.FullName "include\gurobi_c.h") } |
+            Select-Object -First 1
+          if (-not $platform) { throw "Gurobi win64 folder not found." }
+          "GUROBI_ROOT=$($platform.FullName)" >> $env:GITHUB_ENV
+
+      - name: Identify toolchain
+        id: toolchain
+        shell: python
+        run: |
+          import hashlib, os, subprocess
+          command = ["cl"] if os.name == "nt" else ["c++", "--version"]
+          version = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True).stdout
+          identity = os.environ.get("ImageVersion", "") + "\n" + version
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write("id=" + hashlib.sha256(identity.encode()).hexdigest()[:16] + "\n")
+
+      - name: Cache compiled dependencies
+        id: dependencies
+        uses: actions/cache@v4
+        with:
+          key: deps-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.toolchain.outputs.id }}-${{ hashFiles('build.py', 'packages/application/cvrp/lib/hgs/CMakeLists.txt', 'packages/application/cvrp/lib/hgs/src/**', 'packages/application/cvrp/lib/hgs/include/**', 'packages/external/cvrpsep/*.cpp', 'packages/external/cvrpsep/*.h', 'packages/external/cvrpsep/CMakeLists.txt', 'packages/external/cvrpsep/Makefile') }}
+          path: |
+            packages/external/xgb/include
+            packages/external/xgb/lib
+            packages/application/cvrp/lib/hgs/lib
+            packages/external/cvrpsep/obj
+
+      - name: Prepare dependencies
+        shell: python
+        env:
+          DEPENDENCIES_CACHED: ${{ steps.dependencies.outputs.cache-hit }}
+        run: |
+          import os, subprocess, sys
+          sys.path.insert(0, os.getcwd())
+          import build
+          root = build.resolve_gurobi_root(os.environ["GUROBI_ROOT"])
+          if root is None:
+              raise RuntimeError("Gurobi SDK not found")
+          if os.environ["DEPENDENCIES_CACHED"] == "true":
+              build.update_cmake(root)
+          else:
+              subprocess.run([sys.executable, "build.py"], input=root + "\n", text=True, check=True)
+
+      - name: Build CVRP
+        shell: python
+        run: |
+          import os, subprocess
+          command = ["cmake", "-S", "packages/application/cvrp", "-B", "packages/application/cvrp/build",
+                     "-DCMAKE_BUILD_TYPE=Release", "-DLABEL_ASSIGN_OVERRIDE=160000"]
+          if os.name == "nt":
+              command += ["-G", "Ninja", "-DCMAKE_TOOLCHAIN_FILE=" + os.environ["CMAKE_TOOLCHAIN_FILE"]]
+          subprocess.run(command, check=True)
+          subprocess.run(["cmake", "--build", "packages/application/cvrp/build", "--parallel", "2"], check=True)
+
+      - name: Package runtime
+        run: python .github/scripts/ci_runtime.py package
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: runtime-${{ matrix.os }}
+          path: ${{ runner.temp }}/runtime.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
+  test:
+    name: Test (${{ matrix.os }})
+    needs: build
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/download-artifact@v4
+        with:
+          name: runtime-${{ matrix.os }}
+          path: ${{ runner.temp }}
+      - name: Run CVRP smoke test
+        env:
+          GRB_WLSACCESSID: ${{ secrets.GRB_WLSACCESSID }}
+          GRB_WLSSECRET: ${{ secrets.GRB_WLSSECRET }}
+          GRB_LICENSEID: ${{ secrets.GRB_LICENSEID }}
+        run: python .github/scripts/ci_runtime.py smoke
